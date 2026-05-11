@@ -262,7 +262,7 @@ function Services() {
       </div>
 
       {/* pinned scroll track — height = N viewports, the pinned panel sits inside */}
-      <div ref={trackRef} className="relative" style={{ height: `${N * 100}vh` }}>
+      <div ref={trackRef} className="relative" style={{ height: `${N * 40}vh` }}>
         <div className="sticky top-0 h-screen w-full">
           {/* stacked panels, only the active one visible via opacity mask */}
           {SERVICES.map((svc, i) => {

@@ -3,12 +3,34 @@
    Services. The video plays at its native aspect (object-contain) so
    no part is cropped. Autoplays muted + looped; click to pause. */
 
-const { useRef, useState } = React;
+const { useRef, useState, useEffect } = React;
 
 function Interlude() {
   const videoRef = useRef(null);
+  const sectionRef = useRef(null);
   const [muted, setMuted] = useState(true);
   const [playing, setPlaying] = useState(true);
+  const [loaded, setLoaded] = useState(false);
+
+  // Lazy-load: only attach the heavy mp4 once the section nears the viewport.
+  useEffect(() => {
+    if (loaded) return;
+    const el = sectionRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        if (e.isIntersecting) { setLoaded(true); io.disconnect(); break; }
+      }
+    }, { rootMargin: '600px 0px' });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [loaded]);
+
+  useEffect(() => {
+    if (!loaded) return;
+    const v = videoRef.current;
+    if (v) { v.play().catch(() => {}); }
+  }, [loaded]);
 
   const toggleSound = (e) => {
     e.stopPropagation();
@@ -26,6 +48,7 @@ function Interlude() {
 
   return (
     <section
+      ref={sectionRef}
       data-screen-label="Interlude"
       className="relative w-full bg-black text-white overflow-hidden">
 
@@ -37,14 +60,14 @@ function Interlude() {
         data-hover>
         <video
           ref={videoRef}
-          src="assets/interlude-film.mp4"
+          src={loaded ? "assets/interlude-film.mp4" : undefined}
           autoPlay
           loop
           muted
           playsInline
-          preload="metadata"
+          preload="none"
           className="block max-h-screen max-w-full h-auto w-auto object-contain"
-          style={{ filter: 'saturate(0.95) contrast(1.04)' }}
+          style={{ filter: 'saturate(0.95) contrast(1.04)', minHeight: loaded ? undefined : '60vh' }}
         />
 
         {/* grain continuity with the rest of the site */}

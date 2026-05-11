@@ -708,9 +708,9 @@ function ClosingCTA() {
             </svg>
           </a>
           <div className="mt-10 text-[10.5px] uppercase tracking-[0.28em] text-white/45 md:text-right leading-[1.9]">
-            <div>Info@rmotionstudios.com</div>
-            <div>Studiobooking@rmotionstudios.com</div>
-            <div>Help@rmotionstudios.com</div>
+            <div>info@relatedmotionstudios.com</div>
+            <div>bookings@relatedmotionstudios.com</div>
+            <div>support@relatedmotionstudios.com</div>
           </div>
         </motionS.div>
       </div>

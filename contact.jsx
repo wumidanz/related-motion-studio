@@ -72,11 +72,14 @@ function Contact() {
   const yHeadline = useTransformC(scrollYProgress, [0, 1], [80, -80]);
 
   const emails = [
-    { label: 'General',        address: 'Info@rmotionstudios.com' },
-    { label: 'Studio booking', address: 'Studiobooking@rmotionstudios.com' },
-    { label: 'Help',           address: 'Help@rmotionstudios.com' },
+    { label: 'General',        address: 'info@relatedmotionstudios.com' },
+    { label: 'Studio booking', address: 'bookings@relatedmotionstudios.com' },
+    { label: 'Help',           address: 'support@relatedmotionstudios.com' },
   ];
-  const socials = ['Instagram', 'Vimeo', 'Behance', 'LinkedIn'];
+  const socials = [
+    { name: 'Instagram', href: 'mailto:support@relatedmotionstudios.com' },
+    { name: 'LinkedIn',  href: '#' },
+  ];
 
   return (
     <section
@@ -178,12 +181,12 @@ function Contact() {
             </div>
             <ul className="grid grid-cols-2 gap-y-3 gap-x-4">
               {socials.map((s) => (
-                <li key={s}>
+                <li key={s.name}>
                   <a
-                    href="#"
+                    href={s.href}
                     data-hover
                     className="group inline-flex items-center gap-2 text-[14px] text-white hover:text-white/70 transition-colors">
-                    <span>{s}</span>
+                    <span>{s.name}</span>
                     <span className="inline-block transition-transform group-hover:translate-x-1 text-white/50">↗</span>
                   </a>
                 </li>
