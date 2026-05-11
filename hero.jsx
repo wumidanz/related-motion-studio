@@ -318,7 +318,7 @@ function Hero() {
     { label: 'STUDIO', href: 'Studio.html' },
     { label: 'CONTACT', href: 'index.html#contact' },
   ];
-  const langs = ['EN', 'VN', '中文'];
+  const langs = ['EN'];
   const [activeLang, setActiveLang] = useState('EN');
 
   return (
