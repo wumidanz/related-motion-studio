@@ -319,7 +319,7 @@ function Hero() {
     { label: 'TEAM' },
     { label: 'CONTACT' },
   ];
-  const langs = ['EN', 'VN', '中文'];
+  const langs = ['EN'];
   const [activeLang, setActiveLang] = useState('EN');
 
   return (

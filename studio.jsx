@@ -56,7 +56,7 @@ function TopBar() {
     { label: 'STUDIO',    href: 'Studio.html', active: true },
     { label: 'CONTACT',   href: 'index.html#contact' },
   ];
-  const langs = ['EN', 'VN', '中文'];
+  const langs = ['EN'];
   const [activeLang, setActiveLang] = useState('EN');
   return (
     <header className="absolute top-0 inset-x-0 z-40 px-10 pt-8 grid grid-cols-3 items-start">
@@ -734,10 +734,8 @@ function StudioPage() {
       <Cursor />
       <div className="bg-black">
         <div data-screen-label="Studio · Masthead"><Masthead /></div>
-        <div data-screen-label="Studio · The Space"><StudioImages /></div>
         <div data-screen-label="Studio · Bookings"><Bookings /></div>
-        <div data-screen-label="Studio · In Orbit"><InOrbit /></div>
-        <div data-screen-label="Studio · Encounter"><ClosingCTA /></div>
+        <div data-screen-label="Studio · The Space"><StudioImages /></div>
       </div>
     </>
   );

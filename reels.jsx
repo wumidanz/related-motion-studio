@@ -368,9 +368,6 @@ function Reels() {
   const reels = [
     { n: 1, title: 'Tide Lines',            client: 'Okurase Rum',       year: 2026, format: 'Brand Film',     duration: 108, aspect: '2.39 : 1', sound: 'Dolby 5.1', label: 'Roll A · Take 07', tone: 'warm',  tags: ['Direction', 'Color', 'Sound'],   src: 'assets/reel-fixed.mp4' },
     { n: 2, title: 'A Quiet Rebellion',     client: 'Akoya Studios',     year: 2025, format: 'Short',          duration:  92, aspect: '1.85 : 1', sound: 'Stereo',    label: 'Roll C · Take 02', tone: 'ember', tags: ['Narrative', 'Sound Design'],     src: 'assets/reel-02.mp4' },
-    { n: 3, title: 'Pilgrim / Chapter One', client: 'Pilgrim',           year: 2025, format: 'Motion System',  duration: 142, aspect: '16 : 9',   sound: 'Stereo',    label: 'Roll F · Take 01', tone: 'noir',  tags: ['Identity', 'Motion'],            src: 'assets/reel-02.mp4' },
-    { n: 4, title: 'Salt Month',            client: 'Manta Island',      year: 2024, format: 'Documentary',    duration: 214, aspect: '2.39 : 1', sound: 'Atmos',     label: 'Roll B · Take 11', tone: 'dusk',  tags: ['Doc', 'Edit'],                   src: 'assets/reel-fixed.mp4' },
-    { n: 5, title: 'After Hours',           client: 'Lumen & Co',        year: 2024, format: 'Campaign',       duration:  66, aspect: '9 : 16',   sound: 'Stereo',    label: 'Roll E · Take 03', tone: 'cool',  tags: ['Vertical', 'Edit'],              src: 'assets/reel-02.mp4' },
   ];
 
   const [active, setActive] = React.useState(0);
