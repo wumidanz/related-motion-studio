@@ -44,10 +44,10 @@
     letter-spacing: 0.28em;
     text-indent: 0.28em; /* optical shift for tracking */
     text-transform: uppercase;
-    color: #ffffff;
+    color: #1a1714;
     white-space: nowrap;
-    /* Subtle shadow so it reads over any image */
-    text-shadow: 0 2px 40px rgba(0,0,0,0.45);
+    /* Subtle shadow for depth against the frosted surface */
+    text-shadow: 0 1px 20px rgba(255,255,255,0.3);
     opacity: 0;
     animation: appear 1.4s cubic-bezier(0.22,1,0.36,1) 0.6s forwards;
   }
@@ -159,6 +159,13 @@ function boot() {
 
       vec4 col = mix(colA, colB, u_alpha);
       col.rgb  *= edge;
+
+      /* ── Frosted glass overlay ──────────────────────────────────────
+         Mix the image with a warm milky white so it reads like light
+         passing through ribbed frosted glass — image is there but
+         ghosted, not fully legible. 0.0 = clear · 1.0 = opaque white */
+      vec3 frost = vec3(0.91, 0.89, 0.86);   /* warm off-white          */
+      col.rgb = mix(col.rgb, frost, 0.62);    /* 62% frosted             */
 
       gl_FragColor = col;
     }
