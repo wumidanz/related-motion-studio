@@ -2,1479 +2,313 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>RMS Frames — Cinematic Identity Studio</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>RMS Frames — Related Motion Studio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Manrope:wght@300;400;500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet" />
 <style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
   :root {
-    --ink: #070605;
-    --ink-2: #0d0b09;
-    --ink-3: #15110d;
-    --bone: #e8dfd2;
-    --bone-dim: #b9ad9c;
-    --bone-low: #6b6155;
-    --gold: #c9a96a;
-    --gold-deep: #8a6f3e;
-    --ember: #8a5a3b;
-    --line: rgba(232, 223, 210, 0.14);
-    --line-strong: rgba(232, 223, 210, 0.32);
+    --ink:   #070605;
+    --bone:  #e8dfd2;
+    --mute:  #9a9189;
+    --gold:  #c9a96a;
+    --dim:   #3a3530;
+    --line:  rgba(232,223,210,0.1);
     --serif: "Cormorant Garamond", "Times New Roman", serif;
-    --sans: "Manrope", -apple-system, system-ui, sans-serif;
-    --gutter: clamp(20px, 5vw, 64px);
+    --sans:  "Manrope", system-ui, sans-serif;
+    --mono:  "JetBrains Mono", ui-monospace, monospace;
   }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { background: var(--ink); color: var(--bone); }
-  body {
+  html, body {
+    height: 100%;
+    background: var(--ink);
+    color: var(--bone);
     font-family: var(--sans);
     font-weight: 300;
-    line-height: 1.5;
     -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    overflow-x: hidden;
+    overflow: hidden;
   }
 
-  ::selection { background: var(--gold); color: var(--ink); }
+  a { color: inherit; text-decoration: none; }
 
-  /* ---------- Film grain overlay ---------- */
-  .grain {
-    position: fixed; inset: 0;
+  /* Full-bleed background */
+  .bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+  }
+
+  .bg image-slot {
+    width: 100%;
+    height: 100%;
+    display: block;
+    --slot-bg: #070605;
+    --slot-radius: 0;
+  }
+
+  /* Layered overlays */
+  .bg-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
     pointer-events: none;
-    z-index: 200;
-    opacity: 0.06;
-    mix-blend-mode: overlay;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.6 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
   }
 
-  /* ---------- Top frame (RMS wordmark + ticker) ---------- */
-  .topbar {
-    position: fixed; top: 0; left: 0; right: 0;
-    z-index: 100;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 22px var(--gutter);
+  .bg-overlay-vignette {
+    background:
+      radial-gradient(ellipse 80% 70% at 50% 50%, transparent 0%, rgba(7,6,5,0.45) 60%, rgba(7,6,5,0.88) 100%);
+  }
+
+  .bg-overlay-grain {
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+    background-size: 200px 200px;
+  }
+
+  .bg-overlay-bottom {
+    background: linear-gradient(to top, rgba(7,6,5,0.92) 0%, rgba(7,6,5,0.4) 28%, transparent 55%);
+  }
+
+  .bg-overlay-top {
+    background: linear-gradient(to bottom, rgba(7,6,5,0.75) 0%, rgba(7,6,5,0.15) 24%, transparent 50%);
+  }
+
+  /* ─── Nav ─── */
+  header {
+    position: fixed;
+    top: 0; inset-x: 0;
+    z-index: 10;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: clamp(20px, 3vw, 36px) clamp(24px, 5vw, 64px);
+  }
+
+  .logo {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .logo-main {
     font-family: var(--sans);
-    font-size: 11px;
+    font-weight: 500;
+    font-size: 15px;
+    letter-spacing: -0.01em;
+    color: var(--bone);
+  }
+  .logo-sub {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--mute);
+  }
+
+  nav {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 5px;
+  }
+  nav a {
+    font-family: var(--mono);
+    font-size: 10px;
     letter-spacing: 0.22em;
     text-transform: uppercase;
-    color: var(--bone);
-    transition: background 600ms ease, backdrop-filter 600ms ease;
+    color: rgba(232,223,210,0.45);
+    transition: color .25s;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
   }
-  .topbar.scrolled {
-    background: rgba(7, 6, 5, 0.72);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    border-bottom: 1px solid var(--line);
-  }
-  .wordmark {
-    display: flex; align-items: baseline; gap: 14px;
-    font-family: var(--serif);
-    font-weight: 400;
-    font-size: 22px;
-    letter-spacing: 0.08em;
-    text-transform: none;
-  }
-  .wordmark .back {
-    font-family: var(--sans); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
-    color: var(--bone-low); text-decoration: none; padding: 4px 0;
-    border-bottom: 1px solid transparent; transition: color .25s ease, border-color .25s ease;
-  }
-  .wordmark .back:hover { color: var(--bone); border-color: var(--bone); }
-  .wordmark .sep { color: var(--line-strong); font-family: var(--sans); font-size: 10px; }
-  .wordmark sup {
-    font-family: var(--sans);
-    font-size: 9px; letter-spacing: 0.3em;
-    color: var(--gold);
-    transform: translateY(-6px);
-    display: inline-block;
-  }
-  .topbar nav {
-    display: flex; gap: 36px; align-items: center;
-  }
-  .topbar nav a {
-    color: var(--bone);
-    text-decoration: none;
-    opacity: 0.78;
-    transition: opacity .3s, color .3s;
-  }
-  .topbar nav a:hover { opacity: 1; color: var(--gold); }
-  .topbar .ticker { color: var(--bone-dim); }
-  .topbar .ticker .dot {
-    display: inline-block; width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--gold);
-    margin-right: 8px;
-    transform: translateY(-1px);
-    animation: pulse 2.4s ease-in-out infinite;
-  }
-  @keyframes pulse {
-    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(201, 169, 106, 0.6); }
-    50% { opacity: 0.4; box-shadow: 0 0 0 6px rgba(201, 169, 106, 0); }
-  }
-  @media (max-width: 820px) {
-    .topbar nav { display: none; }
-    .topbar { padding: 18px var(--gutter); }
-    .wordmark { font-size: 19px; }
+  nav a:hover { color: var(--bone); }
+  nav a.active { color: var(--bone); }
+  nav a.active::before { content: "→"; }
+
+  /* ─── Main stage ─── */
+  main {
+    position: relative;
+    z-index: 5;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0 clamp(24px, 6vw, 80px);
   }
 
-  /* ---------- Section common ---------- */
-  section { position: relative; }
-  .section-tag {
-    display: flex; align-items: center; gap: 14px;
-    font-family: var(--sans);
+  .eyebrow {
+    font-family: var(--mono);
     font-size: 10px;
-    font-weight: 500;
     letter-spacing: 0.32em;
     text-transform: uppercase;
     color: var(--gold);
-  }
-  .section-tag::before {
-    content: ""; width: 28px; height: 1px; background: var(--gold);
-  }
-  .roman {
-    font-family: var(--serif);
-    font-style: italic;
-    font-weight: 300;
-    font-size: 14px;
-    color: var(--bone-low);
-    letter-spacing: 0.16em;
-  }
-
-  /* ============================================================
-     1. HERO
-     ============================================================ */
-  .hero {
-    position: relative;
-    height: 100vh;
-    min-height: 720px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-  }
-  .hero-stage {
-    position: absolute; inset: 0;
-    background: var(--ink);
-  }
-  /* Cinematic placeholder "video" — slow Ken-Burns over warm chiaroscuro field */
-  .hero-stage::before {
-    content: "";
-    position: absolute; inset: -8%;
-    background:
-      radial-gradient(ellipse 60% 50% at 30% 38%, rgba(201, 169, 106, 0.18), transparent 65%),
-      radial-gradient(ellipse 50% 70% at 78% 60%, rgba(138, 90, 59, 0.22), transparent 70%),
-      radial-gradient(ellipse 80% 60% at 50% 100%, rgba(7, 6, 5, 0.95), transparent 60%),
-      linear-gradient(180deg, #0a0806 0%, #15100b 40%, #1a120c 60%, #0a0806 100%);
-    background-color: var(--ink);
-    animation: kenburns 22s ease-in-out infinite alternate;
-    filter: contrast(1.05) saturate(0.9);
-  }
-  @keyframes kenburns {
-    0%   { transform: scale(1.05) translate(0, 0); }
-    100% { transform: scale(1.18) translate(-2%, -1.5%); }
-  }
-  /* film placeholder slate (top-left) */
-  .hero-slate {
-    position: absolute;
-    top: calc(var(--gutter) + 80px); right: var(--gutter);
-    z-index: 5;
-    font-family: var(--sans);
-    font-size: 10px; letter-spacing: 0.28em;
-    text-transform: uppercase;
-    color: var(--bone-dim);
-    display: flex; flex-direction: column; gap: 4px;
-    text-align: right;
-    align-items: flex-end;
-  }
-  @media (max-width: 1100px) {
-    .hero-slate { display: none; }
-  }
-  .hero-slate b { color: var(--bone); font-weight: 500; }
-  .hero-slate .tc { color: var(--gold); font-variant-numeric: tabular-nums; }
-
-  /* placeholder striping */
-  .hero-stripes {
-    position: absolute; inset: 0; z-index: 1;
-    background-image: repeating-linear-gradient(
-      105deg,
-      transparent 0 60px,
-      rgba(232, 223, 210, 0.012) 60px 120px
-    );
-    pointer-events: none;
-  }
-
-  .hero-vignette {
-    position: absolute; inset: 0; z-index: 2;
-    background:
-      radial-gradient(ellipse 100% 80% at 50% 50%, transparent 40%, rgba(7, 6, 5, 0.65) 100%),
-      linear-gradient(180deg, rgba(7,6,5,0.45) 0%, transparent 25%, transparent 60%, rgba(7,6,5,0.85) 100%);
-    pointer-events: none;
-  }
-
-  .hero-content {
-    position: relative;
-    z-index: 4;
-    padding: 0 var(--gutter) clamp(48px, 10vh, 120px);
-    max-width: 1480px;
-    margin: 0 auto;
-    width: 100%;
-  }
-  .hero-eyebrow {
-    margin-bottom: 28px;
-  }
-  .hero-headline {
-    font-family: var(--serif);
-    font-weight: 300;
-    font-size: clamp(48px, 9.2vw, 168px);
-    line-height: 0.92;
-    letter-spacing: -0.01em;
-    color: var(--bone);
-    max-width: 14ch;
-    margin-bottom: 32px;
-  }
-  .hero-headline em {
-    font-style: italic;
-    font-weight: 300;
-    color: var(--gold);
-  }
-  .hero-headline .word {
-    display: inline-block;
-    overflow: hidden;
-    vertical-align: top;
-  }
-  .hero-headline .word > span {
-    display: inline-block;
-    transform: translateY(110%);
-    animation: rise 1.4s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
-  }
-  .hero-headline .word:nth-child(1) > span { animation-delay: 0.30s; }
-  .hero-headline .word:nth-child(2) > span { animation-delay: 0.42s; }
-  .hero-headline .word:nth-child(3) > span { animation-delay: 0.54s; }
-  .hero-headline .word:nth-child(4) > span { animation-delay: 0.66s; }
-  .hero-headline .word:nth-child(5) > span { animation-delay: 0.78s; }
-  .hero-headline .word:nth-child(6) > span { animation-delay: 0.90s; }
-  .hero-headline .word:nth-child(7) > span { animation-delay: 1.02s; }
-  @keyframes rise {
-    to { transform: translateY(0); }
-  }
-
-  .hero-bottom {
-    display: grid;
-    grid-template-columns: 1.1fr 1fr;
-    gap: clamp(32px, 6vw, 96px);
-    align-items: end;
+    margin-bottom: clamp(20px, 3vh, 36px);
     opacity: 0;
-    animation: fade-up 1.2s ease 1.4s forwards;
-  }
-  @keyframes fade-up {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  .hero-sub {
-    font-family: var(--serif);
-    font-style: italic;
-    font-weight: 300;
-    font-size: clamp(18px, 1.7vw, 24px);
-    line-height: 1.45;
-    color: var(--bone-dim);
-    max-width: 38ch;
-  }
-  .hero-ctas {
-    display: flex; flex-wrap: wrap; gap: 14px;
-    align-items: center;
+    animation: rise 1.1s cubic-bezier(0.22,1,0.36,1) 0.3s forwards;
   }
 
-  @media (max-width: 820px) {
-    .hero-bottom { grid-template-columns: 1fr; gap: 28px; }
-    .hero-slate { display: none; }
-  }
-
-  /* ---------- Buttons ---------- */
-  .btn {
-    display: inline-flex; align-items: center; gap: 12px;
-    font-family: var(--sans);
-    font-size: 11px;
-    letter-spacing: 0.28em;
-    text-transform: uppercase;
-    font-weight: 500;
-    padding: 18px 26px;
-    border: 1px solid var(--bone);
-    background: transparent;
-    color: var(--bone);
-    text-decoration: none;
-    cursor: pointer;
-    transition: all .45s cubic-bezier(.2,.7,.2,1);
-    position: relative;
-    overflow: hidden;
-  }
-  .btn::after {
-    content: ""; position: absolute; inset: 0;
-    background: var(--bone);
-    transform: translateY(101%);
-    transition: transform .45s cubic-bezier(.2,.7,.2,1);
-    z-index: 0;
-  }
-  .btn > * { position: relative; z-index: 1; }
-  .btn:hover { color: var(--ink); }
-  .btn:hover::after { transform: translateY(0); }
-  .btn .arrow {
-    display: inline-block; transition: transform .45s ease;
-  }
-  .btn:hover .arrow { transform: translateX(4px); }
-  .btn--gold { border-color: var(--gold); color: var(--gold); }
-  .btn--gold::after { background: var(--gold); }
-  .btn--gold:hover { color: var(--ink); }
-  .btn--ghost { border-color: var(--line-strong); color: var(--bone-dim); }
-  .btn--ghost::after { background: var(--bone); }
-  .btn--ghost:hover { color: var(--ink); }
-  .btn--lg { padding: 22px 32px; font-size: 12px; }
-
-  /* ============================================================
-     2. IDENTITY SHIFT
-     ============================================================ */
-  .identity-shift {
-    padding: clamp(120px, 22vh, 220px) var(--gutter);
-    background: var(--ink);
-    border-top: 1px solid var(--line);
-    text-align: left;
-  }
-  .identity-shift .wrap {
-    max-width: 1280px; margin: 0 auto;
-    display: grid; grid-template-columns: 1fr 3fr; gap: clamp(32px, 6vw, 96px);
-    align-items: start;
-  }
-  .identity-shift .meta {
-    display: flex; flex-direction: column; gap: 16px;
-    padding-top: 14px;
-  }
-  .identity-shift .lines {
-    display: flex; flex-direction: column;
-    gap: clamp(40px, 8vh, 80px);
-  }
-  .identity-shift p {
+  .headline {
     font-family: var(--serif);
-    font-weight: 300;
-    font-size: clamp(28px, 4vw, 64px);
-    line-height: 1.08;
-    letter-spacing: -0.005em;
-    color: var(--bone);
-    max-width: 22ch;
-  }
-  .identity-shift p em {
-    font-style: italic;
-    color: var(--gold);
-  }
-  .identity-shift p.dim { color: var(--bone-low); }
-  .identity-shift p.dim em { color: var(--bone); font-style: italic; }
-  @media (max-width: 820px) {
-    .identity-shift .wrap { grid-template-columns: 1fr; }
-  }
-
-  /* ============================================================
-     3. EXPERIENCE MODES
-     ============================================================ */
-  .modes {
-    padding: clamp(80px, 14vh, 160px) var(--gutter) clamp(80px, 14vh, 160px);
-    background: var(--ink);
-    border-top: 1px solid var(--line);
-  }
-  .modes .head {
-    max-width: 1480px; margin: 0 auto clamp(48px, 8vh, 96px);
-    display: grid; grid-template-columns: 1fr 1fr; gap: 32px;
-    align-items: end;
-  }
-  .modes .head h2 {
-    font-family: var(--serif);
-    font-weight: 300;
-    font-size: clamp(36px, 5vw, 72px);
-    line-height: 1.05;
-    color: var(--bone);
-    max-width: 14ch;
-  }
-  .modes .head h2 em { color: var(--gold); font-style: italic; }
-  .modes .head .tag-row { display: flex; gap: 24px; align-items: center; }
-  .modes-grid {
-    max-width: 1480px; margin: 0 auto;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1px;
-    background: var(--line);
-    border-top: 1px solid var(--line);
-    border-bottom: 1px solid var(--line);
-  }
-  .mode {
-    position: relative;
-    background: var(--ink-2);
-    aspect-ratio: 3 / 4.2;
-    overflow: hidden;
-    cursor: pointer;
-    isolation: isolate;
-  }
-  .mode-art {
-    position: absolute; inset: 0;
-    transition: transform 1.6s cubic-bezier(.2,.7,.2,1), filter .8s ease;
-    filter: brightness(0.78) contrast(1.05);
-  }
-  .mode:hover .mode-art {
-    transform: scale(1.06);
-    filter: brightness(0.55) contrast(1.1);
-  }
-  /* placeholder art per tile — different warm fields */
-  .mode--01 .mode-art {
-    background:
-      radial-gradient(ellipse 60% 50% at 50% 30%, rgba(201, 169, 106, 0.32), transparent 70%),
-      linear-gradient(160deg, #1a130d 0%, #0a0806 75%);
-  }
-  .mode--02 .mode-art {
-    background:
-      radial-gradient(ellipse 70% 60% at 30% 70%, rgba(138, 90, 59, 0.45), transparent 70%),
-      linear-gradient(200deg, #0d0a07 0%, #1d140d 100%);
-  }
-  .mode--03 .mode-art {
-    background:
-      radial-gradient(ellipse 50% 50% at 70% 40%, rgba(232, 223, 210, 0.18), transparent 65%),
-      linear-gradient(180deg, #0a0806 0%, #14100b 100%);
-  }
-  .mode--04 .mode-art {
-    background:
-      radial-gradient(ellipse 80% 70% at 50% 100%, rgba(201, 169, 106, 0.22), transparent 70%),
-      linear-gradient(160deg, #14100c 0%, #08060a 100%);
-  }
-  .mode-stripes {
-    position: absolute; inset: 0;
-    background-image: repeating-linear-gradient(
-      115deg, transparent 0 40px, rgba(232,223,210,0.02) 40px 80px
-    );
-    pointer-events: none;
-  }
-  .mode-meta {
-    position: absolute; top: 20px; left: 20px; right: 20px;
-    display: flex; justify-content: space-between;
-    font-family: var(--sans);
-    font-size: 10px; letter-spacing: 0.28em;
-    text-transform: uppercase;
-    color: var(--bone-dim);
-    z-index: 2;
-  }
-  .mode-meta .num { color: var(--gold); font-variant-numeric: tabular-nums; }
-  .mode-bottom {
-    position: absolute;
-    left: 24px; right: 24px; bottom: 24px;
-    z-index: 2;
-  }
-  .mode-title {
-    font-family: var(--serif);
-    font-weight: 300;
-    font-style: italic;
-    font-size: clamp(24px, 2vw, 32px);
-    line-height: 1.1;
-    color: var(--bone);
-    margin-bottom: 8px;
-  }
-  .mode-reveal {
-    font-family: var(--serif);
-    font-style: italic;
-    font-weight: 300;
-    font-size: 14px;
-    line-height: 1.45;
-    color: var(--bone-dim);
-    max-height: 0;
-    opacity: 0;
-    overflow: hidden;
-    transition: max-height .8s cubic-bezier(.2,.7,.2,1), opacity .6s ease, margin-top .6s ease;
-  }
-  .mode:hover .mode-reveal {
-    max-height: 80px;
-    opacity: 1;
-    margin-top: 6px;
-  }
-  .mode::after {
-    content: "";
-    position: absolute; inset: 0;
-    background: linear-gradient(180deg, transparent 50%, rgba(7,6,5,0.85) 100%);
-    z-index: 1;
-    pointer-events: none;
-  }
-  @media (max-width: 1100px) {
-    .modes-grid { grid-template-columns: repeat(2, 1fr); }
-  }
-  @media (max-width: 600px) {
-    .modes-grid { grid-template-columns: 1fr; }
-    .modes .head { grid-template-columns: 1fr; align-items: start; }
-    .mode { aspect-ratio: 4 / 4; }
-  }
-
-  /* ============================================================
-     4. GALLERY
-     ============================================================ */
-  .gallery {
-    background: var(--ink);
-    border-top: 1px solid var(--line);
-    padding: clamp(80px, 14vh, 160px) 0 0;
-  }
-  .gallery .head {
-    padding: 0 var(--gutter);
-    max-width: 1480px; margin: 0 auto clamp(48px, 8vh, 96px);
-    display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: end;
-  }
-  .gallery .head h2 {
-    font-family: var(--serif);
-    font-weight: 300;
-    font-style: italic;
-    font-size: clamp(36px, 5vw, 72px);
-    line-height: 1.05;
-    color: var(--bone);
-    max-width: 16ch;
-  }
-  .gallery .frames {
-    display: flex;
-    flex-direction: column;
-  }
-  .frame {
-    position: relative;
-    height: 100vh;
-    min-height: 560px;
-    overflow: hidden;
-    display: flex;
-    align-items: flex-end;
-  }
-  .frame::before {
-    content: "";
-    position: absolute; inset: -6%;
-    background-size: cover; background-position: center;
-    will-change: transform;
-    /* per-frame backgrounds set below */
-  }
-  .frame::after {
-    content: ""; position: absolute; inset: 0;
-    background:
-      radial-gradient(ellipse 100% 80% at 50% 50%, transparent 30%, rgba(7,6,5,0.6) 100%),
-      linear-gradient(180deg, rgba(7,6,5,0.3) 0%, transparent 30%, transparent 60%, rgba(7,6,5,0.85) 100%);
-    pointer-events: none;
-  }
-  .frame--01::before {
-    background:
-      radial-gradient(ellipse 50% 60% at 60% 40%, rgba(201, 169, 106, 0.35), transparent 65%),
-      radial-gradient(ellipse 80% 60% at 30% 80%, rgba(138, 90, 59, 0.32), transparent 70%),
-      linear-gradient(170deg, #0a0806 0%, #1c140e 60%, #08050a 100%);
-  }
-  .frame--02::before {
-    background:
-      radial-gradient(ellipse 40% 70% at 35% 50%, rgba(232, 223, 210, 0.18), transparent 60%),
-      radial-gradient(ellipse 60% 50% at 80% 30%, rgba(201, 169, 106, 0.18), transparent 70%),
-      linear-gradient(190deg, #0c0a08 0%, #15110d 100%);
-  }
-  .frame--03::before {
-    background:
-      radial-gradient(ellipse 70% 60% at 50% 70%, rgba(138, 90, 59, 0.4), transparent 70%),
-      linear-gradient(180deg, #0a0806 0%, #1d130b 70%, #0a0806 100%);
-  }
-  .frame--04::before {
-    background:
-      radial-gradient(ellipse 50% 50% at 25% 35%, rgba(201, 169, 106, 0.3), transparent 65%),
-      radial-gradient(ellipse 60% 70% at 75% 75%, rgba(60, 30, 20, 0.6), transparent 70%),
-      linear-gradient(160deg, #08060a 0%, #140e0a 100%);
-  }
-  .frame-stripes {
-    position: absolute; inset: 0;
-    background-image: repeating-linear-gradient(105deg, transparent 0 70px, rgba(232,223,210,0.014) 70px 140px);
-    pointer-events: none;
-    z-index: 1;
-  }
-  .frame-corners {
-    position: absolute; inset: 28px;
-    pointer-events: none; z-index: 3;
-  }
-  .frame-corners::before, .frame-corners::after,
-  .frame-corners > span::before, .frame-corners > span::after {
-    content: "";
-    position: absolute;
-    width: 18px; height: 18px;
-    border: 1px solid var(--bone-dim);
-  }
-  .frame-corners::before { top: 0; left: 0; border-right: 0; border-bottom: 0; }
-  .frame-corners::after { top: 0; right: 0; border-left: 0; border-bottom: 0; }
-  .frame-corners > span::before { bottom: 0; left: 0; border-right: 0; border-top: 0; }
-  .frame-corners > span::after { bottom: 0; right: 0; border-left: 0; border-top: 0; }
-
-  .frame-meta {
-    position: absolute; top: 36px; left: 36px;
-    z-index: 4;
-    font-family: var(--sans);
-    font-size: 10px; letter-spacing: 0.28em;
-    text-transform: uppercase;
-    color: var(--bone-dim);
-  }
-  .frame-meta b { color: var(--gold); font-weight: 500; }
-  .frame-credit {
-    position: absolute; top: 36px; right: 36px;
-    z-index: 4;
-    font-family: var(--sans);
-    font-size: 10px; letter-spacing: 0.28em;
-    text-transform: uppercase;
-    color: var(--bone-dim);
-    text-align: right;
-  }
-  .frame-caption {
-    position: relative;
-    z-index: 4;
-    padding: 0 var(--gutter) clamp(48px, 10vh, 96px);
-    width: 100%;
-  }
-  .frame-caption .label {
-    font-family: var(--sans);
-    font-size: 11px; letter-spacing: 0.32em;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 14px;
-  }
-  .frame-caption h3 {
-    font-family: var(--serif);
-    font-weight: 300;
-    font-style: italic;
-    font-size: clamp(36px, 5.4vw, 80px);
-    line-height: 1.0;
-    color: var(--bone);
-    max-width: 20ch;
-  }
-  @media (max-width: 600px) {
-    .frame-meta, .frame-credit { top: 20px; }
-    .frame-meta { left: 20px; }
-    .frame-credit { right: 20px; }
-    .frame-corners { inset: 16px; }
-  }
-
-  /* ============================================================
-     5. PSYCHOLOGICAL POSITIONING
-     ============================================================ */
-  .psych {
-    padding: clamp(120px, 22vh, 240px) var(--gutter);
-    background: var(--ink);
-    border-top: 1px solid var(--line);
-    text-align: center;
-  }
-  .psych .wrap {
-    max-width: 1100px; margin: 0 auto;
-    display: flex; flex-direction: column;
-    gap: clamp(64px, 10vh, 120px);
-    align-items: center;
-  }
-  .psych blockquote {
-    font-family: var(--serif);
-    font-weight: 300;
-    font-size: clamp(32px, 4.6vw, 72px);
-    line-height: 1.08;
-    letter-spacing: -0.005em;
-    color: var(--bone);
-    max-width: 22ch;
-  }
-  .psych blockquote em { color: var(--gold); font-style: italic; }
-  .psych .divider {
-    width: 1px; height: 80px; background: var(--line-strong);
-  }
-
-  /* ============================================================
-     6. HOW IT WORKS
-     ============================================================ */
-  .how {
-    padding: clamp(80px, 14vh, 160px) var(--gutter);
-    background: var(--ink-2);
-    border-top: 1px solid var(--line);
-  }
-  .how .head {
-    max-width: 1480px; margin: 0 auto clamp(48px, 8vh, 96px);
-    display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: end;
-  }
-  .how .head h2 {
-    font-family: var(--serif);
-    font-weight: 300;
-    font-size: clamp(36px, 5vw, 72px);
-    line-height: 1.05;
-    color: var(--bone);
-    max-width: 12ch;
-  }
-  .how .head h2 em { color: var(--gold); font-style: italic; }
-  .how-steps {
-    max-width: 1480px; margin: 0 auto;
-    display: grid; grid-template-columns: repeat(3, 1fr);
-    gap: 1px;
-    background: var(--line);
-    border-top: 1px solid var(--line);
-    border-bottom: 1px solid var(--line);
-  }
-  .step {
-    background: var(--ink-2);
-    padding: clamp(36px, 5vw, 56px);
-    min-height: 360px;
-    display: flex; flex-direction: column; justify-content: space-between;
-    gap: 32px;
-    transition: background .6s ease;
-  }
-  .step:hover { background: var(--ink-3); }
-  .step .num {
-    font-family: var(--serif);
-    font-style: italic;
-    font-weight: 300;
-    font-size: clamp(64px, 7vw, 120px);
+    font-weight: 600;
+    font-size: clamp(72px, 14vw, 200px);
     line-height: 0.9;
-    color: var(--gold);
-  }
-  .step h3 {
-    font-family: var(--serif);
-    font-weight: 300;
-    font-size: clamp(24px, 2.2vw, 32px);
-    line-height: 1.15;
+    letter-spacing: -0.03em;
     color: var(--bone);
-    max-width: 14ch;
-  }
-  .step p {
-    font-family: var(--serif);
-    font-style: italic;
-    font-weight: 300;
-    font-size: 16px;
-    line-height: 1.5;
-    color: var(--bone-dim);
-    max-width: 28ch;
-  }
-  .step .marker {
-    font-family: var(--sans);
-    font-size: 10px; letter-spacing: 0.28em;
     text-transform: uppercase;
-    color: var(--bone-low);
-  }
-  @media (max-width: 900px) {
-    .how-steps { grid-template-columns: 1fr; }
-    .how .head { grid-template-columns: 1fr; align-items: start; }
-  }
-
-  /* ============================================================
-     7. MEMBERSHIP TIERS
-     ============================================================ */
-  .tiers {
-    padding: clamp(80px, 14vh, 160px) var(--gutter);
-    background: var(--ink);
-    border-top: 1px solid var(--line);
-  }
-  .tiers .head {
-    max-width: 1480px; margin: 0 auto clamp(48px, 8vh, 96px);
-    display: flex; flex-direction: column; gap: 24px;
-  }
-  .tiers .head h2 {
-    font-family: var(--serif);
-    font-weight: 300;
-    font-size: clamp(48px, 6vw, 96px);
-    line-height: 1.0;
-    color: var(--bone);
-    max-width: 16ch;
-  }
-  .tiers .head h2 em { color: var(--gold); font-style: italic; }
-  .tiers .head p {
-    font-family: var(--serif);
-    font-style: italic;
-    font-size: clamp(16px, 1.4vw, 20px);
-    color: var(--bone-dim);
-    max-width: 56ch;
-  }
-  .tiers-grid {
-    max-width: 1480px; margin: 0 auto;
-    display: grid; grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
-  }
-  .tier {
-    border: 1px solid var(--line-strong);
-    background: var(--ink);
-    padding: clamp(36px, 4vw, 56px);
-    display: flex; flex-direction: column; gap: 28px;
-    min-height: 540px;
-    position: relative;
-    transition: border-color .6s ease, transform .6s ease, background .6s ease;
-  }
-  .tier:hover {
-    border-color: var(--gold);
-    transform: translateY(-4px);
-  }
-  .tier--featured {
-    border-color: var(--gold);
-    background: linear-gradient(180deg, rgba(201,169,106,0.04), transparent 60%);
-  }
-  .tier-tag {
-    display: inline-flex; align-self: flex-start;
-    padding: 6px 12px;
-    border: 1px solid var(--gold);
-    color: var(--gold);
-    font-family: var(--sans);
-    font-size: 9px; letter-spacing: 0.32em;
-    text-transform: uppercase;
-  }
-  .tier .roman { color: var(--bone-low); }
-  .tier h3 {
-    font-family: var(--serif);
-    font-weight: 300;
-    font-size: clamp(28px, 2.6vw, 40px);
-    line-height: 1.1;
-    color: var(--bone);
-    max-width: 14ch;
-  }
-  .tier h3 em { font-style: italic; color: var(--gold); }
-  .tier-desc {
-    font-family: var(--serif);
-    font-style: italic;
-    font-size: 16px;
-    line-height: 1.5;
-    color: var(--bone-dim);
-    max-width: 32ch;
-  }
-  .tier-list {
-    list-style: none;
-    display: flex; flex-direction: column; gap: 14px;
-    margin-top: auto;
-    padding-top: 24px;
-    border-top: 1px solid var(--line);
-  }
-  .tier-list li {
-    font-family: var(--sans);
-    font-size: 12px; letter-spacing: 0.06em;
-    color: var(--bone);
-    display: flex; gap: 12px; align-items: baseline;
-  }
-  .tier-list li::before {
-    content: ""; width: 6px; height: 6px; flex-shrink: 0;
-    background: var(--gold);
-    transform: rotate(45deg) translateY(-2px);
-  }
-  .tier-cta {
-    margin-top: 8px;
-  }
-  @media (max-width: 1000px) {
-    .tiers-grid { grid-template-columns: 1fr; }
-  }
-
-  /* ============================================================
-     8. FINAL CTA
-     ============================================================ */
-  .final {
-    position: relative;
-    height: 100vh; min-height: 720px;
-    overflow: hidden;
-    display: flex; align-items: center; justify-content: center;
-    text-align: center;
-    border-top: 1px solid var(--line);
-  }
-  .final-stage {
-    position: absolute; inset: 0;
-    background:
-      radial-gradient(ellipse 60% 50% at 50% 50%, rgba(201, 169, 106, 0.22), transparent 65%),
-      radial-gradient(ellipse 80% 60% at 50% 100%, rgba(138, 90, 59, 0.25), transparent 70%),
-      linear-gradient(180deg, #08060a 0%, #18120c 50%, #06050a 100%);
-    animation: kenburns 26s ease-in-out infinite alternate;
-    filter: contrast(1.05);
-  }
-  .final-vignette {
-    position: absolute; inset: 0;
-    background:
-      radial-gradient(ellipse 100% 80% at 50% 50%, transparent 35%, rgba(7,6,5,0.75) 100%);
-    pointer-events: none;
-  }
-  .final-stripes {
-    position: absolute; inset: 0;
-    background-image: repeating-linear-gradient(105deg, transparent 0 70px, rgba(232,223,210,0.012) 70px 140px);
-    pointer-events: none;
-  }
-  .final-content {
-    position: relative; z-index: 4;
-    padding: 0 var(--gutter);
-    max-width: 1280px;
-    display: flex; flex-direction: column; align-items: center; gap: clamp(36px, 6vh, 56px);
-  }
-  .final-content .section-tag { color: var(--gold); }
-  .final-content h2 {
-    font-family: var(--serif);
-    font-weight: 300;
-    font-size: clamp(44px, 7.4vw, 128px);
-    line-height: 0.96;
-    letter-spacing: -0.005em;
-    color: var(--bone);
-    max-width: 16ch;
-  }
-  .final-content h2 em { color: var(--gold); font-style: italic; }
-  .final-ctas {
-    display: flex; flex-wrap: wrap; gap: 14px; justify-content: center;
-  }
-  .whatsapp {
-    display: inline-flex; align-items: center; gap: 10px;
-    font-family: var(--sans);
-    font-size: 11px; letter-spacing: 0.28em;
-    text-transform: uppercase;
-    color: var(--bone-dim);
-    text-decoration: none;
-    padding: 18px 4px;
-    border-bottom: 1px solid transparent;
-    transition: color .4s, border-color .4s;
-  }
-  .whatsapp:hover { color: var(--bone); border-color: var(--bone-dim); }
-  .whatsapp svg { width: 14px; height: 14px; flex-shrink: 0; }
-
-  /* ============================================================
-     FOOTER
-     ============================================================ */
-  footer {
-    background: var(--ink);
-    border-top: 1px solid var(--line);
-    padding: 48px var(--gutter) 32px;
-    color: var(--bone-low);
-  }
-  footer .row {
-    max-width: 1480px; margin: 0 auto;
-    display: flex; justify-content: space-between; align-items: center; gap: 32px;
-    flex-wrap: wrap;
-    font-family: var(--sans);
-    font-size: 10px; letter-spacing: 0.28em;
-    text-transform: uppercase;
-  }
-  footer .wm {
-    font-family: var(--serif);
-    font-size: 18px;
-    letter-spacing: 0.08em;
-    text-transform: none;
-    color: var(--bone);
-  }
-  footer .links { display: flex; gap: 24px; flex-wrap: wrap; }
-  footer a { color: var(--bone-low); text-decoration: none; word-break: break-word; }
-  footer a:hover { color: var(--gold); }
-  @media (max-width: 720px) {
-    footer { padding: 40px var(--gutter) 100px; }  /* 100px bottom for sticky-cta */
-    footer .row { flex-direction: column; align-items: flex-start; gap: 18px; letter-spacing: 0.22em; }
-    footer .links { flex-direction: column; gap: 10px; width: 100%; }
-    footer .wm { font-size: 16px; }
-  }
-
-  /* ============================================================
-     STICKY CTA BAR (mobile-first)
-     ============================================================ */
-  .sticky-cta {
-    position: fixed;
-    left: 0; right: 0; bottom: 0;
-    z-index: 90;
-    display: flex;
-    background: rgba(7, 6, 5, 0.92);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    border-top: 1px solid var(--line);
-    transform: translateY(100%);
-    transition: transform .8s cubic-bezier(.2,.7,.2,1);
-  }
-  .sticky-cta.visible { transform: translateY(0); }
-  .sticky-cta a {
-    flex: 1;
-    text-align: center;
-    padding: 18px 12px;
-    font-family: var(--sans);
-    font-size: 10px;
-    letter-spacing: 0.28em;
-    text-transform: uppercase;
-    color: var(--bone);
-    text-decoration: none;
-    border-right: 1px solid var(--line);
-    transition: background .3s, color .3s;
-  }
-  .sticky-cta a:last-child { border-right: 0; }
-  .sticky-cta a.gold { color: var(--gold); }
-  .sticky-cta a:hover { background: var(--gold); color: var(--ink); }
-
-  /* ---------- Reveal-on-scroll ---------- */
-  .reveal {
     opacity: 0;
-    transform: translateY(28px);
-    transition: opacity 1.2s cubic-bezier(.2,.7,.2,1), transform 1.2s cubic-bezier(.2,.7,.2,1);
+    animation: rise 1.2s cubic-bezier(0.22,1,0.36,1) 0.5s forwards;
   }
-  .reveal.in { opacity: 1; transform: translateY(0); }
 
-  @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after { animation: none !important; transition: none !important; }
-    .reveal { opacity: 1; transform: none; }
+  .headline em {
+    font-style: italic;
+    color: var(--gold);
+    font-weight: 300;
   }
-</style>
 
-<!-- ===== Inquiry modal (shared) ===== -->
-<link rel="stylesheet" href="../_shared/inquiry-modal.css" />
-<style>
-  /* Theme override — match Frames' bone/gold editorial palette */
-  .inquiry-modal {
-    --im-bg:        #0d0b09;
-    --im-card-bg:   #0d0b09;
-    --im-ink:       #e8dfd2;
-    --im-mute:      #b9ad9c;
-    --im-dim:       #6b6155;
-    --im-line:      rgba(232, 223, 210, 0.18);
-    --im-accent:    #c9a96a;
-    --im-soft:      rgba(201, 169, 106, 0.05);
-    --im-scrim:     rgba(7, 6, 5, 0.85);
-    --im-serif:     "Cormorant Garamond", "Times New Roman", serif;
-    --im-sans:      "Manrope", -apple-system, system-ui, sans-serif;
-    --im-mono:      "Manrope", system-ui, sans-serif;
-    --im-radius:    0px;
+  .sub {
+    margin-top: clamp(24px, 3vh, 40px);
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 300;
+    font-size: clamp(18px, 2.5vw, 28px);
+    letter-spacing: 0.01em;
+    color: rgba(232,223,210,0.5);
+    opacity: 0;
+    animation: rise 1.1s cubic-bezier(0.22,1,0.36,1) 0.75s forwards;
   }
-  .inquiry-modal .im-meta,
-  .inquiry-modal .im-field label,
-  .inquiry-modal .im-option .tag,
-  .inquiry-modal .im-wa-lbl {
-    font-weight: 500;
-    color: var(--im-accent);
+
+  .divider {
+    margin-top: clamp(32px, 4vh, 56px);
+    width: clamp(32px, 5vw, 64px);
+    height: 1px;
+    background: var(--gold);
+    opacity: 0;
+    animation: fade 1s ease 1s forwards;
   }
-  .inquiry-modal .im-btn:hover { background: var(--im-accent); color: var(--im-bg); border-color: var(--im-accent); }
-  .inquiry-modal .im-close:hover { background: var(--im-accent); color: var(--im-bg); border-color: var(--im-accent); }
-  .inquiry-modal .im-option:has(input:checked) { border-color: var(--im-accent); }
-  .inquiry-modal .im-wa-btn:hover { background: var(--im-accent); color: var(--im-bg); border-color: var(--im-accent); }
+
+  .notify {
+    margin-top: clamp(20px, 2.5vh, 32px);
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: rgba(232,223,210,0.35);
+    opacity: 0;
+    animation: rise 1s cubic-bezier(0.22,1,0.36,1) 1.1s forwards;
+  }
+
+  .notify a {
+    color: var(--mute);
+    border-bottom: 1px solid rgba(232,223,210,0.15);
+    padding-bottom: 1px;
+    transition: color .2s, border-color .2s;
+  }
+  .notify a:hover {
+    color: var(--bone);
+    border-color: rgba(232,223,210,0.4);
+  }
+
+  /* ─── Footer bar ─── */
+  footer {
+    position: fixed;
+    bottom: 0; inset-x: 0;
+    z-index: 10;
+    padding: clamp(16px, 2.5vw, 28px) clamp(24px, 5vw, 64px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(232,223,210,0.28);
+    border-top: 1px solid var(--line);
+    opacity: 0;
+    animation: fade 1s ease 1.3s forwards;
+  }
+
+  footer a {
+    color: inherit;
+    transition: color .2s;
+  }
+  footer a:hover { color: var(--mute); }
+
+  /* ─── Keyframes ─── */
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(22px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fade {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  /* ─── Mobile ─── */
+  @media (max-width: 600px) {
+    nav { display: none; }
+    .headline { letter-spacing: -0.025em; }
+    footer { flex-direction: column; gap: 10px; text-align: center; }
+  }
 </style>
 </head>
 <body>
 
-<div class="grain"></div>
+<!-- Background image (drop any image onto the page to set it) -->
+<div class="bg">
+  <image-slot
+    src=""
+    alt="RMS Frames background"
+    fit="cover"
+    position="center"
+    editable
+  ></image-slot>
+</div>
 
-<!-- ===== TOPBAR ===== -->
-<header class="topbar" id="topbar">
-  <div class="wordmark"><a href="../../index.html" class="back">← Related Motion Studios</a><span class="sep">/</span><span>RMS <em style="font-style: italic; color: var(--gold);">Frames</em><sup>®</sup></span></div>
+<!-- Overlays -->
+<div class="bg-overlay bg-overlay-top"></div>
+<div class="bg-overlay bg-overlay-vignette"></div>
+<div class="bg-overlay bg-overlay-bottom"></div>
+<div class="bg-overlay bg-overlay-grain"></div>
+
+<!-- Nav -->
+<header>
+  <a href="../../index.html" class="logo">
+    <span class="logo-main">related</span>
+    <span class="logo-sub">motion studio</span>
+  </a>
   <nav>
-    <a href="#modes">Experiences</a>
-    <a href="#gallery">Drops</a>
-    <a href="#tiers">Membership</a>
-    <a href="#final" data-open-form="book">Book</a>
+    <a href="../../index.html">Work</a>
+    <a href="../rms-trybe/index.html">RMS Trybe</a>
+    <a href="../rms-identity/index.html">RMS Identity</a>
+    <a href="index.html" class="active">RMS Frames</a>
+    <a href="../rms-space/index.html">RMS Space</a>
+    <a href="../../Studio.html">Studio</a>
   </nav>
-  <div class="ticker"><span class="dot"></span>Vol. 04 — Now casting</div>
 </header>
 
-<!-- ===== 1. HERO ===== -->
-<section class="hero" data-screen-label="01 Hero">
-  <div class="hero-stage"></div>
-  <div class="hero-stripes"></div>
-  <div class="hero-vignette"></div>
+<!-- Stage -->
+<main>
+  <p class="eyebrow">→ Post-production · 03 / 04</p>
+  <h1 class="headline">Coming<br><em>Soon.</em></h1>
+  <p class="sub">The edit suite is being built.</p>
+  <div class="divider"></div>
+  <p class="notify">
+    Enquiries — <a href="mailto:frames@relatedmotionstudios.com">frames@relatedmotionstudios.com</a>
+  </p>
+</main>
 
-  <div class="hero-slate" aria-hidden="true">
-    <span>REEL · 04 / 12</span>
-    <b>RMS FRAMES — CINEMATIC IDENTITY</b>
-    <span class="tc">TC 00:00:14:08</span>
-  </div>
-
-  <div class="hero-content">
-    <div class="hero-eyebrow section-tag">Cinematic Identity Studio</div>
-
-    <h1 class="hero-headline">
-      <span class="word"><span>You</span></span>
-      <span class="word"><span>are</span></span>
-      <span class="word"><span>not</span></span>
-      <span class="word"><span>meant</span></span>
-      <span class="word"><span>to</span></span>
-      <span class="word"><span>be</span></span>
-      <span class="word"><span><em>seen once.</em></span></span>
-    </h1>
-
-    <div class="hero-bottom">
-      <p class="hero-sub">
-        Weekly and daily glam identity sessions for people who want presence —
-        not moments. A continuous editorial of the person you already are.
-      </p>
-      <div class="hero-ctas">
-        <a href="#modes" class="btn btn--gold btn--lg">Enter Experience <span class="arrow">→</span></a>
-        <a href="#final" class="btn btn--lg" data-open-form="book">Book Glam Session</a>
-        <a href="#tiers" class="btn btn--ghost btn--lg">Join Glam Drops</a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ===== 2. IDENTITY SHIFT ===== -->
-<section class="identity-shift" data-screen-label="02 Identity Shift">
-  <div class="wrap">
-    <div class="meta">
-      <div class="section-tag">Chapter I</div>
-      <div class="roman">ii. the shift</div>
-    </div>
-    <div class="lines">
-      <p class="reveal">
-        Most people capture you <em>occasionally.</em>
-      </p>
-      <p class="reveal" style="margin-left: clamp(0px, 8vw, 120px);">
-        But your presence is <em>not</em> occasional.
-      </p>
-      <p class="dim reveal" style="margin-left: clamp(0px, 16vw, 240px);">
-        It is continuous. <em>Evolving.</em> Alive.
-      </p>
-    </div>
-  </div>
-</section>
-
-<!-- ===== 3. EXPERIENCE MODES ===== -->
-<section class="modes" id="modes" data-screen-label="03 Experience Modes">
-  <div class="head">
-    <h2 class="reveal">Four ways to <em>arrive</em>.</h2>
-    <div class="tag-row">
-      <div class="section-tag">Chapter II — Modes</div>
-      <div class="roman">iii. arrival</div>
-    </div>
-  </div>
-
-  <div class="modes-grid">
-    <article class="mode mode--01">
-      <div class="mode-art"></div>
-      <div class="mode-stripes"></div>
-      <div class="mode-meta"><span class="num">M / 01</span><span>16:9 · 4K</span></div>
-      <div class="mode-bottom">
-        <h3 class="mode-title">Cinematic<br/>Portrait Sessions</h3>
-        <p class="mode-reveal">A single editorial chapter — directed, lit and styled like a fashion-film cover.</p>
-      </div>
-    </article>
-
-    <article class="mode mode--02">
-      <div class="mode-art"></div>
-      <div class="mode-stripes"></div>
-      <div class="mode-meta"><span class="num">M / 02</span><span>Recurring</span></div>
-      <div class="mode-bottom">
-        <h3 class="mode-title">Weekly<br/>Glam Drops</h3>
-        <p class="mode-reveal">A new visual chapter every week. Your presence, on a release schedule.</p>
-      </div>
-    </article>
-
-    <article class="mode mode--03">
-      <div class="mode-art"></div>
-      <div class="mode-stripes"></div>
-      <div class="mode-meta"><span class="num">M / 03</span><span>Editorial</span></div>
-      <div class="mode-bottom">
-        <h3 class="mode-title">Editorial<br/>Identity Shoots</h3>
-        <p class="mode-reveal">A multi-look campaign built around a single visual thesis: who you are becoming.</p>
-      </div>
-    </article>
-
-    <article class="mode mode--04">
-      <div class="mode-art"></div>
-      <div class="mode-stripes"></div>
-      <div class="mode-meta"><span class="num">M / 04</span><span>Social</span></div>
-      <div class="mode-bottom">
-        <h3 class="mode-title">Social Presence<br/>Visual Sets</h3>
-        <p class="mode-reveal">A month of editorial-grade content for the feeds that already watch you.</p>
-      </div>
-    </article>
-  </div>
-</section>
-
-<!-- ===== 4. GLAM GALLERY ===== -->
-<section class="gallery" id="gallery" data-screen-label="04 Gallery">
-  <div class="head">
-    <h2 class="reveal">A continuous editorial.</h2>
-    <div class="tag-row" style="display:flex; gap:24px; align-items:center; justify-self:end;">
-      <div class="section-tag">Chapter III — The Drops</div>
-    </div>
-  </div>
-
-  <div class="frames">
-    <article class="frame frame--01" data-screen-label="04a Drop 01">
-      <div class="frame-stripes"></div>
-      <div class="frame-corners"><span></span></div>
-      <div class="frame-meta">DROP <b>01</b> · LAGOS · 2025</div>
-      <div class="frame-credit">RMS / FRAME 01<br/>EDITORIAL</div>
-      <div class="frame-caption">
-        <div class="label">Drop 01</div>
-        <h3>Lagos Night Editorial</h3>
-      </div>
-    </article>
-
-    <article class="frame frame--02" data-screen-label="04b Drop 02">
-      <div class="frame-stripes"></div>
-      <div class="frame-corners"><span></span></div>
-      <div class="frame-meta">DROP <b>02</b> · STUDIO · 2025</div>
-      <div class="frame-credit">RMS / FRAME 02<br/>SOFT LUXURY</div>
-      <div class="frame-caption">
-        <div class="label">Drop 02</div>
-        <h3>Soft Luxury Identity Series</h3>
-      </div>
-    </article>
-
-    <article class="frame frame--03" data-screen-label="04c Drop 03">
-      <div class="frame-stripes"></div>
-      <div class="frame-corners"><span></span></div>
-      <div class="frame-meta">DROP <b>03</b> · MARRAKECH · 2026</div>
-      <div class="frame-credit">RMS / FRAME 03<br/>HEAT &amp; GOLD</div>
-      <div class="frame-caption">
-        <div class="label">Drop 03</div>
-        <h3>The Heat &amp; Gold Chapter</h3>
-      </div>
-    </article>
-
-    <article class="frame frame--04" data-screen-label="04d Drop 04">
-      <div class="frame-stripes"></div>
-      <div class="frame-corners"><span></span></div>
-      <div class="frame-meta">DROP <b>04</b> · NIGHT · 2026</div>
-      <div class="frame-credit">RMS / FRAME 04<br/>MIDNIGHT FILM</div>
-      <div class="frame-caption">
-        <div class="label">Drop 04</div>
-        <h3>Midnight Film, Velvet Light</h3>
-      </div>
-    </article>
-  </div>
-</section>
-
-<!-- ===== 5. PSYCHOLOGICAL POSITIONING ===== -->
-<section class="psych" data-screen-label="05 Positioning">
-  <div class="wrap">
-    <div class="section-tag reveal">Chapter IV — Why this exists</div>
-    <blockquote class="reveal">
-      It’s not about <em>looking good.</em><br/>
-      It’s about becoming visually <em>unforgettable.</em>
-    </blockquote>
-    <div class="divider reveal"></div>
-    <blockquote class="reveal">
-      When your identity is documented <em>consistently,</em> the world starts responding differently to you.
-    </blockquote>
-    <div class="roman reveal">— this is how I should have been seen all along.</div>
-  </div>
-</section>
-
-<!-- ===== 6. HOW IT WORKS ===== -->
-<section class="how" data-screen-label="06 How It Works">
-  <div class="head">
-    <h2 class="reveal">From booking to <em>becoming.</em></h2>
-    <div class="tag-row" style="display:flex; gap:24px; align-items:center; justify-self:end;">
-      <div class="section-tag">Chapter V — The Process</div>
-      <div class="roman">three movements</div>
-    </div>
-  </div>
-
-  <div class="how-steps">
-    <div class="step reveal">
-      <div class="num">01</div>
-      <div>
-        <h3>Book your session.</h3>
-        <p>Choose a single chapter or a recurring rhythm. We confirm location, mood and direction inside 24 hours.</p>
-      </div>
-      <div class="marker">Step / Booking</div>
-    </div>
-    <div class="step reveal">
-      <div class="num">02</div>
-      <div>
-        <h3>We design your visual identity direction.</h3>
-        <p>A custom moodboard, lighting plan, styling brief and shot list — built around the person you are becoming.</p>
-      </div>
-      <div class="marker">Step / Direction</div>
-    </div>
-    <div class="step reveal">
-      <div class="num">03</div>
-      <div>
-        <h3>You receive recurring glam identity content.</h3>
-        <p>Cinematic stills and motion delivered as a continuous editorial — yours to release on your own rhythm.</p>
-      </div>
-      <div class="marker">Step / Delivery</div>
-    </div>
-  </div>
-</section>
-
-<!-- ===== 7. MEMBERSHIP / TIERS ===== -->
-<section class="tiers" id="tiers" data-screen-label="07 Membership">
-  <div class="head">
-    <div class="section-tag reveal">Chapter VI — Access</div>
-    <h2 class="reveal">Access the <em>Glam System.</em></h2>
-    <p class="reveal">Three tiers. Each is a different relationship to your own image — choose the one that matches the version of you about to be released.</p>
-  </div>
-
-  <div class="tiers-grid">
-    <article class="tier reveal">
-      <div class="roman">i. the chapter</div>
-      <h3>Single Glam <em>Session</em></h3>
-      <p class="tier-desc">One cinematic session. One editorial chapter. One moment, directed at film-cover quality.</p>
-      <ul class="tier-list">
-        <li>One 3-hour cinematic session</li>
-        <li>Custom direction &amp; mood brief</li>
-        <li>20 retouched editorial stills</li>
-        <li>One short-form motion edit</li>
-      </ul>
-      <a href="#final" class="btn tier-cta" data-open-form="book">Book the Chapter <span class="arrow">→</span></a>
-    </article>
-
-    <article class="tier tier--featured reveal">
-      <span class="tier-tag">Most chosen</span>
-      <div class="roman">ii. the rhythm</div>
-      <h3>Monthly Identity <em>Membership</em></h3>
-      <p class="tier-desc">A monthly editorial of you. Direction, shoot and delivery on a rhythm — so your presence keeps releasing.</p>
-      <ul class="tier-list">
-        <li>One full session each month</li>
-        <li>Evolving seasonal direction</li>
-        <li>40 stills · 2 motion edits monthly</li>
-        <li>Private archive &amp; release calendar</li>
-      </ul>
-      <a href="#final" class="btn btn--gold tier-cta" data-open-form="rhythm">Enter the Rhythm <span class="arrow">→</span></a>
-    </article>
-
-    <article class="tier reveal">
-      <div class="roman">iii. the inner circle</div>
-      <h3>VIP Weekly <em>Glam Drops</em></h3>
-      <p class="tier-desc">A new editorial chapter every week. The most direct way to live as a continuously documented presence.</p>
-      <ul class="tier-list">
-        <li>Weekly cinematic drops</li>
-        <li>Personal creative director</li>
-        <li>Unlimited stills &amp; motion</li>
-        <li>Travel &amp; on-location editions</li>
-      </ul>
-      <a href="#final" class="btn tier-cta" data-open-form="vip">Apply for VIP <span class="arrow">→</span></a>
-    </article>
-  </div>
-</section>
-
-<!-- ===== 8. FINAL CTA ===== -->
-<section class="final" id="final" data-screen-label="08 Final CTA">
-  <div class="final-stage"></div>
-  <div class="final-stripes"></div>
-  <div class="final-vignette"></div>
-
-  <div class="final-content">
-    <div class="section-tag reveal">Closing Frame</div>
-    <h2 class="reveal">
-      Your next version <em>already exists.</em><br/>
-      We just bring it into view.
-    </h2>
-    <div class="final-ctas reveal">
-      <a href="#book" class="btn btn--gold btn--lg" data-open-form="book">Book Session <span class="arrow">→</span></a>
-      <a href="#tiers" class="btn btn--lg" data-open-form="glamlist">Join Glam List</a>
-      <a href="#whatsapp" class="whatsapp" data-whatsapp aria-label="WhatsApp">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
-          <path d="M3 21l1.5-5.2a8.5 8.5 0 1 1 3.7 3.7L3 21z"/>
-          <path d="M8.5 9.2c.3 1.4 1 2.6 2 3.7s2.3 1.7 3.7 2c.4.1.8 0 1.1-.3l.7-.7c.3-.3.7-.4 1-.2l1.5.8c.4.2.5.7.3 1.1-.4.7-1 1.3-1.7 1.6-1.4.6-3 .3-4.5-.4-1.5-.7-2.8-1.9-3.6-3.4-.7-1.4-1-3-.4-4.4.3-.7.9-1.3 1.6-1.7.4-.2.9-.1 1.1.3l.8 1.5c.2.3.1.7-.2 1l-.7.7c-.3.3-.4.7-.3 1.1z"/>
-        </svg>
-        WhatsApp
-      </a>
-    </div>
-  </div>
-</section>
-
-<!-- ===== FOOTER ===== -->
+<!-- Footer -->
 <footer>
-  <div class="row">
-    <div class="wm">RMS <em style="font-style: italic; color: var(--gold);">Frames</em><sup style="font-family: var(--sans); font-size: 9px; letter-spacing: 0.3em; color: var(--gold);">®</sup></div>
-    <div class="links">
-      <a href="/cdn-cgi/l/email-protection#ff998d9e929a8cbf8d9a939e8b9a9b92908b9690918c8b8a9b96908cd19c9092"><span class="__cf_email__" data-cfemail="630511020e06102311060f021706070e0c170a0c0d101716070a0c104d000c0e">[email&#160;protected]</span></a>
-      <a href="#">Instagram</a>
-      <a href="#">Vimeo</a>
-      <a href="#">Press</a>
-    </div>
-    <div>© RMS Frames Studio · Cinematic Identity, est. 2024</div>
-  </div>
+  <span>© 2026 Related Motion Studio</span>
+  <a href="../index.html">← All products</a>
 </footer>
 
-<!-- ===== STICKY CTA ===== -->
-<nav class="sticky-cta" id="stickyCta" aria-label="Quick actions">
-  <a href="#book" data-open-form="book">Book</a>
-  <a href="#glamlist" class="gold" data-open-form="glamlist">Join Glam List</a>
-</nav>
-
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-  // Topbar scrolled state
-  const topbar = document.getElementById('topbar');
-  const sticky = document.getElementById('stickyCta');
-  const onScroll = () => {
-    const y = window.scrollY;
-    topbar.classList.toggle('scrolled', y > 60);
-    sticky.classList.toggle('visible', y > window.innerHeight * 0.7);
-  };
-  window.addEventListener('scroll', onScroll, { passive: true });
-  onScroll();
-
-  // Reveal-on-scroll
-  const io = new IntersectionObserver((entries) => {
-    for (const e of entries) {
-      if (e.isIntersecting) {
-        e.target.classList.add('in');
-        io.unobserve(e.target);
-      }
-    }
-  }, { threshold: 0.18, rootMargin: "0px 0px -8% 0px" });
-  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
-
-  // Parallax on gallery frames (subtle)
-  const frames = document.querySelectorAll('.frame');
-  const onParallax = () => {
-    const vh = window.innerHeight;
-    frames.forEach(f => {
-      const r = f.getBoundingClientRect();
-      const center = r.top + r.height / 2;
-      const offset = (center - vh / 2) / vh; // -1..1ish
-      const before = f.querySelector(':scope'); // we'll use direct style
-      f.style.setProperty('--p', offset.toFixed(3));
-    });
-  };
-  // CSS-driven parallax: we set --p and use it via inline style on ::before through a CSS var on the frame
-  const styleEl = document.createElement('style');
-  styleEl.textContent = `.frame::before { transform: translateY(calc(var(--p, 0) * -8%)); }`;
-  document.head.appendChild(styleEl);
-  window.addEventListener('scroll', onParallax, { passive: true });
-  onParallax();
-</script>
-
-<script src="mobile-preview.js"></script>
-
-<!-- ============================ INQUIRY MODAL ============================ -->
-<script>
-  window.INQUIRY_CONFIG = {
-    email: 'frames@relatedmotionstudios.com',
-    whatsapp: '2348112225555',
-    whatsappPrefill: "Hi RMS Frames — I'd like to book a session.",
-    productLabel: 'RMS Frames',
-    metaLabel: 'Vol. 04 — Booking',
-    defaultTitle: 'Book a session. <em>Briefly.</em>',
-    defaultSub: 'A few quick fields. We confirm direction, date and mood within 24 hours.',
-    waLabel: 'Or — direct line',
-    waDesc: 'Reach the studio on WhatsApp <em>— faster, more personal.</em>',
-    intents: {
-      book: {
-        title: 'Book a session. <em>Briefly.</em>',
-        sub: 'A few quick fields. We confirm direction, date and mood within 24 hours.',
-        intentValue: 'Book session',
-      },
-      rhythm: {
-        title: 'Enter the Rhythm. <em>Monthly cadence.</em>',
-        sub: 'For people building a continuous editorial. Tell us where you are now.',
-        intentValue: 'Membership — Rhythm',
-      },
-      vip: {
-        title: 'Apply for VIP. <em>By invitation.</em>',
-        sub: 'A small list. Custom direction, travel-ready, dedicated team. Tell us your story.',
-        intentValue: 'VIP application',
-      },
-      glamlist: {
-        title: 'Join the Glam List.',
-        sub: 'First-look drops, casting calls, private editions. Just the essentials.',
-        intentValue: 'Join Glam List',
-      },
-    },
-    fields: [
-      { id: 'name',  label: 'Name',  type: 'text',  required: true, autocomplete: 'name',  placeholder: 'Full name', row: 0 },
-      { id: 'email', label: 'Email', type: 'email', required: true, autocomplete: 'email', placeholder: 'you@studio.com', row: 0 },
-
-      { id: 'phone',   label: 'Phone', type: 'tel', autocomplete: 'tel', placeholder: '+234 …', row: 1 },
-      { id: 'session', label: 'Session type', type: 'select', required: true, placeholder: 'Select one', row: 1,
-        options: [
-          'Personal portrait',
-          'Editorial / brand campaign',
-          'Lifestyle session',
-          'Lookbook',
-          'Music portrait / album',
-          'Event / launch',
-          'Couple / family',
-          'Other',
-        ],
-      },
-
-      { id: 'date',     label: 'Preferred date',     type: 'date', row: 2 },
-      { id: 'location', label: 'Location preference', type: 'select', placeholder: 'Select one', row: 2,
-        options: ['In studio', 'On location', 'Either / open'],
-      },
-
-      { id: 'message', label: 'Tell us about it', type: 'textarea', full: true,
-        placeholder: 'A sentence or two on the look, mood, or story you want to make.', rows: 4 },
-
-      { id: 'heard', label: 'How did you hear about us', type: 'text', full: true,
-        placeholder: 'Instagram, a friend, a film…' },
-    ],
-  };
-</script>
-<script src="../_shared/inquiry-modal.js"></script>
-
+<script src="../_shared/image-slot.js"></script>
 </body>
 </html>
