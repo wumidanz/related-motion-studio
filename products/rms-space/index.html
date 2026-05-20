@@ -1,0 +1,1220 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RMS Spaces — Eight worlds inside Lagos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Italiana&family=Manrope:wght@200;300;400;500;600&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    /* ============================================================ */
+    /* TOKENS                                                       */
+    /* ============================================================ */
+    :root {
+      --bg:        #ECE3D1;
+      --paper:     #F5EEDD;
+      --ivory:     #FAF5E8;
+      --ink:       #261C13;
+      --ink-soft:  #4A382A;
+      --mute:      #8A7560;
+      --rule:      #D5C7AE;
+      --accent:    #B26642;       /* terracotta */
+      --accent-2:  #7C8369;       /* sage */
+      --display:   'Cormorant Garamond', 'Times New Roman', serif;
+      --hero:      'Italiana', 'Cormorant Garamond', serif;
+      --sans:      'Manrope', system-ui, sans-serif;
+      --mono:      'JetBrains Mono', ui-monospace, monospace;
+    }
+
+    /* palette swaps via tweaks */
+    body[data-palette="sand"] {
+      --bg:#E6DAC0; --paper:#F0E5CA; --ivory:#F7EFD9;
+      --ink:#2A1E14; --ink-soft:#523E2A; --mute:#8C7657; --rule:#CFBE9D;
+      --accent:#A57534; --accent-2:#7A7E5E;
+    }
+    body[data-palette="stone"] {
+      --bg:#DAD5C8; --paper:#E9E4D6; --ivory:#F2EEE2;
+      --ink:#1C1B17; --ink-soft:#3D3C36; --mute:#736F62; --rule:#BFB9A8;
+      --accent:#7A6B57; --accent-2:#5D6A60;
+    }
+    body[data-palette="clay"] {
+      --bg:#E6D2BD; --paper:#F0DEC6; --ivory:#F8E9D2;
+      --ink:#321A0D; --ink-soft:#5A3A25; --mute:#967358; --rule:#D2B89A;
+      --accent:#A24E29; --accent-2:#7F7959;
+    }
+
+    * { box-sizing:border-box; }
+    html,body { margin:0; padding:0; }
+    body {
+      background:var(--bg);
+      color:var(--ink);
+      font-family:var(--sans);
+      font-weight:300;
+      letter-spacing:0.005em;
+      line-height:1.5;
+      -webkit-font-smoothing:antialiased;
+      text-rendering:optimizeLegibility;
+      transition:background .8s ease, color .8s ease;
+    }
+    ::selection { background:var(--accent); color:var(--ivory); }
+
+    /* film-grain texture */
+    body::before {
+      content:""; position:fixed; inset:0; pointer-events:none;
+      background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.15  0 0 0 0 0.11  0 0 0 0 0.08  0 0 0 0.18 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/></svg>");
+      mix-blend-mode:multiply; opacity:.35; z-index:1000;
+    }
+
+    /* ============================================================ */
+    /* TYPE PRIMITIVES                                              */
+    /* ============================================================ */
+    .display { font-family:var(--display); font-weight:300; letter-spacing:-0.012em; line-height:0.96; }
+    .display em { font-style:italic; font-weight:400; color:var(--accent); }
+    .hero-type { font-family:var(--hero); font-weight:400; letter-spacing:-0.01em; line-height:0.9; }
+    .label { font-family:var(--mono); font-size:11px; letter-spacing:.22em; text-transform:uppercase; color:var(--ink-soft); font-weight:400; }
+    .label--mute { color:var(--mute); }
+    .sm { font-size:13px; line-height:1.55; }
+    .rule { height:1px; background:var(--rule); border:0; margin:0; }
+
+    /* ============================================================ */
+    /* LAYOUT                                                       */
+    /* ============================================================ */
+    .wrap { max-width:1440px; margin:0 auto; padding:0 48px; }
+    @media (max-width:720px){ .wrap { padding:0 22px; } }
+
+    /* ============================================================ */
+    /* NAV                                                          */
+    /* ============================================================ */
+    nav.top {
+      position:fixed; top:0; left:0; right:0; z-index:50;
+      display:grid; grid-template-columns:1fr auto 1fr; align-items:center;
+      padding:22px 48px;
+      background:linear-gradient(to bottom, var(--bg) 0%, var(--bg) 70%, color-mix(in oklab, var(--bg) 0%, transparent) 100%);
+    }
+    nav.top .mark {
+      font-family:var(--display); font-weight:400; font-size:18px; letter-spacing:.18em;
+      text-transform:uppercase; color:var(--ink);
+      display:flex; align-items:baseline; gap:18px;
+    }
+    nav.top .mark .back {
+      font-family:var(--mono); font-size:10px; letter-spacing:.22em; text-transform:uppercase;
+      color:var(--mute); text-decoration:none; padding:6px 0;
+      border-bottom:1px solid transparent; transition:color .25s ease, border-color .25s ease;
+    }
+    nav.top .mark .back:hover { color:var(--ink); border-color:var(--ink); }
+    nav.top .mark .sep { color:var(--rule); font-family:var(--mono); font-size:10px; }
+    nav.top .mark sup { font-family:var(--mono); font-size:9px; letter-spacing:.1em; vertical-align:super; margin-left:6px; color:var(--mute); }
+    nav.top ul {
+      list-style:none; padding:0; margin:0; display:flex; gap:38px; justify-content:center;
+    }
+    nav.top a {
+      font-family:var(--mono); font-size:11px; letter-spacing:.22em; text-transform:uppercase;
+      color:var(--ink-soft); text-decoration:none; padding:6px 0;
+      border-bottom:1px solid transparent; transition:color .25s ease, border-color .25s ease;
+    }
+    nav.top a:hover { color:var(--ink); border-color:var(--ink); }
+    nav.top .status {
+      justify-self:end; display:flex; align-items:center; gap:10px;
+      font-family:var(--mono); font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:var(--mute);
+    }
+    nav.top .dot { width:6px; height:6px; border-radius:50%; background:var(--accent); box-shadow:0 0 0 4px color-mix(in oklab, var(--accent) 20%, transparent); animation:pulse 2.6s ease-in-out infinite; }
+    @keyframes pulse { 0%,100%{opacity:.7} 50%{opacity:1} }
+
+    @media (max-width:860px){
+      nav.top { grid-template-columns:1fr auto; padding:18px 22px; }
+      nav.top ul { display:none; }
+    }
+
+    /* ============================================================ */
+    /* HERO                                                         */
+    /* ============================================================ */
+    section.hero {
+      min-height:100vh; padding:120px 0 60px; position:relative;
+      display:grid; grid-template-columns:1.05fr 1fr; gap:64px;
+      align-items:end;
+    }
+    .hero .left { padding-bottom:30px; }
+    .hero .eyebrow {
+      display:flex; gap:18px; align-items:center; margin-bottom:60px;
+    }
+    .hero .eyebrow .bar { width:42px; height:1px; background:var(--ink); }
+    .hero h1 {
+      font-family:var(--hero); font-weight:400;
+      font-size:clamp(72px, 11vw, 184px);
+      line-height:0.88; letter-spacing:-0.025em;
+      margin:0; color:var(--ink);
+    }
+    .hero h1 .italic { font-family:var(--display); font-style:italic; font-weight:400; color:var(--accent); display:inline-block; padding-left:.06em; }
+    .hero h1 .small-r { font-family:var(--mono); font-size:.13em; vertical-align:super; letter-spacing:0; color:var(--mute); margin-left:6px; }
+
+    .hero .lede {
+      max-width:430px; margin-top:42px;
+      font-family:var(--display); font-weight:300; font-style:italic;
+      font-size:21px; line-height:1.45; color:var(--ink-soft);
+    }
+    .hero .meta {
+      display:flex; gap:34px; margin-top:50px; flex-wrap:wrap;
+    }
+    .hero .meta > div { display:flex; flex-direction:column; gap:6px; }
+    .hero .meta b { font-family:var(--display); font-weight:400; font-size:22px; color:var(--ink); letter-spacing:-0.01em; }
+
+    .hero .right { position:relative; min-height:560px; }
+    .hero .right .slot-wrap {
+      position:absolute; top:0; bottom:30px; right:0; width:100%;
+      display:flex; flex-direction:column; gap:14px;
+    }
+    .hero image-slot { flex:1; width:100%; }
+    .hero .right .caption {
+      display:flex; justify-content:space-between; align-items:baseline;
+      font-family:var(--mono); font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:var(--mute);
+    }
+    .hero .right .caption em { font-family:var(--display); font-style:italic; font-size:13px; letter-spacing:0; text-transform:none; color:var(--ink-soft); }
+
+    .hero .floating {
+      position:absolute; right:0; bottom:24px;
+      font-family:var(--mono); font-size:10px; letter-spacing:.24em; text-transform:uppercase; color:var(--mute);
+      display:flex; align-items:center; gap:14px;
+    }
+    .hero .floating .arrow {
+      width:36px; height:1px; background:var(--ink-soft); position:relative;
+      animation:scroll-cue 2.4s ease-in-out infinite;
+    }
+    .hero .floating .arrow::after {
+      content:""; position:absolute; right:-1px; top:-3px;
+      width:7px; height:7px; border-right:1px solid var(--ink-soft); border-bottom:1px solid var(--ink-soft);
+      transform:rotate(-45deg);
+    }
+    @keyframes scroll-cue { 0%,100%{opacity:.4; transform:translateX(0)} 50%{opacity:1; transform:translateX(6px)} }
+
+    @media (max-width:960px){
+      section.hero { grid-template-columns:1fr; gap:36px; padding-top:100px; }
+      .hero .right { min-height:420px; }
+      .hero .floating { display:none; }
+    }
+
+    /* ============================================================ */
+    /* THE WORLDS                                                   */
+    /* ============================================================ */
+    section.worlds {
+      padding:90px 0 110px; position:relative;
+      border-top:1px solid var(--rule);
+    }
+    .worlds .head {
+      display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:60px;
+      gap:40px; flex-wrap:wrap;
+    }
+    .worlds .head h2 {
+      font-family:var(--display); font-weight:300; font-size:clamp(36px, 5vw, 64px);
+      letter-spacing:-0.015em; line-height:1; margin:0 0 10px; max-width:760px;
+    }
+    .worlds .head h2 em { font-style:italic; color:var(--accent); }
+    .worlds .head .lede {
+      max-width:320px; font-size:14px; color:var(--ink-soft); line-height:1.55;
+    }
+
+    .worlds .grid {
+      display:grid; grid-template-columns:1.1fr 1fr; gap:64px; align-items:start;
+    }
+
+    .worlds .index { display:flex; flex-direction:column; }
+    .world-row {
+      display:grid; grid-template-columns:42px 1.1fr 1fr 28px;
+      gap:24px; align-items:baseline;
+      padding:22px 0; cursor:pointer; position:relative;
+      border-top:1px solid var(--rule);
+      transition:padding .35s ease, color .35s ease;
+    }
+    .world-row:last-child { border-bottom:1px solid var(--rule); }
+    .world-row .num {
+      font-family:var(--mono); font-size:11px; letter-spacing:.18em; color:var(--mute);
+      transition:color .35s ease;
+    }
+    .world-row .name {
+      font-family:var(--display); font-weight:400; font-size:30px; line-height:1.05;
+      letter-spacing:-0.01em; color:var(--ink);
+      transition:font-style .35s ease, color .35s ease, transform .5s cubic-bezier(.2,.6,.2,1);
+    }
+    .world-row .mood {
+      font-family:var(--display); font-style:italic; font-weight:300; font-size:16px;
+      color:var(--ink-soft); line-height:1.4;
+    }
+    .world-row .enter {
+      font-family:var(--mono); font-size:10px; letter-spacing:.18em; color:transparent;
+      text-align:right; transition:color .35s ease, transform .35s ease;
+    }
+    .world-row:hover .num,
+    .world-row.active .num { color:var(--accent); }
+    .world-row:hover .name,
+    .world-row.active .name { font-style:italic; color:var(--accent); transform:translateX(8px); }
+    .world-row:hover .enter,
+    .world-row.active .enter { color:var(--ink-soft); transform:translateX(-2px); }
+    .world-row::after {
+      content:""; position:absolute; left:0; bottom:-1px; height:1px; width:0; background:var(--accent);
+      transition:width .55s cubic-bezier(.2,.6,.2,1);
+    }
+    .world-row:hover::after,
+    .world-row.active::after { width:100%; }
+
+    .worlds .preview {
+      position:sticky; top:110px;
+      align-self:start;
+      display:flex; flex-direction:column; gap:14px;
+    }
+    .preview-frame {
+      position:relative; width:100%;
+      aspect-ratio: 4 / 5;
+      max-height:calc(100vh - 180px);
+      background:var(--paper);
+      overflow:hidden;
+      box-shadow:0 1px 0 var(--rule);
+    }
+    .preview-frame > .atm {
+      position:absolute; inset:0;
+      opacity:0;
+      transform:scale(1.04);
+      transition:opacity .9s cubic-bezier(.2,.6,.2,1), transform 1.6s cubic-bezier(.2,.6,.2,1);
+      will-change:opacity, transform;
+    }
+    .preview-frame > .atm.on {
+      opacity:1;
+      transform:scale(1);
+    }
+    .preview-cap {
+      display:grid; grid-template-columns:1fr auto; gap:16px; align-items:baseline;
+    }
+    .preview-cap .now {
+      font-family:var(--display); font-style:italic; font-weight:400; font-size:22px; color:var(--ink);
+      transition:opacity .35s ease;
+      opacity:1;
+    }
+    .preview-cap .now.swap { opacity:0; }
+    .preview-cap .loc {
+      font-family:var(--mono); font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:var(--mute);
+    }
+
+    @media (max-width:960px){
+      .worlds .grid { grid-template-columns:1fr; gap:18px; }
+      .worlds .preview {
+        position:sticky; top:74px;
+        order:-1;
+      }
+      .preview-frame { aspect-ratio: 16 / 10; max-height:42vh; }
+      .world-row { grid-template-columns:36px 1fr 24px; padding:18px 0; }
+      .world-row .name { font-size:24px; }
+      .world-row .mood { display:none; }
+    }
+
+    /* ============================================================ */
+    /* MANIFESTO                                                    */
+    /* ============================================================ */
+    section.manifesto {
+      background:var(--ivory);
+      padding:130px 0 130px; position:relative;
+      border-top:1px solid var(--rule); border-bottom:1px solid var(--rule);
+    }
+    .manifesto .inner {
+      display:grid; grid-template-columns:auto 1fr; gap:80px; align-items:start;
+    }
+    .manifesto .col-left { padding-top:8px; width:200px; }
+    .manifesto .col-left .label { display:block; margin-bottom:18px; }
+    .manifesto .col-left p {
+      font-family:var(--display); font-style:italic; font-size:15px; line-height:1.55; color:var(--ink-soft); margin:0 0 14px;
+    }
+    .manifesto h2 {
+      font-family:var(--display); font-weight:300;
+      font-size:clamp(40px, 6.4vw, 96px); line-height:1.0;
+      letter-spacing:-0.018em; margin:0; color:var(--ink);
+      max-width:14ch;
+    }
+    .manifesto h2 .accent { color:var(--accent); font-style:italic; }
+    .manifesto .verbs {
+      margin-top:60px; display:grid; grid-template-columns:repeat(5, 1fr); gap:8px 30px;
+      border-top:1px solid var(--rule); padding-top:20px;
+    }
+    .manifesto .verbs span {
+      font-family:var(--display); font-style:italic; font-weight:300; font-size:18px; color:var(--ink-soft);
+    }
+    .manifesto .verbs span::before {
+      content:"—  "; color:var(--mute); font-style:normal;
+    }
+    @media (max-width:960px){
+      .manifesto .inner { grid-template-columns:1fr; gap:30px; }
+      .manifesto .col-left { width:auto; }
+      .manifesto .verbs { grid-template-columns:repeat(2, 1fr); }
+    }
+
+    /* ============================================================ */
+    /* ENTER                                                        */
+    /* ============================================================ */
+    section.enter {
+      padding:110px 0 80px; min-height:90vh;
+      display:grid; grid-template-columns:1.05fr 1fr; gap:64px;
+    }
+    .enter .head { margin-bottom:42px; }
+    .enter h2 {
+      font-family:var(--display); font-weight:300;
+      font-size:clamp(40px, 6vw, 88px); line-height:0.96; letter-spacing:-0.02em; margin:.3em 0 0;
+    }
+    .enter h2 em { font-style:italic; color:var(--accent); }
+    .enter .lede {
+      max-width:480px; margin-top:24px;
+      font-family:var(--display); font-style:italic; font-size:19px; color:var(--ink-soft); line-height:1.5;
+    }
+    .enter form {
+      margin-top:46px; display:grid; gap:0; max-width:520px;
+      border-top:1px solid var(--rule);
+    }
+    .enter .field {
+      display:grid; grid-template-columns:120px 1fr; gap:20px; align-items:center;
+      padding:14px 0; border-bottom:1px solid var(--rule);
+    }
+    .enter .field label {
+      font-family:var(--mono); font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:var(--mute);
+    }
+    .enter .field input, .enter .field select {
+      font-family:var(--display); font-weight:400; font-size:18px;
+      background:transparent; border:0; outline:none; color:var(--ink);
+      padding:6px 0; width:100%;
+    }
+    .enter .field input::placeholder { color:var(--mute); font-style:italic; }
+    .enter .field select { appearance:none; cursor:pointer; }
+    .enter .submit {
+      display:flex; justify-content:space-between; align-items:center;
+      margin-top:26px; padding:18px 0;
+      border-bottom:1px solid var(--ink); cursor:pointer;
+      transition:padding .35s ease;
+    }
+    .enter .submit:hover { padding-left:6px; }
+    .enter .submit span {
+      font-family:var(--display); font-style:italic; font-size:24px; color:var(--ink);
+    }
+    .enter .submit .arrow {
+      font-family:var(--mono); font-size:14px; letter-spacing:.15em; color:var(--ink);
+      transition:transform .35s ease;
+    }
+    .enter .submit:hover .arrow { transform:translateX(8px); }
+
+    .enter .right {
+      display:flex; flex-direction:column; gap:24px;
+    }
+    .enter .right .panel {
+      position:relative; aspect-ratio:4/5; background:var(--paper);
+      overflow:hidden;
+    }
+
+    /* ===== Reel (auto-cycling worlds) ===== */
+    .reel { position:absolute; inset:0; }
+    .reel-plate {
+      position:absolute; inset:0;
+      background-size:cover; background-position:center;
+      opacity:0; transform:scale(1.04);
+      transition:opacity 1.2s cubic-bezier(.2,.6,.2,1), transform 6s cubic-bezier(.2,.6,.2,1);
+    }
+    .reel-plate.on { opacity:1; transform:scale(1); }
+    .reel-plate.placeholder {
+      background:radial-gradient(120% 80% at 30% 30%, #efd9b3 0%, #b58656 45%, #4a2918 100%);
+    }
+    .reel-plate.placeholder::after {
+      content:""; position:absolute; inset:0;
+      background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.12  0 0 0 0 0.08  0 0 0 0 0.05  0 0 0 0.3 0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)' opacity='0.5'/></svg>");
+      mix-blend-mode:multiply; opacity:.4;
+    }
+    .reel::after {
+      content:""; position:absolute; inset:0; pointer-events:none;
+      background:linear-gradient(180deg, transparent 35%, rgba(8,5,3,.72) 100%);
+    }
+    .reel-cap {
+      position:absolute; left:24px; right:24px; bottom:22px; z-index:2;
+      display:flex; justify-content:space-between; align-items:flex-end; gap:14px;
+      color:#f4ead4;
+      pointer-events:none;
+    }
+    .reel-cap .title {
+      font-family:var(--display); font-style:italic; font-weight:400; font-size:22px;
+      line-height:1.15; color:rgba(244,234,212,.95);
+      transition:opacity .5s ease;
+    }
+    .reel-cap .num {
+      font-family:var(--mono); font-size:10px; letter-spacing:.24em; text-transform:uppercase;
+      color:rgba(244,234,212,.55);
+    }
+    .reel-soon {
+      position:absolute; top:18px; right:18px; z-index:2;
+      font-family:var(--mono); font-size:9px; letter-spacing:.28em; text-transform:uppercase;
+      color:rgba(244,234,212,.92);
+      padding:6px 10px; border:1px solid rgba(244,234,212,.4);
+      backdrop-filter:blur(6px);
+      background:rgba(20,12,6,.18);
+      opacity:0; transition:opacity .4s ease;
+    }
+    .reel-soon.on { opacity:1; }
+    .reel-dots {
+      position:absolute; top:18px; left:18px; z-index:2;
+      display:flex; gap:5px;
+    }
+    .reel-dots span {
+      width:18px; height:1px; background:rgba(244,234,212,.32);
+      transition:background .35s ease;
+    }
+    .reel-dots span.on { background:rgba(244,234,212,.92); }
+    .enter .info {
+      display:grid; grid-template-columns:1fr 1fr; gap:28px;
+      padding-top:18px; border-top:1px solid var(--rule);
+    }
+    .enter .info h4 {
+      font-family:var(--mono); font-size:10px; letter-spacing:.22em; text-transform:uppercase;
+      color:var(--mute); margin:0 0 10px; font-weight:400;
+    }
+    .enter .info p { margin:0; font-family:var(--display); font-size:17px; line-height:1.45; color:var(--ink); }
+    .enter .info p em { font-style:italic; }
+
+    @media (max-width:960px){
+      section.enter { grid-template-columns:1fr; gap:40px; }
+      .enter .field { grid-template-columns:1fr; gap:4px; }
+    }
+
+    /* ============================================================ */
+    /* FOOTER                                                       */
+    /* ============================================================ */
+    footer.site {
+      border-top:1px solid var(--rule); padding:40px 0 36px;
+    }
+    footer.site .row {
+      display:grid; grid-template-columns:1fr auto 1fr; gap:30px; align-items:center;
+    }
+    footer.site .center {
+      font-family:var(--display); font-size:42px; letter-spacing:.06em; color:var(--ink-soft);
+      text-align:center; line-height:1;
+    }
+    footer.site .left, footer.site .right {
+      font-family:var(--mono); font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:var(--mute);
+    }
+    footer.site .right { text-align:right; }
+    @media (max-width:720px){
+      footer.site .row { grid-template-columns:1fr; text-align:center; }
+      footer.site .right { text-align:center; }
+    }
+
+    /* image-slot tweaks */
+    image-slot {
+      --is-bg: var(--paper);
+      --is-border: var(--rule);
+      --is-text: var(--ink-soft);
+    }
+
+    /* ============================================================ */
+    /* ATMOSPHERIC PLACEHOLDERS                                     */
+    /* Each .atm wraps an image-slot; the slot's frame is mostly    */
+    /* transparent so the gradient reads through until the user     */
+    /* drops a real image.                                          */
+    /* ============================================================ */
+    .atm {
+      position:relative; width:100%; height:100%;
+      overflow:hidden;
+      background:var(--paper);
+    }
+    .atm > image-slot { position:absolute; inset:0; width:100%; height:100%; display:block; }
+    /* film vignette + grain over every atmospheric panel */
+    .atm::after {
+      content:""; position:absolute; inset:0; pointer-events:none;
+      background:
+        radial-gradient(120% 90% at 50% 60%, transparent 35%, rgba(20,12,6,.18) 100%),
+        radial-gradient(60% 40% at 25% 25%, rgba(255,240,210,.22), transparent 70%);
+      mix-blend-mode:multiply;
+    }
+    .atm::before {
+      content:""; position:absolute; inset:0; pointer-events:none; z-index:2;
+      background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.12  0 0 0 0 0.08  0 0 0 0 0.05  0 0 0 0.3 0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)' opacity='0.5'/></svg>");
+      mix-blend-mode:multiply; opacity:.4;
+    }
+
+    /* mood label sits centered/lower-left over atm — only when slot is empty */
+    .atm .atm-mood {
+      position:absolute; left:24px; right:24px; bottom:22px; z-index:1;
+      display:flex; justify-content:space-between; align-items:flex-end; gap:20px;
+      font-family:var(--mono); font-size:9px; letter-spacing:.26em; text-transform:uppercase;
+      color:rgba(255,245,225,.62);
+      pointer-events:none;
+      transition:opacity .4s ease;
+    }
+    .atm .atm-mood em {
+      font-family:var(--display); font-style:italic; font-size:13px; letter-spacing:.01em;
+      text-transform:none; color:rgba(255,245,225,.78);
+    }
+    /* hide mood label once the slot has an image */
+    .atm:has(image-slot[data-has-image]) .atm-mood,
+    .atm.has-image .atm-mood { opacity:0; }
+    /* and dial back the vignette */
+    .atm:has(image-slot[data-has-image])::after,
+    .atm.has-image::after { opacity:0; transition:opacity .4s ease; }
+    .atm:has(image-slot[data-has-image])::before,
+    .atm.has-image::before { opacity:0; transition:opacity .4s ease; }
+
+    /* ---- per-world gradients ---- */
+    .atm--hero  { background:
+      radial-gradient(120% 80% at 30% 20%, #f4e0bb 0%, #c89569 38%, #6b3a23 78%, #2a160c 100%); }
+
+    .atm--w1 { background:                    /* Vacation House — linen sun */
+      radial-gradient(110% 75% at 70% 25%, #f7e7c3 0%, #d9a875 50%, #7a4a2c 100%); }
+    .atm--w2 { background:                    /* Penthouse — glass, dusk skyline */
+      linear-gradient(180deg, #c9b08a 0%, #8d7e7a 35%, #3a3946 75%, #14171f 100%); }
+    .atm--w3 { background:                    /* Tatami — paper light */
+      linear-gradient(180deg, #f1e4cb 0%, #d6c19a 60%, #8a7553 100%); }
+    .atm--w4 { background:                    /* Rainy apartment — petrichor + lamp */
+      radial-gradient(60% 45% at 30% 60%, #d9a35a 0%, transparent 60%),
+      linear-gradient(180deg, #2b3236 0%, #14191c 100%); }
+    .atm--w5 { background:                    /* Old-money library — walnut + brass */
+      radial-gradient(80% 60% at 80% 30%, #c79a5c 0%, transparent 55%),
+      linear-gradient(180deg, #3d2615 0%, #1d100a 100%); }
+    .atm--w6 { background:                    /* Paris café — marble + espresso */
+      linear-gradient(180deg, #efe5cf 0%, #c9a682 55%, #5a3924 100%); }
+    .atm--w7 { background:                    /* Creative loft — concrete + north light */
+      linear-gradient(180deg, #d7d4cb 0%, #a9aaa7 55%, #6c6e6f 100%); }
+    .atm--w8 { background:                    /* Modern African luxury — clay, gold afternoon */
+      radial-gradient(120% 80% at 30% 80%, #e3a861 0%, #b4612e 45%, #4f1f10 100%); }
+
+    .atm--enter { background:                 /* warm interior detail */
+      radial-gradient(110% 80% at 70% 70%, #efd9b3 0%, #b58656 45%, #4a2918 100%); }
+
+    /* ============================================================ */
+    /* TWEAKS PANEL                                                 */
+    /* ============================================================ */
+    #tweaks {
+      position:fixed; right:24px; bottom:24px; z-index:200;
+      background:var(--ivory); color:var(--ink);
+      border:1px solid var(--rule);
+      padding:18px 18px 16px; width:280px;
+      display:none; font-family:var(--mono);
+      box-shadow:0 30px 60px -30px rgba(35,20,10,.25);
+    }
+    #tweaks.open { display:block; animation:fadeup .4s ease both; }
+    @keyframes fadeup { from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:none} }
+    #tweaks .t-head {
+      display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;
+      padding-bottom:10px; border-bottom:1px solid var(--rule);
+    }
+    #tweaks .t-head .ttl { font-family:var(--display); font-size:18px; letter-spacing:.02em; }
+    #tweaks .t-head button { background:none; border:0; cursor:pointer; color:var(--mute); font-family:var(--mono); font-size:11px; letter-spacing:.18em; text-transform:uppercase; padding:4px 6px; }
+    #tweaks .t-head button:hover { color:var(--ink); }
+    #tweaks .t-row { margin-bottom:14px; }
+    #tweaks .t-row > .lbl { font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:var(--mute); margin-bottom:8px; }
+    #tweaks .swatches { display:flex; gap:8px; }
+    #tweaks .sw {
+      flex:1; height:38px; border:1px solid var(--rule); cursor:pointer; position:relative;
+      display:flex; align-items:flex-end; justify-content:flex-start; padding:5px 6px;
+      font-size:9px; letter-spacing:.18em; text-transform:uppercase; color:var(--ink-soft);
+      transition:transform .25s ease;
+    }
+    #tweaks .sw:hover { transform:translateY(-2px); }
+    #tweaks .sw.on { outline:1px solid var(--ink); outline-offset:2px; }
+    #tweaks .seg { display:flex; gap:0; border:1px solid var(--rule); }
+    #tweaks .seg button {
+      flex:1; background:transparent; border:0; cursor:pointer;
+      padding:8px 6px; font-family:var(--mono); font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:var(--ink-soft);
+      border-right:1px solid var(--rule);
+    }
+    #tweaks .seg button:last-child { border-right:0; }
+    #tweaks .seg button.on { background:var(--ink); color:var(--ivory); }
+
+    /* reveal on scroll */
+    .reveal { opacity:0; transform:translateY(18px); transition:opacity 1.1s cubic-bezier(.2,.6,.2,1), transform 1.1s cubic-bezier(.2,.6,.2,1); }
+    .reveal.in { opacity:1; transform:none; }
+    .reveal.d1 { transition-delay:.08s; }
+    .reveal.d2 { transition-delay:.16s; }
+    .reveal.d3 { transition-delay:.24s; }
+    .reveal.d4 { transition-delay:.32s; }
+  </style>
+
+  <!-- ===== Inquiry modal (shared across products) ===== -->
+  <link rel="stylesheet" href="../_shared/inquiry-modal.css" />
+  <style>
+    /* Theme override — match Space's warm-earth palette */
+    .inquiry-modal {
+      --im-bg:        #F5EEDD;
+      --im-card-bg:   #FAF5E8;
+      --im-ink:       #261C13;
+      --im-mute:      #8A7560;
+      --im-dim:       #B59A7B;
+      --im-line:      #D5C7AE;
+      --im-accent:    #B26642;
+      --im-soft:      rgba(178, 102, 66, 0.06);
+      --im-scrim:     rgba(38, 28, 19, 0.45);
+      --im-serif:     'Cormorant Garamond', 'Times New Roman', serif;
+      --im-sans:      'Manrope', system-ui, sans-serif;
+      --im-mono:      'JetBrains Mono', ui-monospace, monospace;
+      --im-radius:    2px;
+    }
+    .inquiry-modal .im-field input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.2); }
+    /* CTA replacement section */
+    .enter-ctas { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 32px; }
+    .enter-ctas .open-book {
+      display: inline-flex; align-items: center; gap: 12px;
+      font-family: var(--mono);
+      font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+      padding: 18px 24px;
+      border: 1px solid var(--ink);
+      color: var(--ink);
+      background: transparent;
+      cursor: pointer;
+      transition: background .5s ease, color .5s ease;
+      text-decoration: none;
+    }
+    .enter-ctas .open-book.primary { background: var(--ink); color: var(--ivory); }
+    .enter-ctas .open-book:hover { background: var(--accent); color: var(--ivory); border-color: var(--accent); }
+    .enter-ctas .open-book.primary:hover { background: var(--accent); color: var(--ivory); border-color: var(--accent); }
+    .enter-ctas .open-book .a { width: 18px; height: 1px; background: currentColor; position: relative; }
+    .enter-ctas .open-book .a::after {
+      content: ""; position: absolute; right: 0; top: -3px;
+      width: 7px; height: 7px;
+      border-top: 1px solid currentColor;
+      border-right: 1px solid currentColor;
+      transform: rotate(45deg);
+    }
+    .enter-summary {
+      list-style: none; padding: 0; margin: 32px 0 0;
+      border-top: 1px solid var(--rule);
+    }
+    .enter-summary li {
+      padding: 16px 0;
+      border-bottom: 1px solid var(--rule);
+      display: grid; grid-template-columns: 120px 1fr; gap: 24px; align-items: baseline;
+      font-family: var(--sans); font-size: 14px; color: var(--ink-soft); line-height: 1.5;
+    }
+    .enter-summary .k {
+      font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--mute);
+    }
+    .enter-summary .v em { color: var(--accent); font-style: italic; }
+  </style>
+</head>
+<body data-palette="bone">
+
+  <!-- ============================ NAV ============================ -->
+  <nav class="top" data-screen-label="Top Nav">
+    <div class="mark"><a href="../../index.html" class="back">← Related Motion Studios</a><span class="sep">/</span><span>RMS&nbsp;·&nbsp;Spaces<sup>2026</sup></span></div>
+    <ul>
+      <li><a href="#worlds">The Worlds</a></li>
+      <li><a href="#manifesto">Manifesto</a></li>
+      <li><a href="#enter">Enter</a></li>
+    </ul>
+    <div class="status" aria-hidden="true"></div>
+  </nav>
+
+  <!-- ============================ HERO =========================== -->
+  <section class="hero wrap" data-screen-label="01 Hero">
+    <div class="left">
+      <div class="eyebrow reveal">
+        <span class="bar"></span>
+        <span class="label">Cinematic environments · Lagos</span>
+      </div>
+
+      <h1 class="reveal d1">
+        Enter<br>
+        another<br>
+        <span class="italic">world.</span><span class="small-r">®</span>
+      </h1>
+
+      <p class="lede reveal d2">
+        Eight cinematic worlds, built and held inside one city. Each entered, not booked. Each meant to feel like somewhere else entirely.
+      </p>
+
+      <div class="meta reveal d3">
+        <div>
+          <span class="label label--mute">Worlds</span>
+          <b>Eight</b>
+        </div>
+        <div>
+          <span class="label label--mute">Locale</span>
+          <b>Lagos, NG</b>
+        </div>
+        <div>
+          <span class="label label--mute">Access</span>
+          <b>By appointment</b>
+        </div>
+        <div>
+          <span class="label label--mute">Volume</span>
+          <b>I &nbsp;/&nbsp; MMXXVI</b>
+        </div>
+      </div>
+    </div>
+
+    <div class="right">
+      <div class="slot-wrap reveal d2">
+        <div class="atm atm--hero">
+          <image-slot id="hero-img" shape="rect" fit="cover" src="images/hero-aerial.jpeg" placeholder="Drop hero still — atmospheric, low light, a single world."></image-slot>
+          <div class="atm-mood"><em>The Bath House, dusk.</em><span>placeholder · plate I</span></div>
+        </div>
+        <div class="caption">
+          <span>Plate&nbsp;/&nbsp;I</span>
+          <em>The Bath House, dusk.</em>
+          <span>35mm · 1/40</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="floating">
+      <span>Scroll to enter</span>
+      <span class="arrow"></span>
+    </div>
+  </section>
+
+  <!-- ============================ WORLDS ========================= -->
+  <section id="worlds" class="worlds" data-screen-label="02 The Worlds">
+    <div class="wrap">
+      <div class="head">
+        <div class="reveal">
+          <div class="label" style="margin-bottom:18px;">I&nbsp;&nbsp;—&nbsp;&nbsp;Index of Worlds</div>
+          <h2>Eight atmospheres,<br>held inside <em>one city</em>.</h2>
+        </div>
+        <p class="lede reveal d1">
+          Each world is built, lit and held year-round. Step in. Live the scene. Walk out into Lagos again.
+        </p>
+      </div>
+
+      <div class="grid">
+        <div class="index reveal d1">
+          <!-- 8 worlds -->
+          <div class="world-row active" data-i="0">
+            <span class="num">01</span>
+            <span class="name">The Vacation House</span>
+            <span class="mood">Linen-warm. Sun-bleached. A long Sunday.</span>
+            <span class="enter">Enter →</span>
+          </div>
+          <div class="world-row" data-i="1">
+            <span class="num">02</span>
+            <span class="name">The Penthouse</span>
+            <span class="mood">Glass, skyline, a held breath.</span>
+            <span class="enter">Enter →</span>
+          </div>
+          <div class="world-row" data-i="2">
+            <span class="num">03</span>
+            <span class="name">The Japanese Minimal Room</span>
+            <span class="mood">Paper light. Silence as architecture.</span>
+            <span class="enter">Enter →</span>
+          </div>
+          <div class="world-row" data-i="3">
+            <span class="num">04</span>
+            <span class="name">The Rainy Apartment</span>
+            <span class="mood">Petrichor, a yellow lamp, slowness.</span>
+            <span class="enter">Enter →</span>
+          </div>
+          <div class="world-row" data-i="4">
+            <span class="num">05</span>
+            <span class="name">The Old-Money Library</span>
+            <span class="mood">Walnut, brass, a century inside the dust.</span>
+            <span class="enter">Enter →</span>
+          </div>
+          <div class="world-row" data-i="5">
+            <span class="num">06</span>
+            <span class="name">The Paris Morning Café</span>
+            <span class="mood">Marble, espresso, a folded paper.</span>
+            <span class="enter">Enter →</span>
+          </div>
+          <div class="world-row" data-i="6">
+            <span class="num">07</span>
+            <span class="name">The Creative Loft</span>
+            <span class="mood">Concrete, north light, the next idea.</span>
+            <span class="enter">Enter →</span>
+          </div>
+          <div class="world-row" data-i="7">
+            <span class="num">08</span>
+            <span class="name">A Modern African Luxury</span>
+            <span class="mood">Clay, mahogany, gold afternoon.</span>
+            <span class="enter">Enter →</span>
+          </div>
+        </div>
+
+        <div class="preview reveal d2">
+          <div class="preview-frame" id="preview-frame">
+            <div class="atm atm--w1 on" data-i="0"><image-slot id="ws-0" shape="rect" fit="cover" src="images/w1-vacation.jpeg" placeholder="World 01 — The Vacation House"></image-slot><div class="atm-mood"><em>Linen-warm. Sun-bleached.</em><span>01 · vacation house</span></div></div>
+            <div class="atm atm--w2"     data-i="1"><image-slot id="ws-1" shape="rect" fit="cover" src="images/w2-penthouse.jpeg" placeholder="World 02 — The Penthouse"></image-slot><div class="atm-mood"><em>Glass. Skyline. A held breath.</em><span>02 · penthouse</span></div></div>
+            <div class="atm atm--w3"     data-i="2"><image-slot id="ws-2" shape="rect" fit="cover" src="images/w3-tatami.jpeg" placeholder="World 03 — The Japanese Minimal Room"></image-slot><div class="atm-mood"><em>Paper light. Silence.</em><span>03 · tatami room</span></div></div>
+            <div class="atm atm--w4"     data-i="3"><image-slot id="ws-3" shape="rect" fit="cover" src="images/w4-rainy.jpeg" placeholder="World 04 — The Rainy Apartment"></image-slot><div class="atm-mood"><em>Petrichor. Yellow lamp.</em><span>04 · rainy apartment</span></div></div>
+            <div class="atm atm--w5"     data-i="4"><image-slot id="ws-4" shape="rect" fit="cover" src="images/w5-library.jpeg" placeholder="World 05 — The Old-Money Library"></image-slot><div class="atm-mood"><em>Walnut. Brass. A century.</em><span>05 · old-money library</span></div></div>
+            <div class="atm atm--w6"     data-i="5"><image-slot id="ws-5" shape="rect" fit="cover" src="images/w6-paris.jpeg" placeholder="World 06 — The Paris Café"></image-slot><div class="atm-mood"><em>Marble. Espresso. A folded paper.</em><span>06 · paris café</span></div></div>
+            <div class="atm atm--w7"     data-i="6"><image-slot id="ws-6" shape="rect" fit="cover" src="images/w7-loft.jpeg" placeholder="World 07 — The Creative Loft"></image-slot><div class="atm-mood"><em>Concrete. North light.</em><span>07 · creative loft</span></div></div>
+            <div class="atm atm--w8"     data-i="7"><image-slot id="ws-7" shape="rect" fit="cover" src="images/w8-african.jpeg" placeholder="World 08 — Modern African Luxury"></image-slot><div class="atm-mood"><em>Clay. Mahogany. Gold afternoon.</em><span>08 · african luxury</span></div></div>
+          </div>
+          <div class="preview-cap">
+            <span class="now" id="preview-now"><em>The Vacation House</em></span>
+            <span class="loc">Plate · <span id="preview-num">01</span>&nbsp;/&nbsp;08</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ MANIFESTO ====================== -->
+  <section id="manifesto" class="manifesto" data-screen-label="03 Manifesto">
+    <div class="wrap inner">
+      <div class="col-left reveal">
+        <span class="label">II — On atmosphere</span>
+        <p>The space is not the product. The atmosphere is.</p>
+        <p>You do not book walls. You enter a mood that is already waiting for you.</p>
+      </div>
+      <div class="reveal d1">
+        <h2>
+          You are not booking <span class="accent">a&nbsp;space</span>.<br>
+          You are entering <span class="accent">an&nbsp;atmosphere</span>.
+        </h2>
+        <div class="verbs reveal d2">
+          <span>experience</span>
+          <span>step in</span>
+          <span>inhabit</span>
+          <span>escape</span>
+          <span>arrive</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ ENTER ========================== -->
+  <section id="enter" class="enter wrap" data-screen-label="04 Enter">
+    <div class="left">
+      <div class="head reveal">
+        <div class="label">III — Enter</div>
+        <h2>Request a <em>private viewing</em>.</h2>
+        <p class="lede">
+          A small number of worlds are released each week. Tell us who you are, and what you are bringing in with you.
+        </p>
+      </div>
+
+      <form class="reveal d1" id="enter-cta-form" onsubmit="event.preventDefault(); window.openInquiryModal && window.openInquiryModal('book');">
+        <ul class="enter-summary">
+          <li><span class="k">Option A</span><span class="v"><em>Premium Full-Day</em> · up to 10 hours · refundable caution</span></li>
+          <li><span class="k">Option B</span><span class="v"><em>Standard</em> · up to 5 hours · refundable caution</span></li>
+          <li><span class="k">Reply</span><span class="v">Within 24 hours · by invitation</span></li>
+          <li><span class="k">Pricing</span><span class="v">On request — depends on world, day and direction</span></li>
+        </ul>
+
+        <div class="enter-ctas">
+          <button type="button" class="open-book primary" data-open-form="book">
+            Request a viewing <span class="a"></span>
+          </button>
+          <button type="button" class="open-book" data-open-form="inquire">
+            General inquiry
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div class="right reveal d2">
+      <div class="panel">
+        <div class="reel" id="reel">
+          <div class="reel-dots" id="reel-dots"></div>
+          <div class="reel-soon" id="reel-soon">Coming soon</div>
+          <div class="reel-cap">
+            <span class="title" id="reel-title"><em>The Vacation House</em></span>
+            <span class="num" id="reel-num">01 / 11</span>
+          </div>
+        </div>
+      </div>
+      <div class="info">
+        <div>
+          <h4>The House</h4>
+          <p>RMS Spaces<br>Lagos, Nigeria<br><em>address on confirmation</em></p>
+        </div>
+        <div>
+          <h4>Direct</h4>
+          <p><a href="/cdn-cgi/l/email-protection#c3b0b3a2a0a683b1a6afa2b7a6a7aeacb7aaacadb0b7b6a7aaacb0eda0acae" style="color:var(--ink);text-decoration:none;border-bottom:1px solid var(--rule);"><span class="__cf_email__" data-cfemail="7a090a1b191f3a081f161b0e1f1e17150e131514090e0f1e13150954191517">[email&#160;protected]</span></a><br>@rmsspaces<br><em>Mon–Sat · 9 to 7</em></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ FOOTER ========================= -->
+  <footer class="site">
+    <div class="wrap row">
+      <div class="left">© MMXXVI · Rms Spaces, Lagos</div>
+      <div class="center">R · M · S</div>
+      <div class="right">All worlds protected. The illusion is the product.</div>
+    </div>
+  </footer>
+
+  <!-- ============================ TWEAKS ========================= -->
+  <div id="tweaks" role="dialog" aria-label="Tweaks">
+    <div class="t-head">
+      <div class="ttl">Tweaks</div>
+      <button id="tweaks-close">Close</button>
+    </div>
+
+    <div class="t-row">
+      <div class="lbl">Palette</div>
+      <div class="swatches" id="palette-row">
+        <div class="sw" data-palette="bone"  style="background:#ECE3D1;">Bone</div>
+        <div class="sw" data-palette="sand"  style="background:#E6DAC0;">Sand</div>
+        <div class="sw" data-palette="stone" style="background:#DAD5C8;">Stone</div>
+        <div class="sw" data-palette="clay"  style="background:#E6D2BD;">Clay</div>
+      </div>
+    </div>
+
+    <div class="t-row">
+      <div class="lbl">Hero display</div>
+      <div class="seg" id="hero-font">
+        <button data-font="Italiana"             class="on">Italiana</button>
+        <button data-font="Cormorant Garamond">Cormorant</button>
+        <button data-font="Playfair Display">Playfair</button>
+      </div>
+    </div>
+
+    <div class="t-row">
+      <div class="lbl">Accent</div>
+      <div class="swatches" id="accent-row">
+        <div class="sw" data-accent="#B26642" style="background:#B26642;"></div>
+        <div class="sw" data-accent="#7C8369" style="background:#7C8369;"></div>
+        <div class="sw" data-accent="#8A5A3E" style="background:#8A5A3E;"></div>
+        <div class="sw" data-accent="#26201A" style="background:#26201A;"></div>
+      </div>
+    </div>
+
+    <div class="t-row">
+      <div class="lbl">Motion</div>
+      <div class="seg" id="motion-row">
+        <button data-motion="restrained" class="on">Restrained</button>
+        <button data-motion="cinematic">Cinematic</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================ SCRIPTS ======================== -->
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="image-slot.js"></script>
+  <script>
+    /* ===== Worlds interaction ===== */
+    const rows = document.querySelectorAll('.world-row');
+    const slots = document.querySelectorAll('.preview-frame > .atm');
+    const nowEl = document.getElementById('preview-now');
+    const numEl = document.getElementById('preview-num');
+    const worldNames = [
+      'The Vacation House','The Penthouse','The Japanese Minimal Room','The Rainy Apartment',
+      'The Old-Money Library','The Paris Morning Café','The Creative Loft','A Modern African Luxury'
+    ];
+    function setWorld(i){
+      if (i === currentWorld) return;
+      currentWorld = i;
+      rows.forEach(r => r.classList.toggle('active', +r.dataset.i === i));
+      slots.forEach(s => s.classList.toggle('on', +s.dataset.i === i));
+      nowEl.classList.add('swap');
+      setTimeout(() => {
+        nowEl.innerHTML = `<em>${worldNames[i]}</em>`;
+        numEl.textContent = String(i+1).padStart(2,'0');
+        nowEl.classList.remove('swap');
+      }, 280);
+    }
+    let currentWorld = 0;
+    rows.forEach(r => {
+      r.addEventListener('mouseenter', () => setWorld(+r.dataset.i));
+      r.addEventListener('click', () => setWorld(+r.dataset.i));
+    });
+
+    /* ===== Reel — auto-cycling worlds ===== */
+    const reelWorlds = [
+      { src:'images/w1-vacation.jpeg', title:'The Vacation House' },
+      { src:'images/w2-penthouse.jpeg', title:'The Penthouse' },
+      { src:'images/w3-tatami.jpeg',   title:'The Japanese Minimal Room' },
+      { src:'images/w4-rainy.jpeg',    title:'The Rainy Apartment' },
+      { src:'images/w5-library.jpeg',  title:'The Old-Money Library' },
+      { src:'images/w6-paris.jpeg',    title:'The Paris Morning Café' },
+      { src:'images/w7-loft.jpeg',     title:'The Creative Loft' },
+      { src:'images/w8-african.jpeg',  title:'A Modern African Luxury' },
+      { src:null, title:'The Desert House', soon:true },
+      { src:null, title:'The Atelier',      soon:true },
+      { src:null, title:'The Garden Suite', soon:true },
+    ];
+    const reel = document.getElementById('reel');
+    const reelDots = document.getElementById('reel-dots');
+    const reelTitle = document.getElementById('reel-title');
+    const reelNum = document.getElementById('reel-num');
+    const reelSoon = document.getElementById('reel-soon');
+    const reelPlates = reelWorlds.map((w, i) => {
+      const p = document.createElement('div');
+      p.className = 'reel-plate' + (w.src ? '' : ' placeholder');
+      if (w.src) p.style.backgroundImage = `url('${w.src}')`;
+      p.dataset.i = i;
+      reel.insertBefore(p, reel.firstChild);
+      const d = document.createElement('span');
+      d.dataset.i = i;
+      reelDots.appendChild(d);
+      return p;
+    });
+    const reelDotEls = reelDots.querySelectorAll('span');
+    let reelIdx = 0;
+    function showReel(i){
+      reelIdx = i;
+      const w = reelWorlds[i];
+      reelPlates.forEach(p => p.classList.toggle('on', +p.dataset.i === i));
+      reelDotEls.forEach(d => d.classList.toggle('on', +d.dataset.i === i));
+      reelSoon.classList.toggle('on', !!w.soon);
+      reelTitle.style.opacity = '0';
+      setTimeout(() => {
+        reelTitle.innerHTML = `<em>${w.title}</em>`;
+        reelTitle.style.opacity = '1';
+      }, 280);
+      reelNum.textContent = `${String(i+1).padStart(2,'0')} / ${String(reelWorlds.length).padStart(2,'0')}`;
+    }
+    reelTitle.style.transition = 'opacity .45s ease';
+    showReel(0);
+    let reelTimer = setInterval(() => showReel((reelIdx + 1) % reelWorlds.length), 3800);
+    reel.addEventListener('mouseenter', () => clearInterval(reelTimer));
+    reel.addEventListener('mouseleave', () => { reelTimer = setInterval(() => showReel((reelIdx + 1) % reelWorlds.length), 3800); });
+    reelDotEls.forEach(d => d.addEventListener('click', () => { clearInterval(reelTimer); showReel(+d.dataset.i); reelTimer = setInterval(() => showReel((reelIdx + 1) % reelWorlds.length), 3800); }));
+
+    /* ===== Reveal on scroll ===== */
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }});
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+    /* ===== Smooth anchor ===== */
+    document.querySelectorAll('nav.top a').forEach(a => {
+      a.addEventListener('click', e => {
+        const id = a.getAttribute('href');
+        if (id && id.startsWith('#')) {
+          const el = document.querySelector(id);
+          if (el) { e.preventDefault(); window.scrollTo({ top: el.offsetTop - 30, behavior:'smooth' }); }
+        }
+      });
+    });
+  </script>
+
+  <!-- ============================ TWEAK PROTOCOL ================= -->
+  <script>
+    /* defaults persisted to disk */
+    const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+      "palette": "bone",
+      "heroFont": "Italiana",
+      "accent": "#B26642",
+      "motion": "restrained"
+    }/*EDITMODE-END*/;
+
+    const state = { ...TWEAK_DEFAULTS };
+    function apply(){
+      document.body.dataset.palette = state.palette;
+      document.querySelectorAll('#palette-row .sw').forEach(s => s.classList.toggle('on', s.dataset.palette === state.palette));
+      document.documentElement.style.setProperty('--hero', `'${state.heroFont}', 'Cormorant Garamond', serif`);
+      document.querySelectorAll('#hero-font button').forEach(b => b.classList.toggle('on', b.dataset.font === state.heroFont));
+      if (state.accent) document.documentElement.style.setProperty('--accent', state.accent);
+      document.querySelectorAll('#accent-row .sw').forEach(s => s.classList.toggle('on', s.dataset.accent === state.accent));
+      document.querySelectorAll('#motion-row button').forEach(b => b.classList.toggle('on', b.dataset.motion === state.motion));
+      document.documentElement.style.setProperty('--reveal-distance', state.motion === 'cinematic' ? '48px' : '18px');
+    }
+    function persist(patch){
+      Object.assign(state, patch);
+      apply();
+      try { window.parent.postMessage({ type:'__edit_mode_set_keys', edits: patch }, '*'); } catch(e){}
+    }
+
+    document.querySelectorAll('#palette-row .sw').forEach(s => s.addEventListener('click', () => persist({ palette: s.dataset.palette })));
+    document.querySelectorAll('#hero-font button').forEach(b => b.addEventListener('click', () => persist({ heroFont: b.dataset.font })));
+    document.querySelectorAll('#accent-row .sw').forEach(s => s.addEventListener('click', () => persist({ accent: s.dataset.accent })));
+    document.querySelectorAll('#motion-row button').forEach(b => b.addEventListener('click', () => persist({ motion: b.dataset.motion })));
+
+    /* host protocol: register listener FIRST, then announce */
+    const panel = document.getElementById('tweaks');
+    function openPanel(){ panel.classList.add('open'); }
+    function closePanel(){
+      panel.classList.remove('open');
+      try { window.parent.postMessage({ type:'__edit_mode_dismissed' }, '*'); } catch(e){}
+    }
+    window.addEventListener('message', (e) => {
+      const d = e.data || {};
+      if (d.type === '__activate_edit_mode') openPanel();
+      if (d.type === '__deactivate_edit_mode') closePanel();
+    });
+    document.getElementById('tweaks-close').addEventListener('click', closePanel);
+    try { window.parent.postMessage({ type:'__edit_mode_available' }, '*'); } catch(e){}
+
+    /* Preload font: Playfair (only loaded on tweak) */
+    function ensurePlayfair(){
+      if (document.getElementById('pf-font')) return;
+      const link = document.createElement('link');
+      link.id = 'pf-font'; link.rel = 'stylesheet';
+      link.href = 'https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,400&display=swap';
+      document.head.appendChild(link);
+    }
+    document.querySelectorAll('#hero-font button').forEach(b => b.addEventListener('click', () => { if (b.dataset.font.includes('Playfair')) ensurePlayfair(); }));
+
+    apply();
+  </script>
+
+<script src="mobile-preview.js"></script>
+
+<!-- ============================ INQUIRY MODAL ============================ -->
+<script>
+  window.INQUIRY_CONFIG = {
+    email: 'space@relatedmotionstudios.com',
+    whatsapp: '2348112225555',
+    whatsappPrefill: "Hi RMS — I'd like to book the studio.",
+    productLabel: 'RMS Space',
+    metaLabel: 'Vol. 026 — Booking',
+    defaultTitle: 'Book the space. <em>Briefly.</em>',
+    defaultSub: 'A few quick fields. We confirm within 24 hours. Pricing shared on request.',
+    waLabel: 'Or — direct line',
+    waDesc: 'Reach the desk on WhatsApp <em>— faster, more personal.</em>',
+    intents: {
+      book: {
+        title: 'Book the space. <em>Briefly.</em>',
+        sub: 'A few quick fields. We confirm within 24 hours. Pricing shared on request.',
+        intentValue: 'Booking',
+      },
+      inquire: {
+        title: 'Tell us about your project.',
+        sub: 'Not ready to book? Tell us what you have in mind and we will reply.',
+        intentValue: 'General inquiry',
+      },
+    },
+    fields: [
+      { id: 'name',  label: 'Name',  type: 'text',  required: true, autocomplete: 'name',  placeholder: 'Full name', row: 0 },
+      { id: 'email', label: 'Email', type: 'email', required: true, autocomplete: 'email', placeholder: 'you@studio.com', row: 0 },
+
+      { id: 'phone',  label: 'Phone', type: 'tel', autocomplete: 'tel', placeholder: '+234 …', row: 1 },
+      { id: 'studio', label: 'Which space', type: 'select', required: true, placeholder: 'Select a world', row: 1,
+        options: [
+          'Either / open to suggestion',
+          'The Vacation House',
+          'The Penthouse',
+          'The Japanese Minimal Room',
+          'The Rainy Apartment',
+          'The Old-Money Library',
+          'The Paris Morning Café',
+          'The Creative Loft',
+          'A Modern African Luxury',
+        ],
+      },
+
+      { id: 'option', label: 'Booking option', type: 'options', required: true, row: 2,
+        options: [
+          { value: 'Option A — Premium Full-Day', tag: 'Option A',  name: 'Premium <em>Full-Day</em>', meta: 'Up to 10 hours · refundable caution' },
+          { value: 'Option B — Standard',         tag: 'Option B',  name: 'Standard <em>Booking</em>', meta: 'Up to 5 hours · refundable caution' },
+        ],
+      },
+
+      { id: 'date',    label: 'Preferred date', type: 'date', row: 3 },
+      { id: 'project', label: 'Project type', type: 'select', required: true, placeholder: 'Select one', row: 3,
+        options: [
+          'Editorial campaign',
+          'Brand film',
+          'Music video',
+          'Skincare / fragrance',
+          'Fashion lookbook',
+          'Personal portrait',
+          'Event / launch',
+          'Something else',
+        ],
+      },
+
+      { id: 'crew',    label: 'Crew size', type: 'number', placeholder: 'e.g. 6', min: 1, row: 4 },
+      { id: 'styling', label: 'Need styling / HMU?', type: 'select', placeholder: 'Select one', row: 4,
+        options: ['No — handled', 'Yes — coordinate for me', 'Maybe — let\'s discuss'],
+      },
+
+      { id: 'equipment', label: 'Equipment needs', type: 'textarea', placeholder: 'Lights, cameras, special rigs… or leave blank.', rows: 2, row: 5 },
+      { id: 'message',   label: 'Anything else',   type: 'textarea', placeholder: 'A sentence or two on the world you want to make.', rows: 3, row: 6 },
+      { id: 'heard',     label: 'How did you hear about us', type: 'text', placeholder: 'Instagram, a friend, a film…', row: 7 },
+    ],
+  };
+</script>
+<script src="../_shared/inquiry-modal.js"></script>
+
+</body>
+</html>

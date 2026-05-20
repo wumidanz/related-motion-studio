@@ -1,0 +1,353 @@
+/* ============================================================
+   RMS Inquiry/Booking Modal — shared across all product pages.
+   Per-page theming via CSS custom properties on .inquiry-modal.
+   ============================================================ */
+
+.inquiry-modal {
+  /* THEME — overridable per page */
+  --im-bg:        #050505;
+  --im-card-bg:   #050505;
+  --im-ink:       #EDEAE3;
+  --im-mute:      #8A847B;
+  --im-dim:       #5A554E;
+  --im-line:      #232323;
+  --im-accent:    #B14A2C;
+  --im-soft:      rgba(237, 234, 227, 0.02);
+  --im-scrim:     rgba(5, 5, 5, 0.82);
+  --im-serif:     "Cormorant Garamond", "Times New Roman", serif;
+  --im-sans:      "Inter", system-ui, sans-serif;
+  --im-mono:      "JetBrains Mono", ui-monospace, monospace;
+  --im-radius:    0px;
+
+  position: fixed; inset: 0; z-index: 100;
+  display: flex; align-items: stretch; justify-content: stretch;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .5s ease;
+}
+.inquiry-modal.open { opacity: 1; pointer-events: auto; }
+.inquiry-modal *, .inquiry-modal *::before, .inquiry-modal *::after { box-sizing: border-box; }
+
+.inquiry-modal .im-scrim {
+  position: absolute; inset: 0;
+  background: var(--im-scrim);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.inquiry-modal .im-card {
+  position: relative;
+  margin: auto;
+  width: min(680px, calc(100vw - 40px));
+  max-height: calc(100vh - 40px);
+  background: var(--im-card-bg);
+  color: var(--im-ink);
+  border: 1px solid var(--im-line);
+  border-radius: var(--im-radius);
+  padding: 56px 56px 48px;
+  overflow-y: auto;
+  transform: translateY(14px);
+  transition: transform .6s cubic-bezier(.2,.7,.2,1);
+}
+.inquiry-modal.open .im-card { transform: none; }
+@media (max-width: 720px) {
+  .inquiry-modal .im-card { padding: 44px 24px 36px; width: calc(100vw - 20px); max-height: calc(100vh - 20px); }
+}
+
+.inquiry-modal .im-head {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  border-bottom: 1px solid var(--im-line);
+  padding-bottom: 28px;
+  margin-bottom: 32px;
+  gap: 24px;
+}
+.inquiry-modal .im-meta {
+  font-family: var(--im-mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--im-mute);
+  margin-bottom: 14px;
+}
+.inquiry-modal .im-title {
+  font-family: var(--im-serif);
+  font-weight: 300;
+  font-size: clamp(28px, 3.6vw, 40px);
+  line-height: 1;
+  letter-spacing: -0.015em;
+  color: var(--im-ink);
+  margin: 0;
+}
+.inquiry-modal .im-title em { font-style: italic; color: var(--im-mute); }
+.inquiry-modal .im-sub {
+  color: var(--im-mute);
+  font-family: var(--im-sans);
+  font-size: 12px;
+  line-height: 1.6;
+  margin-top: 12px;
+  max-width: 42ch;
+}
+
+.inquiry-modal .im-close {
+  background: none;
+  border: 1px solid var(--im-line);
+  color: var(--im-ink);
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  font-family: var(--im-mono);
+  font-size: 14px;
+  border-radius: var(--im-radius);
+  transition: background .3s ease, border-color .3s ease, color .3s ease;
+  flex-shrink: 0;
+}
+.inquiry-modal .im-close:hover {
+  background: var(--im-ink);
+  color: var(--im-bg);
+  border-color: var(--im-ink);
+}
+
+.inquiry-modal .im-grid { display: grid; gap: 24px; }
+.inquiry-modal .im-row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.inquiry-modal .im-row.single { grid-template-columns: 1fr; }
+@media (max-width: 540px) {
+  .inquiry-modal .im-row { grid-template-columns: 1fr; }
+}
+
+.inquiry-modal .im-field { display: flex; flex-direction: column; gap: 8px; }
+.inquiry-modal .im-field label {
+  font-family: var(--im-mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--im-mute);
+}
+.inquiry-modal .im-field label .req { color: var(--im-ink); opacity: .6; margin-left: 4px; }
+.inquiry-modal .im-field input,
+.inquiry-modal .im-field textarea,
+.inquiry-modal .im-field select {
+  font-family: var(--im-serif);
+  font-weight: 300;
+  font-size: 20px;
+  line-height: 1.4;
+  color: var(--im-ink);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--im-line);
+  padding: 8px 0 10px;
+  outline: none;
+  transition: border-color .3s ease;
+  resize: none;
+  width: 100%;
+  -webkit-appearance: none;
+          appearance: none;
+  border-radius: 0;
+}
+.inquiry-modal .im-field textarea { min-height: 60px; font-family: var(--im-sans); font-size: 15px; line-height: 1.6; }
+.inquiry-modal .im-field input::placeholder,
+.inquiry-modal .im-field textarea::placeholder {
+  color: var(--im-dim);
+  font-style: italic;
+}
+.inquiry-modal .im-field input:focus,
+.inquiry-modal .im-field textarea:focus,
+.inquiry-modal .im-field select:focus { border-bottom-color: var(--im-ink); }
+.inquiry-modal .im-field select { cursor: pointer; }
+.inquiry-modal .im-field select option {
+  background: var(--im-card-bg);
+  color: var(--im-ink);
+  font-family: var(--im-sans);
+  font-size: 14px;
+}
+/* dates: nudge color for legibility on dark bgs */
+.inquiry-modal .im-field input[type="date"],
+.inquiry-modal .im-field input[type="number"],
+.inquiry-modal .im-field input[type="tel"] {
+  font-family: var(--im-sans);
+  font-size: 16px;
+}
+.inquiry-modal .im-field input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.8);
+  cursor: pointer;
+  opacity: 0.6;
+}
+.inquiry-modal .im-field input[type="date"]:focus::-webkit-calendar-picker-indicator { opacity: 1; }
+
+/* Booking option radio cards */
+.inquiry-modal .im-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+@media (max-width: 540px) {
+  .inquiry-modal .im-options { grid-template-columns: 1fr; }
+}
+.inquiry-modal .im-option {
+  display: block;
+  border: 1px solid var(--im-line);
+  border-radius: var(--im-radius);
+  padding: 18px 18px 16px;
+  cursor: pointer;
+  transition: border-color .3s ease, background .3s ease;
+  position: relative;
+}
+.inquiry-modal .im-option input { position: absolute; opacity: 0; pointer-events: none; }
+.inquiry-modal .im-option:hover { border-color: var(--im-mute); }
+.inquiry-modal .im-option:has(input:checked) {
+  border-color: var(--im-ink);
+  background: var(--im-soft);
+}
+.inquiry-modal .im-option .tag {
+  font-family: var(--im-mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--im-mute);
+  margin-bottom: 6px;
+}
+.inquiry-modal .im-option:has(input:checked) .tag { color: var(--im-ink); }
+.inquiry-modal .im-option .name {
+  font-family: var(--im-serif);
+  font-weight: 300;
+  font-size: 22px;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  margin-bottom: 4px;
+}
+.inquiry-modal .im-option .name em { font-style: italic; color: var(--im-mute); }
+.inquiry-modal .im-option .meta {
+  font-family: var(--im-mono);
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  color: var(--im-mute);
+  text-transform: none;
+}
+
+.inquiry-modal .im-actions {
+  margin-top: 36px;
+  padding-top: 28px;
+  border-top: 1px solid var(--im-line);
+  display: flex; gap: 14px; flex-wrap: wrap;
+  align-items: center;
+}
+.inquiry-modal .im-btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: var(--im-mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--im-ink);
+  text-decoration: none;
+  padding: 16px 22px 15px;
+  border: 1px solid var(--im-ink);
+  border-radius: var(--im-radius);
+  background: transparent;
+  cursor: pointer;
+  transition: background .5s ease, color .5s ease, border-color .5s ease;
+}
+.inquiry-modal .im-btn .arr {
+  width: 18px; height: 1px; background: currentColor; position: relative; transition: width .5s ease;
+}
+.inquiry-modal .im-btn .arr::after {
+  content: ""; position: absolute; right: 0; top: -3px;
+  width: 7px; height: 7px;
+  border-top: 1px solid currentColor;
+  border-right: 1px solid currentColor;
+  transform: rotate(45deg);
+}
+.inquiry-modal .im-btn:hover { background: var(--im-ink); color: var(--im-bg); }
+.inquiry-modal .im-btn:hover .arr { width: 28px; }
+.inquiry-modal .im-btn[disabled] { opacity: .5; cursor: wait; }
+
+.inquiry-modal .im-note {
+  font-family: var(--im-mono);
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  color: var(--im-dim);
+  margin-left: auto;
+  text-transform: uppercase;
+}
+@media (max-width: 540px) {
+  .inquiry-modal .im-note { margin-left: 0; width: 100%; }
+}
+
+/* WhatsApp alternative path */
+.inquiry-modal .im-wa {
+  display: flex; align-items: center; gap: 14px;
+  margin-top: 28px;
+  padding: 18px 20px;
+  border: 1px solid var(--im-line);
+  border-radius: var(--im-radius);
+  background: var(--im-soft);
+}
+.inquiry-modal .im-wa .im-wa-text { flex: 1; min-width: 0; }
+.inquiry-modal .im-wa .im-wa-lbl {
+  font-family: var(--im-mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--im-mute);
+  margin-bottom: 4px;
+}
+.inquiry-modal .im-wa .im-wa-desc {
+  font-family: var(--im-serif);
+  font-size: 18px;
+  line-height: 1.2;
+  color: var(--im-ink);
+}
+.inquiry-modal .im-wa .im-wa-desc em { font-style: italic; color: var(--im-mute); }
+.inquiry-modal .im-wa-btn {
+  flex-shrink: 0;
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: var(--im-mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--im-ink);
+  text-decoration: none;
+  padding: 12px 16px 11px;
+  border: 1px solid var(--im-ink);
+  border-radius: var(--im-radius);
+  cursor: pointer;
+  background: transparent;
+  transition: background .4s ease, color .4s ease;
+}
+.inquiry-modal .im-wa-btn:hover {
+  background: var(--im-ink);
+  color: var(--im-bg);
+}
+@media (max-width: 540px) {
+  .inquiry-modal .im-wa { flex-direction: column; align-items: flex-start; gap: 16px; }
+  .inquiry-modal .im-wa-btn { width: 100%; justify-content: center; }
+}
+
+/* Success state */
+.inquiry-modal .im-success { display: none; }
+.inquiry-modal .im-card.is-success .im-form-wrap,
+.inquiry-modal .im-card.is-success .im-head { display: none; }
+.inquiry-modal .im-card.is-success .im-success { display: block; }
+.inquiry-modal .im-success-inner {
+  text-align: center;
+  padding: 40px 0;
+}
+.inquiry-modal .im-success-inner .im-meta { margin-bottom: 24px; }
+.inquiry-modal .im-success-inner h3 {
+  font-family: var(--im-serif);
+  font-weight: 300;
+  font-size: clamp(28px, 3.6vw, 44px);
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+  margin: 0 0 20px;
+  color: var(--im-ink);
+}
+.inquiry-modal .im-success-inner h3 em { font-style: italic; color: var(--im-mute); }
+.inquiry-modal .im-success-inner p {
+  color: var(--im-mute);
+  font-family: var(--im-sans);
+  font-size: 14px;
+  line-height: 1.7;
+  max-width: 38ch;
+  margin: 0 auto 32px;
+}
+
+body.modal-locked { overflow: hidden; }

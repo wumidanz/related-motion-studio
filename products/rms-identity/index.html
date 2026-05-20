@@ -1,0 +1,1402 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>RMS Identity — Test the ad before you shoot it.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg:        oklch(0.16 0.005 80);
+    --bg-2:      oklch(0.20 0.006 80);
+    --fg:        oklch(0.96 0.008 85);
+    --fg-dim:    oklch(0.78 0.008 85);
+    --fg-mute:   oklch(0.55 0.008 85);
+    --rule:      oklch(0.30 0.008 85);
+    --accent:    oklch(0.88 0.18 115);
+    --accent-ink:oklch(0.20 0.02 115);
+    --display: "Archivo Black", "Inter", system-ui, sans-serif;
+    --sans:    "Inter", system-ui, sans-serif;
+    --mono:    "JetBrains Mono", ui-monospace, monospace;
+    --maxw: 1240px;
+    --pad: clamp(20px, 5vw, 40px);
+  }
+
+  *,*::before,*::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+  a { color: inherit; text-decoration: none; }
+  img { max-width: 100%; display: block; }
+
+  .wrap { max-width: var(--maxw); margin: 0 auto; padding-inline: var(--pad); }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 11px; font-weight: 500;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--fg-mute);
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .eyebrow::before {
+    content: ""; width: 6px; height: 6px;
+    background: var(--accent); border-radius: 50%; flex: none;
+  }
+  .display {
+    font-family: var(--display);
+    font-weight: 900;
+    line-height: 0.9;
+    letter-spacing: -0.025em;
+    text-transform: uppercase;
+    text-wrap: balance;
+  }
+  .display em { font-style: normal; color: var(--accent); }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    padding: 16px 24px;
+    border-radius: 999px;
+    font-family: var(--sans);
+    font-weight: 500;
+    font-size: 14px;
+    letter-spacing: -0.005em;
+    transition: transform .15s ease, background .2s ease;
+    white-space: nowrap;
+    min-height: 52px;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-primary { background: var(--accent); color: var(--accent-ink); }
+  .btn-primary:hover { background: oklch(0.92 0.18 115); }
+  .btn-ghost {
+    background: color-mix(in oklab, var(--fg) 6%, transparent);
+    color: var(--fg);
+    border: 1px solid color-mix(in oklab, var(--fg) 14%, transparent);
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+  }
+  .btn-ghost:hover {
+    background: color-mix(in oklab, var(--fg) 10%, transparent);
+    border-color: color-mix(in oklab, var(--fg) 24%, transparent);
+  }
+  .btn-primary { box-shadow: 0 0 0 0 oklch(0.88 0.18 115 / 0.0); }
+  .btn-primary:hover { box-shadow: 0 14px 40px -12px oklch(0.88 0.18 115 / 0.45); }
+
+  /* ── glass / frost panel ── */
+  .glass {
+    background: color-mix(in oklab, var(--fg) 5%, transparent);
+    border: 1px solid color-mix(in oklab, var(--fg) 12%, transparent);
+    backdrop-filter: blur(22px) saturate(140%);
+    -webkit-backdrop-filter: blur(22px) saturate(140%);
+    border-radius: 18px;
+  }
+
+  /* live chip */
+  .chip {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 8px 14px 8px 12px;
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--fg) 5%, transparent);
+    border: 1px solid color-mix(in oklab, var(--fg) 12%, transparent);
+    backdrop-filter: blur(20px) saturate(140%);
+    -webkit-backdrop-filter: blur(20px) saturate(140%);
+    font-family: var(--mono);
+    font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--fg-dim);
+  }
+  .chip .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 0 oklch(0.88 0.18 115 / 0.55);
+    animation: chip-pulse 2.2s ease-out infinite;
+  }
+  @keyframes chip-pulse {
+    0% { box-shadow: 0 0 0 0 oklch(0.88 0.18 115 / 0.5); }
+    100% { box-shadow: 0 0 0 12px oklch(0.88 0.18 115 / 0); }
+  }
+  .btn .arrow { transition: transform .2s ease; }
+  .btn:hover .arrow { transform: translate(2px,-2px); }
+
+  /* ── nav ── */
+  .nav {
+    position: sticky; top: 0; z-index: 40;
+    background: color-mix(in oklab, var(--bg) 86%, transparent);
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid transparent;
+    transition: border-color .2s ease;
+  }
+  .nav.scrolled { border-bottom-color: var(--rule); }
+  .nav-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    height: 64px;
+  }
+  .nav-left { display: flex; align-items: center; gap: 18px; }
+  .nav-back {
+    font-family: var(--mono); font-size: 10px;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--fg-mute);
+  }
+  .nav-back:hover { color: var(--fg); }
+  .logo {
+    font-family: var(--display);
+    font-size: 15px; letter-spacing: 0.02em;
+    text-transform: uppercase; line-height: 1;
+  }
+  .logo .amp { color: var(--accent); }
+  .nav-cta .btn { padding: 10px 18px; min-height: 40px; font-size: 12px; }
+
+  /* ── hero ── */
+  .hero {
+    position: relative;
+    padding: 80px 0 96px;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .hero::before {
+    content: ""; position: absolute; inset: 0;
+    background-image: url("assets/hero-bg.png");
+    background-size: cover;
+    background-position: var(--hero-bg-x, 100%) var(--hero-bg-y, 50%);
+    background-repeat: no-repeat;
+    filter: brightness(1.0) saturate(1.05) contrast(1.02);
+    z-index: -2;
+    pointer-events: none;
+    transform-origin: 60% 50%;
+    animation: kenburns 36s ease-in-out infinite alternate;
+  }
+  .hero::after {
+    content: ""; position: absolute; inset: 0;
+    background:
+      linear-gradient(90deg,
+        color-mix(in oklab, var(--bg) 80%, transparent) 0%,
+        color-mix(in oklab, var(--bg) 55%, transparent) 32%,
+        color-mix(in oklab, var(--bg) 18%, transparent) 62%,
+        color-mix(in oklab, var(--bg) 6%, transparent) 100%),
+      linear-gradient(180deg,
+        color-mix(in oklab, var(--bg) 40%, transparent) 0%,
+        transparent 18%,
+        transparent 75%,
+        color-mix(in oklab, var(--bg) 55%, transparent) 100%);
+    z-index: -1;
+    pointer-events: none;
+  }
+  @media (max-width: 859px) {
+    .hero::after {
+      background:
+        linear-gradient(180deg,
+          color-mix(in oklab, var(--bg) 30%, transparent) 0%,
+          color-mix(in oklab, var(--bg) 60%, transparent) 60%,
+          color-mix(in oklab, var(--bg) 82%, transparent) 100%);
+    }
+  }
+  .hero-chip-row {
+    margin-bottom: 56px;
+    position: relative; z-index: 1;
+  }
+
+  .hero h1 {
+    font-size: clamp(54px, 12vw, 168px);
+    margin: 0;
+    position: relative; z-index: 1;
+  }
+  .hero h1 .line { display: block; }
+  .hero h1 .indent { padding-left: 0.4em; }
+
+  .hero-row {
+    margin-top: 56px;
+    display: grid; gap: 36px;
+    position: relative; z-index: 1;
+  }
+  @media (min-width: 860px) {
+    .hero-row { grid-template-columns: 1.1fr 1fr; gap: 64px; align-items: end; }
+  }
+  .hero-sub {
+    font-size: clamp(17px, 1.7vw, 20px);
+    line-height: 1.5;
+    color: var(--fg-dim);
+    max-width: 44ch;
+    text-wrap: pretty;
+    margin: 0;
+  }
+  .hero-sub b { color: var(--fg); font-weight: 600; }
+
+  .hero-cta {
+    display: flex; flex-direction: column; gap: 12px;
+    align-self: end;
+  }
+  .hero-cta .btn { width: 100%; }
+  @media (min-width: 560px) {
+    .hero-cta { flex-direction: row; flex-wrap: wrap; }
+    .hero-cta .btn { width: auto; }
+  }
+
+  /* ── section base ── */
+  section { position: relative; }
+  .sec { padding: 96px 0; }
+  @media (min-width: 860px) { .sec { padding: 128px 0; } }
+  .sec-head { display: grid; gap: 14px; margin-bottom: 64px; max-width: 56ch; }
+  .sec-head h2 { font-size: clamp(40px, 7vw, 80px); margin: 0; }
+  .sec-head p { color: var(--fg-dim); font-size: 17px; margin: 8px 0 0; }
+  .sec-head p .hl {
+    background: var(--accent);
+    color: var(--accent-ink);
+    padding: 1px 8px 2px;
+    border-radius: 3px;
+    font-weight: 600;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+  }
+
+  /* ── method (with production-still backdrop) ── */
+  .method {
+    background: var(--bg);
+    border-top: 1px solid var(--rule);
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+  }
+  .method::before {
+    content: "";
+    position: absolute; inset: 0;
+    background-image: url("assets/shoot-bg.png");
+    background-size: cover;
+    background-position: var(--method-bg-x, 50%) var(--method-bg-y, 50%);
+    background-repeat: no-repeat;
+    filter: brightness(0.72) saturate(0.95) contrast(1.02);
+    z-index: -2;
+    pointer-events: none;
+  }
+  .method::after {
+    content: "";
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(180deg,
+        color-mix(in oklab, var(--bg) 55%, transparent) 0%,
+        color-mix(in oklab, var(--bg) 8%, transparent) 22%,
+        color-mix(in oklab, var(--bg) 8%, transparent) 78%,
+        color-mix(in oklab, var(--bg) 70%, transparent) 100%),
+      radial-gradient(70% 60% at 50% 50%, transparent 0%, color-mix(in oklab, var(--bg) 20%, transparent) 100%);
+    z-index: -1;
+    pointer-events: none;
+  }
+  .method .sec-head p { color: var(--fg); }
+  .method .step {
+    background: color-mix(in oklab, var(--bg) 78%, transparent);
+    backdrop-filter: blur(14px) saturate(130%);
+    -webkit-backdrop-filter: blur(14px) saturate(130%);
+  }
+  .method .step:hover {
+    background: color-mix(in oklab, var(--bg) 68%, transparent);
+  }
+  .method .steps {
+    border-color: color-mix(in oklab, var(--fg) 14%, transparent);
+    background: color-mix(in oklab, var(--fg) 14%, transparent);
+  }
+
+  /* ── cut section (its own section, plain bg) ── */
+  .cut-sec {
+    position: relative;
+    overflow: hidden;
+    padding: 112px 0 128px;
+    background: var(--bg-2);
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+  }
+  @media (min-width: 860px) { .cut-sec { padding: 144px 0 160px; } }
+  .cut-sec .test-stack { margin-top: 0; }
+  .steps {
+    display: grid; gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    border-radius: 22px;
+    overflow: hidden;
+  }
+  @media (min-width: 860px) { .steps { grid-template-columns: repeat(3, 1fr); } }
+  .step {
+    background: color-mix(in oklab, var(--fg) 3%, var(--bg-2));
+    padding: 40px 32px;
+    display: grid; gap: 18px;
+    align-content: start;
+    position: relative;
+    min-height: 280px;
+    transition: background .25s ease;
+  }
+  .step:hover { background: color-mix(in oklab, var(--fg) 6%, var(--bg-2)); }
+  .step .n {
+    font-family: var(--mono);
+    font-size: 11px; letter-spacing: 0.2em;
+    color: var(--accent); text-transform: uppercase;
+  }
+  .step h3 {
+    font-family: var(--display); font-weight: 900;
+    font-size: clamp(40px, 5vw, 56px);
+    line-height: 0.95; letter-spacing: -0.03em;
+    text-transform: uppercase; margin: 0;
+  }
+  .step p { color: var(--fg-dim); font-size: 15.5px; line-height: 1.6; margin: 0; max-width: 32ch; }
+
+  /* ── test stack (what "cut" actually looks like) ── */
+  .test-stack {
+    margin-top: 72px;
+    position: relative;
+  }
+  .stack-eyebrow {
+    display: flex; justify-content: center; margin-bottom: 28px;
+  }
+  .stack-eyebrow .chip {
+    color: var(--fg);
+  }
+  .stack-row {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    flex-wrap: nowrap;
+    padding: 12px 0 20px;
+    mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+    overflow: hidden;
+    width: 100%;
+  }
+  .stack-track {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    flex-wrap: nowrap;
+    will-change: transform;
+    animation: marquee 38s linear infinite;
+    animation-play-state: running;
+  }
+  .stack-row:hover .stack-track { animation-play-state: paused; }
+  @keyframes marquee {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  .concept {
+    flex: 0 0 132px;
+    aspect-ratio: 9 / 16;
+    border-radius: 14px;
+    border: 1px solid color-mix(in oklab, var(--fg) 8%, transparent);
+    position: relative;
+    overflow: hidden;
+    opacity: 0.72;
+    filter: saturate(80%);
+    transition: opacity .3s ease, transform .4s cubic-bezier(.2,.7,.2,1), filter .3s ease, border-color .25s ease, box-shadow .35s ease;
+    cursor: pointer;
+    background: radial-gradient(110% 80% at 50% 40%, oklch(0.32 0.04 80), oklch(0.16 0.005 80) 70%);
+  }
+  .concept:hover {
+    opacity: 1;
+    filter: none;
+    transform: translateY(-6px) scale(1.04);
+    border-color: color-mix(in oklab, var(--fg) 25%, transparent);
+    z-index: 2;
+  }
+  .concept video {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+    filter: grayscale(0.55) brightness(0.78);
+    transition: filter .35s ease;
+  }
+  .concept:hover video { filter: none; }
+  .concept.winner video { filter: none; }
+  .concept:hover { opacity: 0.78; transform: translateY(-2px); }
+  /* film grain on every concept */
+  .concept::after {
+    content: ""; position: absolute; inset: 0;
+    background: repeating-linear-gradient(0deg, transparent 0 3px, oklch(0.95 0.01 80 / 0.04) 3px 4px);
+    pointer-events: none;
+  }
+  /* mute gradient backgrounds for variety */
+  .concept.c1 { background: radial-gradient(110% 80% at 30% 20%, oklch(0.40 0.04 50), oklch(0.18 0.005 80) 70%); }
+  .concept.c2 { background: radial-gradient(110% 80% at 60% 30%, oklch(0.36 0.04 240), oklch(0.16 0.005 80) 70%); }
+  .concept.c3 { background: radial-gradient(110% 80% at 40% 70%, oklch(0.42 0.05 85), oklch(0.18 0.005 80) 70%); }
+  .concept.c4 { background: radial-gradient(110% 80% at 50% 30%, oklch(0.34 0.05 320), oklch(0.16 0.005 80) 70%); }
+  .concept.c5 { background: radial-gradient(110% 80% at 30% 50%, oklch(0.38 0.05 150), oklch(0.16 0.005 80) 70%); }
+  .concept.c6 { background: radial-gradient(110% 80% at 60% 60%, oklch(0.40 0.06 30), oklch(0.18 0.005 80) 70%); }
+  .concept.c7 { background: radial-gradient(110% 80% at 40% 30%, oklch(0.34 0.03 200), oklch(0.16 0.005 80) 70%); }
+
+  .concept .lab {
+    position: absolute; left: 8px; right: 8px; bottom: 8px;
+    font-family: var(--mono);
+    font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: color-mix(in oklab, var(--fg) 60%, transparent);
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 4px;
+    z-index: 2;
+  }
+  .concept .lab .s { color: var(--fg-mute); }
+  .concept .lab .s-shot { display: none; color: var(--accent); }
+  .concept.winner .lab { color: var(--fg); }
+  .concept.winner .lab .s-cut { display: none; }
+  .concept.winner .lab .s-shot { display: inline; }
+
+  /* the survivor */
+  .concept.winner {
+    flex: 0 0 132px;
+    opacity: 1;
+    filter: none;
+    border-color: color-mix(in oklab, var(--accent) 55%, transparent);
+    box-shadow:
+      0 0 0 1px color-mix(in oklab, var(--accent) 35%, transparent),
+      0 14px 36px -16px oklch(0.88 0.18 115 / 0.35);
+    transform: translateY(-3px);
+  }
+  .concept.winner:hover {
+    transform: translateY(-9px) scale(1.04);
+  }
+  .concept.winner::before {
+    content: "";
+    position: absolute; top: 8px; right: 8px;
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 0 oklch(0.88 0.18 115 / 0.55);
+    animation: chip-pulse 2.2s ease-out infinite;
+    z-index: 2;
+  }
+
+  .stack-caption {
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    margin-top: 28px;
+    text-align: center;
+  }
+  .stack-caption .line-1 {
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: clamp(22px, 3vw, 32px);
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    text-transform: uppercase;
+    text-wrap: balance;
+    max-width: 22ch;
+  }
+  .stack-caption .line-1 em { color: var(--accent); font-style: normal; }
+  .stack-caption .line-2 {
+    font-family: var(--mono);
+    font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--fg-mute);
+  }
+
+  /* ── math (the founder's case) ── */
+  .math-sec {
+    background: var(--bg-2);
+    border-block: 1px solid var(--rule);
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+  }
+  .math-sec::before {
+    content: "";
+    position: absolute; inset: 0;
+    background-image: url("assets/math-bg.png");
+    background-size: cover;
+    background-position: var(--math-bg-x, 50%) var(--math-bg-y, 38%);
+    background-repeat: no-repeat;
+    background-color: var(--bg-2);
+    filter: brightness(0.72) contrast(1.05);
+    z-index: -2;
+    pointer-events: none;
+    transform-origin: 50% 50%;
+    animation: kenburns 32s ease-in-out infinite alternate;
+  }
+  .math-sec::after {
+    content: "";
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(180deg,
+        color-mix(in oklab, var(--bg-2) 70%, transparent) 0%,
+        color-mix(in oklab, var(--bg-2) 25%, transparent) 14%,
+        color-mix(in oklab, var(--bg-2) 25%, transparent) 70%,
+        color-mix(in oklab, var(--bg-2) 80%, transparent) 100%),
+      radial-gradient(85% 70% at 50% 45%, transparent 0%, color-mix(in oklab, var(--bg-2) 35%, transparent) 100%);
+    z-index: -1;
+    pointer-events: none;
+  }
+  @media (max-width: 859px) {
+    .math-sec::before { background-position: center 30%; }
+  }
+  .math-sec .sec-head p { color: var(--fg); }
+  .math-grid {
+    display: grid; gap: 18px;
+  }
+  @media (min-width: 860px) { .math-grid { grid-template-columns: 1fr 1fr; gap: 24px; } }
+
+  .math-card {
+    background: color-mix(in oklab, var(--bg) 78%, transparent);
+    border: 1px solid color-mix(in oklab, var(--fg) 14%, transparent);
+    backdrop-filter: blur(18px) saturate(135%);
+    -webkit-backdrop-filter: blur(18px) saturate(135%);
+    border-radius: 22px;
+    padding: 36px 32px 32px;
+    display: grid; gap: 22px;
+    align-content: start;
+    position: relative;
+    min-height: 380px;
+    overflow: hidden;
+  }
+  .math-card .m-tag {
+    font-family: var(--mono);
+    font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--fg-mute);
+  }
+  .math-card.new .m-tag { color: var(--accent); }
+  .math-card .m-cost {
+    font-family: var(--display); font-weight: 900;
+    font-size: clamp(48px, 7vw, 84px);
+    line-height: 0.9; letter-spacing: -0.035em;
+    text-transform: uppercase;
+    color: var(--fg);
+  }
+  .math-card .m-cost .arrow {
+    font-family: var(--mono);
+    font-size: 0.32em;
+    color: var(--fg-mute);
+    margin: 0 0.4em;
+    vertical-align: 0.6em;
+    letter-spacing: 0.1em;
+  }
+  .math-card .m-cost .then {
+    color: var(--accent);
+  }
+  .math-card.old .m-cost { color: color-mix(in oklab, var(--fg) 75%, transparent); }
+
+  .math-card .m-steps {
+    list-style: none; padding: 0; margin: 0;
+    display: grid; gap: 10px;
+    padding-top: 18px;
+    border-top: 1px solid var(--rule);
+  }
+  .math-card .m-steps li {
+    font-family: var(--mono);
+    font-size: 12px; letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--fg-dim);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .math-card .m-steps li::before {
+    content: ""; width: 5px; height: 5px; border-radius: 50%;
+    background: var(--fg-mute); flex: none;
+  }
+  .math-card.new .m-steps li::before { background: var(--accent); }
+
+  .math-card .m-outcome {
+    font-family: var(--sans);
+    font-size: 16px; line-height: 1.5;
+    color: var(--fg);
+    padding-top: 8px;
+    text-wrap: pretty;
+    max-width: 36ch;
+  }
+  .math-card .m-outcome b { color: var(--accent); font-weight: 600; }
+  .math-card.old .m-outcome { color: color-mix(in oklab, var(--fg) 80%, transparent); }
+
+  /* pioneer offer */
+  .offer {
+    margin-top: 48px;
+    padding: 36px 36px;
+    border-radius: 22px;
+    background:
+      radial-gradient(60% 100% at 0% 0%, oklch(0.88 0.18 115 / 0.10), transparent 60%),
+      color-mix(in oklab, var(--bg) 80%, transparent);
+    backdrop-filter: blur(18px) saturate(135%);
+    -webkit-backdrop-filter: blur(18px) saturate(135%);
+    border: 1px solid color-mix(in oklab, var(--accent) 28%, var(--rule));
+    display: grid; gap: 18px;
+    align-items: start;
+    position: relative;
+  }
+  @media (min-width: 860px) {
+    .offer { grid-template-columns: auto 1fr auto; gap: 36px; padding: 32px 40px; align-items: center; }
+  }
+  .offer .o-tag {
+    font-family: var(--mono);
+    font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--accent);
+    display: inline-flex; align-items: center; gap: 8px;
+    white-space: nowrap;
+  }
+  .offer .o-tag::before {
+    content: ""; width: 7px; height: 7px; border-radius: 50%;
+    background: var(--accent);
+  }
+  .offer .o-copy {
+    font-family: var(--display); font-weight: 900;
+    font-size: clamp(22px, 2.6vw, 30px);
+    line-height: 1.05; letter-spacing: -0.025em;
+    text-transform: uppercase;
+    color: var(--fg);
+    margin: 0;
+    text-wrap: balance;
+    max-width: 32ch;
+  }
+  .offer .o-copy em { color: var(--accent); font-style: normal; }
+  .offer .o-sub {
+    font-family: var(--sans);
+    font-size: 14px; line-height: 1.5;
+    color: var(--fg-dim);
+    margin: 0;
+    max-width: 42ch;
+    grid-column: 1 / -1;
+  }
+  @media (min-width: 860px) { .offer .o-sub { grid-column: 2 / 3; } }
+
+  /* hero deliverables microcopy */
+  .hero-deliverables {
+    margin-top: 28px;
+    font-family: var(--mono);
+    font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--fg-mute);
+    position: relative; z-index: 1;
+  }
+  .hero-deliverables b { color: var(--fg-dim); font-weight: 500; margin-right: 10px; }
+
+  /* ── final (poster image is the section) ── */
+  .final {
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+    background: oklch(0.85 0.21 122); /* lime fallback under the image */
+    isolation: isolate;
+  }
+  .final-poster {
+    width: 100%;
+    aspect-ratio: 1664 / 936;
+    background-image: url("assets/final-bg.png");
+    background-size: cover;
+    background-position: var(--final-bg-x, 50%) var(--final-bg-y, 50%);
+    background-repeat: no-repeat;
+    position: relative;
+  }
+  .final-cta-strip {
+    background: oklch(0.85 0.21 122);
+    padding: 36px 0 56px;
+    position: relative;
+  }
+  .final-cta-strip::before {
+    content: "";
+    position: absolute; left: 0; right: 0; top: 0;
+    height: 1px;
+    background: color-mix(in oklab, #000 18%, transparent);
+  }
+  .final .ctas {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  @media (min-width: 560px) { .final .ctas { flex-direction: row; flex-wrap: wrap; align-items: center; } }
+  .final .btn-primary {
+    background: #0a0a0a;
+    color: oklch(0.85 0.21 122);
+  }
+  .final .btn-primary:hover { background: #000; }
+  .final .btn-ghost {
+    background: transparent;
+    color: #0a0a0a;
+    border: 1px solid color-mix(in oklab, #000 28%, transparent);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .final .btn-ghost:hover {
+    background: color-mix(in oklab, #000 7%, transparent);
+    border-color: color-mix(in oklab, #000 50%, transparent);
+  }
+  .final .availability {
+    margin: 24px 0 0;
+    padding-top: 20px;
+    border-top: 1px solid color-mix(in oklab, #000 18%, transparent);
+    color: color-mix(in oklab, #0a0a0a 60%, transparent);
+    font-family: var(--mono);
+    font-size: 11px; letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+  .final .availability b { color: #0a0a0a; font-weight: 600; }
+
+  /* ── footer ── */
+  footer {
+    border-top: 1px solid var(--rule);
+    padding: 40px 0 calc(40px + env(safe-area-inset-bottom));
+    color: var(--fg-mute);
+    font-family: var(--mono);
+    font-size: 11px; letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .foot-row {
+    display: flex; flex-direction: column; gap: 16px;
+    justify-content: space-between;
+  }
+  @media (min-width: 720px) { .foot-row { flex-direction: row; align-items: center; } }
+  .foot-row a:hover { color: var(--fg); }
+
+  /* ── reveal ── */
+  .reveal { opacity: 0; transform: translateY(20px);
+    transition: opacity .7s ease, transform .7s cubic-bezier(.2,.7,.2,1);
+    will-change: opacity, transform; }
+  .reveal.in { opacity: 1; transform: none; }
+  .reveal.delay-1 { transition-delay: 0.08s; }
+  .reveal.delay-2 { transition-delay: 0.16s; }
+  .reveal.delay-3 { transition-delay: 0.24s; }
+
+  /* ── ken-burns slow zoom for image backdrops ── */
+  @keyframes kenburns {
+    0%   { transform: scale(1)    translate(0, 0); }
+    100% { transform: scale(1.08) translate(-0.6%, -0.4%); }
+  }
+
+  /* ── word-by-word blur reveal ── */
+  .word-stagger .w {
+    display: inline-block;
+    opacity: 0;
+    filter: blur(14px);
+    transform: translateY(0.22em);
+    transition:
+      opacity 0.7s cubic-bezier(.2,.7,.2,1),
+      filter 0.9s cubic-bezier(.2,.7,.2,1),
+      transform 0.9s cubic-bezier(.2,.7,.2,1);
+    transition-delay: calc(var(--i, 0) * 70ms);
+    will-change: opacity, filter, transform;
+  }
+  .word-stagger.in .w {
+    opacity: 1;
+    filter: blur(0);
+    transform: none;
+  }
+
+  /* ── concept reel stagger (cut section) ── */
+  .cut-sec:not(.cs-in) .stack-track { opacity: 0; }
+  .cut-sec .stack-track {
+    transition: opacity .6s ease;
+  }
+
+  /* ── cursor-follow glow on math cards ── */
+  .math-card { --mx: 50%; --my: 50%; }
+  .math-card::after {
+    content: "";
+    position: absolute; inset: 0;
+    background: radial-gradient(280px 280px at var(--mx) var(--my),
+      oklch(0.88 0.18 115 / 0.12), transparent 65%);
+    opacity: 0;
+    transition: opacity .35s ease;
+    pointer-events: none;
+    border-radius: inherit;
+  }
+  .math-card:hover::after { opacity: 1; }
+  .math-card { transition: transform .35s cubic-bezier(.2,.7,.2,1), border-color .25s ease; }
+  .math-card:hover { transform: translateY(-3px); border-color: color-mix(in oklab, var(--fg) 22%, transparent); }
+
+  /* ── method step micro-lift ── */
+  .step { transition: background .25s ease, transform .35s cubic-bezier(.2,.7,.2,1); }
+  .step:hover { transform: translateY(-2px); }
+
+  /* ── chip hover ── */
+  .chip { transition: border-color .2s ease, background .2s ease, transform .25s ease; }
+  .chip:hover { transform: translateY(-1px); }
+
+  /* ── nav logo subtle ── */
+  .logo { transition: opacity .2s ease; }
+  .logo:hover { opacity: 0.85; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; transition: none; }
+    .word-stagger .w { opacity: 1; filter: none; transform: none; transition: none; }
+    .cut-sec:not(.cs-in) .stack-track { opacity: 1; }
+    .stack-track { animation: none !important; }
+    .hero::before, .math-sec::before { animation: none; }
+    html { scroll-behavior: auto; }
+  }
+
+  ::selection { background: var(--accent); color: var(--accent-ink); }
+
+  /* ── tweak mode (drag-to-reposition) ── */
+  body.tweak-mode .draggable-bg {
+    cursor: grab;
+    outline: 2px dashed color-mix(in oklab, var(--accent) 70%, transparent);
+    outline-offset: -8px;
+    transition: outline-color .2s ease;
+  }
+  body.tweak-mode .draggable-bg:hover {
+    outline-color: var(--accent);
+  }
+  body.tweak-mode .draggable-bg.dragging {
+    cursor: grabbing;
+  }
+  .tweak-hint {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 100;
+    background: oklch(0.20 0.006 80);
+    color: var(--fg);
+    border: 1px solid var(--rule);
+    border-radius: 14px;
+    padding: 14px 18px;
+    font-family: var(--sans);
+    font-size: 13px;
+    line-height: 1.45;
+    max-width: 260px;
+    box-shadow: 0 20px 60px -20px rgba(0,0,0,0.55);
+    display: none;
+    user-select: none;
+  }
+  body.tweak-mode .tweak-hint { display: block; }
+  .tweak-hint .t-title {
+    font-family: var(--mono);
+    font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--accent);
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 6px;
+  }
+  .tweak-hint .t-title::before {
+    content: ""; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent);
+  }
+  .tweak-hint p { margin: 0; color: var(--fg-dim); }
+  .tweak-hint .t-reset {
+    margin-top: 10px;
+    display: inline-flex;
+    font-family: var(--mono);
+    font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--fg-mute);
+    background: none; border: 1px solid var(--rule);
+    padding: 6px 10px; border-radius: 999px;
+    cursor: pointer;
+  }
+  .tweak-hint .t-reset:hover { color: var(--fg); border-color: color-mix(in oklab, var(--fg) 30%, transparent); }
+</style>
+
+<!-- ===== Inquiry modal (shared) ===== -->
+<link rel="stylesheet" href="../_shared/inquiry-modal.css" />
+<style>
+  /* Theme override — match Identity's warm-dark + lime accent palette */
+  .inquiry-modal {
+    --im-bg:        oklch(0.16 0.005 80);
+    --im-card-bg:   oklch(0.20 0.006 80);
+    --im-ink:       oklch(0.96 0.008 85);
+    --im-mute:      oklch(0.78 0.008 85);
+    --im-dim:       oklch(0.55 0.008 85);
+    --im-line:      oklch(0.30 0.008 85);
+    --im-accent:    oklch(0.88 0.18 115);
+    --im-soft:      color-mix(in oklab, oklch(0.88 0.18 115) 10%, transparent);
+    --im-scrim:     oklch(0.10 0.005 80 / 0.86);
+    --im-serif:     "Archivo Black", "Inter", system-ui, sans-serif;
+    --im-sans:      "Inter", system-ui, sans-serif;
+    --im-mono:      "JetBrains Mono", ui-monospace, monospace;
+    --im-radius:    6px;
+  }
+  /* Identity is brutalist — swap serif title to display weight, remove italic */
+  .inquiry-modal .im-title {
+    font-family: var(--im-serif);
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    line-height: 0.95;
+  }
+  .inquiry-modal .im-title em {
+    font-style: normal;
+    font-family: var(--im-sans);
+    font-weight: 400;
+    color: var(--im-accent);
+  }
+  .inquiry-modal .im-field input,
+  .inquiry-modal .im-field select { font-family: var(--im-sans); font-size: 17px; font-weight: 400; }
+  .inquiry-modal .im-option .name { font-family: var(--im-sans); font-weight: 600; font-size: 18px; }
+  .inquiry-modal .im-option .name em { font-style: normal; color: var(--im-accent); }
+  .inquiry-modal .im-wa-desc { font-family: var(--im-sans); font-weight: 500; }
+  .inquiry-modal .im-wa-desc em { font-style: normal; color: var(--im-accent); }
+  .inquiry-modal .im-success-inner h3 { font-family: var(--im-serif); font-weight: 900; }
+  .inquiry-modal .im-success-inner h3 em { font-style: normal; font-family: var(--im-sans); font-weight: 400; color: var(--im-accent); }
+  .inquiry-modal .im-btn:hover { background: var(--im-accent); color: var(--im-bg); border-color: var(--im-accent); }
+  .inquiry-modal .im-close:hover { background: var(--im-accent); color: var(--im-bg); border-color: var(--im-accent); }
+  .inquiry-modal .im-option:has(input:checked) { border-color: var(--im-accent); background: var(--im-soft); }
+  .inquiry-modal .im-wa-btn:hover { background: var(--im-accent); color: var(--im-bg); border-color: var(--im-accent); }
+</style>
+</head>
+<body>
+
+<!-- ── nav ── -->
+<nav class="nav" id="nav">
+  <div class="wrap nav-inner">
+    <div class="nav-left">
+      <a href="../../index.html" class="nav-back">← Related Motion Studios</a>
+      <a href="#top" class="logo"><span class="amp">RMS</span> Identity</a>
+    </div>
+    <div class="nav-cta">
+      <a href="#contact" class="btn btn-primary" data-open-form="brief">Brief us <span class="arrow">↗</span></a>
+    </div>
+  </div>
+</nav>
+
+<!-- ── hero ── -->
+<header class="hero" id="top">
+  <div class="wrap">
+    <div class="hero-chip-row reveal">
+      <span class="chip"><span class="dot"></span>Live · 4 tests running in Lagos · Nairobi · Accra</span>
+    </div>
+
+    <h1 class="display reveal">
+      <span class="line">We don't</span>
+      <span class="line indent"><em>guess</em> what</span>
+      <span class="line">Africa wants.</span>
+    </h1>
+
+    <div class="hero-row">
+      <p class="hero-sub reveal delay-1">
+        We test your ad with real people in your market <b>before</b> we shoot anything. Only when the numbers say go do we move to camera.
+      </p>
+      <div class="hero-cta reveal delay-2">
+        <a href="#contact" class="btn btn-primary" data-open-form="brief">Brief us <span class="arrow">↗</span></a>
+        <a href="#method" class="btn btn-ghost">See how</a>
+      </div>
+    </div>
+
+    <div class="hero-deliverables reveal delay-3">
+      <b>We still make the work →</b>Brand films · Launch campaigns · Product reels · Social content
+    </div>
+  </div>
+</header>
+
+<!-- ── method ── -->
+<section class="sec method" id="method" data-screen-label="01 Method">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">The new way</span>
+      <h2 class="display word-stagger">Smart brands<br/>don't <em>shoot</em> first.</h2>
+      <p class="word-stagger">They <span class="hl">test the ad</span> with real people first. Then they shoot the one that worked. That's it.</p>
+    </div>
+
+    <div class="steps">
+      <article class="step reveal">
+        <span class="n">01 — Study</span>
+        <h3>Learn.</h3>
+        <p>We learn how your audience actually decides — what they trust, what they ignore.</p>
+      </article>
+
+      <article class="step reveal delay-1">
+        <span class="n">02 — Test</span>
+        <h3>Cut.</h3>
+        <p>Dozens of versions go to a real test audience. Only the ones that work survive.</p>
+      </article>
+
+      <article class="step reveal delay-2">
+        <span class="n">03 — Shoot</span>
+        <h3>Ship.</h3>
+        <p>Only when the test says yes do we shoot — with the numbers attached up front.</p>
+      </article>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── the cut (its own section, with production-still backdrop) ── -->
+<section class="cut-sec" id="cut" data-screen-label="01b The cut">
+  <div class="wrap">
+    <div class="test-stack reveal">
+      <div class="stack-eyebrow">
+        <span class="chip"><span class="dot"></span>Inside step 02 · The cut</span>
+      </div>
+      <!--
+        ─────────────────────────────────────────────────────────────
+        DEVELOPER NOTE — concept reel videos
+        ─────────────────────────────────────────────────────────────
+        These 6 videos currently stream from Dropbox preview URLs so the
+        live preview works. When integrating into the production site,
+        REPLACE each `src` with the local path:
+
+            videos/VID - 01.mp4   →  v0.1
+            videos/VID - 02.mp4   →  v0.2
+            videos/VID - 03.mp4   →  v0.3
+            videos/VID - 04.mp4   →  v0.4   (THE WINNER — "shot ✓")
+            videos/VID - 05.mp4   →  v0.5
+            videos/VID - 06.mp4   →  v0.6
+
+        Place the `videos/` folder right next to `index.html`. Do not
+        rename the files — keep the spaces and dashes exactly.
+        ─────────────────────────────────────────────────────────────
+      -->
+      <div class="stack-row" aria-hidden="true">
+        <div class="stack-track">
+          <div class="concept" data-vid="0">
+            <video src="https://www.dropbox.com/scl/fi/twgeyuj2lfuzq7imlgexv/VID-01.mp4?rlkey=fhqe8gmg01p0oa7lk5ahb6ogc&amp;raw=1" data-local-src="videos/VID - 01.mp4" muted loop playsinline preload="auto" autoplay></video>
+            <div class="lab"><span>v0.1</span><span class="s s-cut">cut</span><span class="s s-shot">shot ✓</span></div>
+          </div>
+          <div class="concept" data-vid="1">
+            <video src="https://www.dropbox.com/scl/fi/qq31tqso65ecomxjjzg2h/VID-02.mp4?rlkey=3qojy5txqj8apeprcvd891u16&amp;raw=1" data-local-src="videos/VID - 02.mp4" muted loop playsinline preload="auto" autoplay></video>
+            <div class="lab"><span>v0.2</span><span class="s s-cut">cut</span><span class="s s-shot">shot ✓</span></div>
+          </div>
+          <div class="concept" data-vid="2">
+            <video src="https://www.dropbox.com/scl/fi/9itaogjsv0kn4br2z5fdg/VID-03.mp4?rlkey=6qwxezmo61a237k0leye8adbi&amp;raw=1" data-local-src="videos/VID - 03.mp4" muted loop playsinline preload="auto" autoplay></video>
+            <div class="lab"><span>v0.3</span><span class="s s-cut">cut</span><span class="s s-shot">shot ✓</span></div>
+          </div>
+          <div class="concept winner" data-vid="3">
+            <video src="https://www.dropbox.com/scl/fi/wa51zfbfo1favalzhecrd/VID-04.mp4?rlkey=zy1x1au7cyt9uii63yyk17xsh&amp;raw=1" data-local-src="videos/VID - 04.mp4" muted loop playsinline preload="auto" autoplay></video>
+            <div class="lab"><span>v0.4</span><span class="s s-cut">cut</span><span class="s s-shot">shot ✓</span></div>
+          </div>
+          <div class="concept" data-vid="4">
+            <video src="https://www.dropbox.com/scl/fi/lh2z20tu0wrfi0kmezx6q/VID-05.mp4?rlkey=w3q30c9e5xu0cocazk2gblamv&amp;raw=1" data-local-src="videos/VID - 05.mp4" muted loop playsinline preload="auto" autoplay></video>
+            <div class="lab"><span>v0.5</span><span class="s s-cut">cut</span><span class="s s-shot">shot ✓</span></div>
+          </div>
+          <div class="concept" data-vid="5">
+            <video src="https://www.dropbox.com/scl/fi/5weessubwk7obp33po6hv/VID-06.mp4?rlkey=rljmdfn243gaznv58n2nfx7ie&amp;raw=1" data-local-src="videos/VID - 06.mp4" muted loop playsinline preload="auto" autoplay></video>
+            <div class="lab"><span>v0.6</span><span class="s s-cut">cut</span><span class="s s-shot">shot ✓</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="stack-caption">
+        <div class="line-1 word-stagger">100 ideas in.<br/><em>One</em> worth shooting.</div>
+        <div class="line-2">The market picks. Then the camera rolls.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── the math ── -->
+<section class="sec math-sec" id="math" data-screen-label="02 The math">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">The math</span>
+      <h2 class="display word-stagger">Either way,<br/>it's <em>millions</em>.<br/>One way, you know.</h2>
+      <p class="word-stagger">If you're going to spend it anyway, spend a small slice first to find out which idea actually moves your market. Then commit the rest with eyes open.</p>
+    </div>
+
+    <div class="math-grid">
+      <article class="math-card old reveal">
+        <span class="m-tag">The usual way</span>
+        <div class="m-cost">$20M</div>
+        <ul class="m-steps">
+          <li>Brief in</li>
+          <li>Shoot the idea</li>
+          <li>Air it</li>
+          <li>Find out on TV</li>
+        </ul>
+        <p class="m-outcome">If it flops, that's twenty million dollars gone — and the campaign window with it.</p>
+      </article>
+
+      <article class="math-card new reveal delay-1">
+        <span class="m-tag">Our way</span>
+        <div class="m-cost">$2–4M <span class="arrow">then</span><span class="then">$18M</span></div>
+        <ul class="m-steps">
+          <li>Brief in</li>
+          <li>Test 100 versions with real people</li>
+          <li>Cut the 99 that don't move them</li>
+          <li>Shoot only the one that does</li>
+        </ul>
+        <p class="m-outcome">If the test fails, you walk away <b>$16M lighter — not $20M</b>. If it works, you ship a winner.</p>
+      </article>
+    </div>
+
+    <div class="offer reveal delay-2">
+      <span class="o-tag">Honest first brief</span>
+      <h3 class="o-copy word-stagger">We're new. The first <em>three</em> partners get the test phase at cost.</h3>
+      <p class="o-sub">If the data doesn't excite you, you walk. No production fee, no pressure. We'd rather earn the next ten campaigns than oversell the first one.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── final cta ── -->
+<section class="final" id="contact" data-screen-label="03 Contact">
+  <div class="final-poster reveal" role="img" aria-label="Stop guessing. Start testing. — We test bold ideas before the market does."></div>
+  <div class="final-cta-strip">
+    <div class="wrap">
+      <div class="ctas reveal">
+        <a href="#brief" class="btn btn-primary" data-open-form="brief">Brief the studio <span class="arrow">↗</span></a>
+        <a href="#whatsapp" class="btn btn-ghost" data-whatsapp>WhatsApp the studio</a>
+      </div>
+      <div class="availability reveal delay-1">
+        <b>Booking now</b> &nbsp;·&nbsp; Q3 2026 &nbsp;·&nbsp; 2 of 3 spots left
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── footer ── -->
+<footer>
+  <div class="wrap foot-row">
+    <div>© 2026 RMS Identity</div>
+    <div><a href="/cdn-cgi/l/email-protection#016865646f756875784173646d607564656c6e75686e6f72757465686e722f626e6c"><span class="__cf_email__" data-cfemail="335a57565d475a474a7341565f524756575e5c475a5c5d404746575a5c401d505c5e">[email&#160;protected]</span></a></div>
+  </div>
+</footer>
+
+<!-- ── tweak mode hint ── -->
+<div class="tweak-hint" id="tweak-hint">
+  <div class="t-title">Tweaks · reposition</div>
+  <p>Click &amp; drag any background image to reframe it. Changes persist.</p>
+  <button type="button" class="t-reset" id="tweak-reset">Reset all</button>
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  // Tweakable background positions — click & drag any section bg image
+  const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+    "heroBgX": 57.6,
+    "heroBgY": 49.5,
+    "methodBgX": 50,
+    "methodBgY": 50,
+    "mathBgX": 50,
+    "mathBgY": 40,
+    "finalBgX": 50,
+    "finalBgY": 50
+  }/*EDITMODE-END*/;
+
+  const tweakState = Object.assign({}, TWEAK_DEFAULTS);
+  const docRoot = document.documentElement;
+
+  function applyTweaks() {
+    docRoot.style.setProperty('--hero-bg-x', tweakState.heroBgX + '%');
+    docRoot.style.setProperty('--hero-bg-y', tweakState.heroBgY + '%');
+    docRoot.style.setProperty('--method-bg-x', tweakState.methodBgX + '%');
+    docRoot.style.setProperty('--method-bg-y', tweakState.methodBgY + '%');
+    docRoot.style.setProperty('--math-bg-x', tweakState.mathBgX + '%');
+    docRoot.style.setProperty('--math-bg-y', tweakState.mathBgY + '%');
+    docRoot.style.setProperty('--final-bg-x', tweakState.finalBgX + '%');
+    docRoot.style.setProperty('--final-bg-y', tweakState.finalBgY + '%');
+  }
+  applyTweaks();
+
+  let tweakMode = false;
+  window.addEventListener('message', (ev) => {
+    const d = ev.data;
+    if (!d || typeof d !== 'object') return;
+    if (d.type === '__activate_edit_mode') {
+      tweakMode = true;
+      document.body.classList.add('tweak-mode');
+    } else if (d.type === '__deactivate_edit_mode') {
+      tweakMode = false;
+      document.body.classList.remove('tweak-mode');
+    }
+  });
+  window.parent.postMessage({type: '__edit_mode_available'}, '*');
+
+  function setupDrag(el, xKey, yKey) {
+    if (!el) return;
+    el.classList.add('draggable-bg');
+    let dragging = false;
+    let startX, startY, startBgX, startBgY, pid;
+    let pendingPersist = null;
+
+    el.addEventListener('pointerdown', (e) => {
+      if (!tweakMode) return;
+      if (e.target.closest('a, button, input, textarea, select')) return;
+      dragging = true;
+      pid = e.pointerId;
+      startX = e.clientX;
+      startY = e.clientY;
+      startBgX = tweakState[xKey];
+      startBgY = tweakState[yKey];
+      try { el.setPointerCapture(pid); } catch (_) {}
+      el.classList.add('dragging');
+      e.preventDefault();
+    });
+
+    el.addEventListener('pointermove', (e) => {
+      if (!dragging) return;
+      const rect = el.getBoundingClientRect();
+      const dx = (e.clientX - startX) / rect.width * 100;
+      const dy = (e.clientY - startY) / rect.height * 100;
+      // dragging right reveals the right side -> bg position % decreases
+      tweakState[xKey] = Math.max(0, Math.min(100, startBgX - dx));
+      tweakState[yKey] = Math.max(0, Math.min(100, startBgY - dy));
+      applyTweaks();
+    });
+
+    function endDrag() {
+      if (!dragging) return;
+      dragging = false;
+      el.classList.remove('dragging');
+      try { el.releasePointerCapture(pid); } catch (_) {}
+      clearTimeout(pendingPersist);
+      pendingPersist = setTimeout(() => {
+        const edits = {};
+        edits[xKey] = Math.round(tweakState[xKey] * 10) / 10;
+        edits[yKey] = Math.round(tweakState[yKey] * 10) / 10;
+        window.parent.postMessage({type: '__edit_mode_set_keys', edits}, '*');
+      }, 80);
+    }
+    el.addEventListener('pointerup', endDrag);
+    el.addEventListener('pointercancel', endDrag);
+  }
+
+  setupDrag(document.querySelector('.hero'), 'heroBgX', 'heroBgY');
+  setupDrag(document.querySelector('.method'), 'methodBgX', 'methodBgY');
+  setupDrag(document.querySelector('.math-sec'), 'mathBgX', 'mathBgY');
+  setupDrag(document.querySelector('.final-poster'), 'finalBgX', 'finalBgY');
+
+  document.getElementById('tweak-reset').addEventListener('click', () => {
+    Object.assign(tweakState, TWEAK_DEFAULTS);
+    applyTweaks();
+    window.parent.postMessage({
+      type: '__edit_mode_set_keys',
+      edits: Object.assign({}, TWEAK_DEFAULTS)
+    }, '*');
+  });
+</script>
+
+<script>
+  const nav = document.getElementById('nav');
+  function onScroll() {
+    nav.classList.toggle('scrolled', window.scrollY > 8);
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  /* ── word-by-word wrapping for blur reveal ── */
+  (function wrapWords() {
+    const targets = document.querySelectorAll('.word-stagger');
+    targets.forEach(root => {
+      let counter = 0;
+      function process(node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+          const text = node.textContent;
+          if (!text || !text.trim()) return;
+          const frag = document.createDocumentFragment();
+          const parts = text.split(/(\s+)/);
+          parts.forEach(part => {
+            if (/^\s+$/.test(part)) {
+              frag.appendChild(document.createTextNode(part));
+            } else if (part) {
+              const span = document.createElement('span');
+              span.className = 'w';
+              span.style.setProperty('--i', counter++);
+              span.textContent = part;
+              frag.appendChild(span);
+            }
+          });
+          node.parentNode.replaceChild(frag, node);
+        } else if (node.nodeType === Node.ELEMENT_NODE && node.nodeName !== 'BR') {
+          Array.from(node.childNodes).forEach(process);
+        }
+      }
+      Array.from(root.childNodes).forEach(process);
+    });
+  })();
+
+  /* ── cut-section concept cascade trigger ── */
+  const cutSec = document.querySelector('.cut-sec');
+  if (cutSec) {
+    // Duplicate the track contents so the marquee can loop seamlessly
+    const track = cutSec.querySelector('.stack-track');
+    if (track) {
+      const clone = track.cloneNode(true);
+      clone.setAttribute('aria-hidden', 'true');
+      // strip autoplay/src from clones to save bandwidth - they're decorative duplicates
+      Array.from(clone.children).forEach(child => {
+        track.appendChild(child);
+      });
+    }
+
+    const cutObserver = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('cs-in');
+          e.target.querySelectorAll('video').forEach(v => {
+            v.play().catch(() => {});
+          });
+          cutObserver.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.18, rootMargin: '0px 0px -8% 0px' });
+    const r = cutSec.getBoundingClientRect();
+    if (r.top < window.innerHeight * 0.82 && r.bottom > 0) {
+      cutSec.classList.add('cs-in');
+      cutSec.querySelectorAll('video').forEach(v => v.play().catch(() => {}));
+    } else {
+      cutObserver.observe(cutSec);
+    }
+
+    // Click any concept to promote it to winner (demotes previous winner)
+    cutSec.addEventListener('click', (e) => {
+      const card = e.target.closest('.concept');
+      if (!card || !cutSec.contains(card)) return;
+      const vid = card.dataset.vid;
+      if (vid === undefined) return;
+      cutSec.querySelectorAll('.concept').forEach(c => {
+        c.classList.toggle('winner', c.dataset.vid === vid);
+      });
+    });
+  }
+
+  /* ── cursor-follow glow on math cards ── */
+  document.querySelectorAll('.math-card').forEach(card => {
+    card.addEventListener('pointermove', (e) => {
+      const r = card.getBoundingClientRect();
+      card.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+      card.style.setProperty('--my', (e.clientY - r.top) + 'px');
+    });
+  });
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+  requestAnimationFrame(() => {
+    document.querySelectorAll('.reveal, .word-stagger').forEach(el => {
+      const r = el.getBoundingClientRect();
+      if (r.top < window.innerHeight && r.bottom > 0) el.classList.add('in');
+      else io.observe(el);
+    });
+  });
+  // safety: ensure nothing stays hidden if RAF/IO get throttled
+  setTimeout(() => {
+    document.querySelectorAll('.reveal:not(.in), .word-stagger:not(.in)').forEach(el => {
+      const r = el.getBoundingClientRect();
+      if (r.top < window.innerHeight + 200) el.classList.add('in');
+    });
+  }, 900);
+</script>
+
+<script src="mobile-preview.js"></script>
+
+<!-- ============================ INQUIRY MODAL ============================ -->
+<script>
+  window.INQUIRY_CONFIG = {
+    email: 'identity@relatedmotionstudios.com',
+    whatsapp: '2348112225555',
+    whatsappPrefill: "Hi RMS Identity — I want to brief the studio.",
+    productLabel: 'RMS Identity',
+    metaLabel: 'Q3 2026 — Briefing',
+    defaultTitle: 'Brief the studio. <em>No fluff.</em>',
+    defaultSub: 'Tell us what you want to test or build. We reply within 48 hours.',
+    waLabel: 'Or — direct line',
+    waDesc: 'WhatsApp the studio <em>— for fast back-and-forth.</em>',
+    intents: {
+      brief: {
+        title: 'Brief the studio. <em>No fluff.</em>',
+        sub: 'Tell us what you want to test or build. We reply within 48 hours.',
+        intentValue: 'Brief — new project',
+      },
+    },
+    fields: [
+      { id: 'name',  label: 'Name',  type: 'text',  required: true, autocomplete: 'name',  placeholder: 'Full name', row: 0 },
+      { id: 'email', label: 'Work email', type: 'email', required: true, autocomplete: 'email', placeholder: 'you@brand.com', row: 0 },
+
+      { id: 'company', label: 'Company / brand', type: 'text', placeholder: 'Where you work', row: 1 },
+      { id: 'phone',   label: 'Phone',           type: 'tel',  autocomplete: 'tel', placeholder: '+234 …', row: 1 },
+
+      { id: 'stage', label: 'Where you are', type: 'select', required: true, placeholder: 'Select one', row: 2,
+        options: [
+          'Starting from scratch — no concept yet',
+          'Have a concept — want to test it',
+          'Have a campaign — want to validate before spend',
+          'Just exploring — early conversation',
+        ],
+      },
+      { id: 'timeline', label: 'Timeline', type: 'select', placeholder: 'When are you shooting?', row: 2,
+        options: ['Within 30 days', 'Within 90 days', 'Q4 2026', '2027', 'No fixed date'],
+      },
+
+      { id: 'message', label: 'What you want to test or build', type: 'textarea', required: true, full: true,
+        placeholder: 'A few sentences. The clearer the brief, the sharper the reply.', rows: 5 },
+    ],
+  };
+</script>
+<script src="../_shared/inquiry-modal.js"></script>
+
+</body>
+</html>

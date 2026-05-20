@@ -1,0 +1,1567 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>RMS Tribe — A private creative house</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --vanta: #050505;
+    --char:  #0E0E0E;
+    --graph: #16161699;
+    --line:  #232323;
+    --bone:  #EDEAE3;
+    --mute:  #8A847B;
+    --dim:   #5A554E;
+    --ember: #B14A2C;     /* reserved accent — used only on CTA hover */
+    --serif: "Cormorant Garamond", "Times New Roman", serif;
+    --sans:  "Inter", system-ui, sans-serif;
+    --mono:  "JetBrains Mono", ui-monospace, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--vanta); color: var(--bone); }
+  body {
+    font-family: var(--sans);
+    font-weight: 300;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+  ::selection { background: var(--bone); color: var(--vanta); }
+
+  /* ---------- shared ---------- */
+  .shell { max-width: 1320px; margin: 0 auto; padding: 0 40px; }
+  @media (max-width: 720px) { .shell { padding: 0 22px; } }
+
+  .meta {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--mute);
+  }
+  .rule { height: 1px; background: var(--line); width: 100%; }
+
+  section { position: relative; }
+
+  /* fade-in primitive */
+  .rise { opacity: 0; transform: translateY(14px); transition: opacity 1.2s ease, transform 1.2s cubic-bezier(.2,.7,.2,1); transition-delay: var(--d, 0ms); }
+  .rise.in { opacity: 1; transform: none; }
+
+  /* ---------- top nav ---------- */
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 22px 40px;
+    mix-blend-mode: difference;  /* keeps nav legible over any tone */
+    color: #EDEAE3;
+  }
+  .nav .mark {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 20px;
+    letter-spacing: 0.02em;
+    line-height: 1;
+  }
+  .nav .mark sup { font-family: var(--mono); font-style: normal; font-size: 9px; letter-spacing: 0.2em; vertical-align: super; opacity: .7; margin-left: 6px; }
+  .nav .mark-group { display: flex; align-items: center; gap: 16px; min-width: 0; }
+  .nav .back {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: inherit;
+    text-decoration: none;
+    opacity: 0.6;
+    white-space: nowrap;
+    transition: opacity 200ms ease;
+  }
+  .nav .back:hover { opacity: 1; }
+  .nav .sep { font-family: var(--mono); opacity: 0.3; font-size: 12px; }
+  @media (max-width: 720px) {
+    .nav .back { font-size: 9px; letter-spacing: 0.18em; }
+    .nav .sep { display: none; }
+    .nav .back .full { display: none; }
+  }
+  .nav-right { display: flex; gap: 28px; align-items: center; }
+  .nav-right a {
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: inherit; text-decoration: none; opacity: .75;
+  }
+  .nav-right a:hover { opacity: 1; }
+  @media (max-width: 720px) {
+    .nav { padding: 18px 22px; }
+    .nav-right a:not(.cta-mini) { display: none; }
+  }
+  .cta-mini {
+    border: 1px solid currentColor;
+    padding: 9px 14px 8px;
+    opacity: 1 !important;
+  }
+
+  /* ---------- hero ---------- */
+  .hero {
+    min-height: 64vh;
+    padding: 110px 0 60px;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    position: relative;
+    overflow: hidden;
+  }
+  @media (min-width: 1100px) {
+    .hero { min-height: 620px; }
+  }
+  .hero-art {
+    position: absolute; inset: 0; z-index: 0;
+    background-image: url('assets/hero.png');
+    background-size: cover;
+    background-position: center 35%;
+    background-repeat: no-repeat;
+    background-color: var(--vanta);
+    transform: scale(1.04);
+    animation: heroKenBurns 18s ease-in-out infinite alternate;
+    will-change: transform;
+  }
+  @keyframes heroKenBurns {
+    from { transform: scale(1.02) translate3d(-0.5%, -0.5%, 0); }
+    to   { transform: scale(1.08) translate3d(0.8%, 0.6%, 0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero-art { animation: none; transform: none; }
+    .plate, .plate-bg, .access-figure, .access-figure .fig-bg { transition: none !important; clip-path: none !important; transform: none !important; }
+  }
+  .hero-art::before {
+    /* lighter tonal grade — keeps text legible without crushing the photo */
+    content: "";
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(180deg, rgba(5,5,5,0.25) 0%, rgba(5,5,5,0.05) 35%, rgba(5,5,5,0.15) 70%, rgba(5,5,5,0.7) 100%),
+      linear-gradient(90deg, rgba(5,5,5,0.45) 0%, rgba(5,5,5,0) 30%, rgba(5,5,5,0) 70%, rgba(5,5,5,0.45) 100%);
+    pointer-events: none;
+  }
+  .hero-art::after {
+    /* fine film grain */
+    content: "";
+    position: absolute; inset: -50%;
+    background-image: radial-gradient(circle at center, rgba(255,255,255,0.035) 0.5px, transparent 0.6px);
+    background-size: 3px 3px;
+    mix-blend-mode: overlay;
+    opacity: .8;
+    pointer-events: none;
+  }
+  .hero-top {
+    position: relative; z-index: 2;
+    display: flex; justify-content: space-between; align-items: flex-end;
+    padding-bottom: 48px;
+    border-bottom: 1px solid var(--line);
+  }
+  .hero-top .meta-block { max-width: 280px; }
+  .hero-top .meta-block p { color: var(--mute); font-size: 12px; line-height: 1.7; margin-top: 10px; font-family: var(--sans); letter-spacing: 0; text-transform: none; }
+
+  .hero-mid {
+    position: relative; z-index: 2;
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 80px;
+    align-items: end;
+    padding-top: 56px;
+  }
+  .hero h1 {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(40px, 7vw, 104px);
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+    text-shadow: 0 2px 40px rgba(0,0,0,0.6);
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: var(--bone);
+  }
+  .hero h1 .strike {
+    color: var(--dim);
+    text-decoration: line-through;
+    text-decoration-thickness: 1px;
+    text-decoration-color: var(--dim);
+  }
+  .hero-sub {
+    color: var(--bone);
+    font-size: 15px;
+    line-height: 1.65;
+    max-width: 380px;
+    border-left: 1px solid rgba(237,234,227,0.35);
+    padding-left: 24px;
+    text-shadow: 0 2px 20px rgba(0,0,0,0.6);
+  }
+  .hero-bottom {
+    position: relative; z-index: 2;
+    display: flex; justify-content: space-between; align-items: center;
+    padding-top: 56px;
+    gap: 40px;
+  }
+  .ctas { display: flex; gap: 14px; flex-wrap: wrap; }
+  @media (max-width: 720px) {
+    .hero-top { flex-direction: column; align-items: flex-start; gap: 28px; padding-bottom: 56px; }
+    .hero-mid { grid-template-columns: 1fr; gap: 32px; padding-top: 56px; }
+    .hero-sub { max-width: none; }
+    .hero-bottom { flex-direction: column; align-items: flex-start; padding-top: 56px; }
+  }
+
+  /* ---------- buttons ---------- */
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--bone);
+    text-decoration: none;
+    padding: 16px 22px 15px;
+    border: 1px solid var(--bone);
+    background: transparent;
+    cursor: pointer;
+    transition: background .5s ease, color .5s ease, border-color .5s ease, padding .5s ease;
+  }
+  .btn .arr {
+    width: 18px; height: 1px; background: currentColor; position: relative; transition: width .5s ease;
+  }
+  .btn .arr::after {
+    content: ""; position: absolute; right: 0; top: -3px;
+    width: 7px; height: 7px;
+    border-top: 1px solid currentColor;
+    border-right: 1px solid currentColor;
+    transform: rotate(45deg);
+  }
+  .btn:hover { background: var(--bone); color: var(--vanta); }
+  .btn:hover .arr { width: 28px; }
+  .btn.ghost { border-color: var(--line); color: var(--mute); }
+  .btn.ghost:hover { background: transparent; color: var(--bone); border-color: var(--bone); }
+
+  /* ---------- generic section frame ---------- */
+  .section-pad { padding: 140px 0; }
+  @media (max-width: 720px) { .section-pad { padding: 96px 0; } }
+  .section-head {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 60px;
+    align-items: baseline;
+    padding-bottom: 60px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 80px;
+  }
+  .section-head h2 {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(34px, 4.4vw, 64px);
+    line-height: 1.02;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+  .section-head h2 em { font-style: italic; color: var(--mute); }
+  @media (max-width: 720px) {
+    .section-head { grid-template-columns: 1fr; gap: 22px; padding-bottom: 32px; margin-bottom: 48px; }
+  }
+
+  /* ---------- shared cinematic plate ---------- */
+  .plate {
+    position: relative;
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    aspect-ratio: 21 / 9;
+    background-color: var(--char);
+    margin-bottom: 80px;
+    overflow: hidden;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    clip-path: inset(6% 8% 6% 8%);
+    transition: clip-path 1.4s cubic-bezier(.22,.7,.18,1);
+  }
+  .plate.in { clip-path: inset(0% 0% 0% 0%); }
+  .plate-bg {
+    position: absolute;
+    inset: -6%;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    will-change: transform;
+    transform: scale(1.18) translate3d(0, var(--py, 0px), 0);
+    transition: transform 1.6s cubic-bezier(.22,.7,.18,1);
+  }
+  .plate.in .plate-bg {
+    transform: scale(1.04) translate3d(0, var(--py, 0px), 0);
+  }
+  .plate::after {
+    /* film grain */
+    content: "";
+    position: absolute; inset: -50%;
+    background-image: radial-gradient(circle at center, rgba(255,255,255,0.025) 0.5px, transparent 0.6px);
+    background-size: 3px 3px;
+    mix-blend-mode: overlay;
+    opacity: .7;
+    pointer-events: none;
+  }
+  .plate .plate-meta {
+    position: absolute;
+    top: 22px; left: max(22px, calc(50vw - 660px + 40px)); right: max(22px, calc(50vw - 660px + 40px));
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    pointer-events: none;
+    z-index: 2;
+  }
+  .plate .plate-meta .meta { color: var(--bone); opacity: .85; text-shadow: 0 1px 8px rgba(0,0,0,0.6); }
+  .plate .plate-meta, .plate .plate-caption {
+    opacity: 0; transform: translateY(8px);
+    transition: opacity 1s ease, transform 1s cubic-bezier(.22,.7,.18,1);
+    transition-delay: 600ms;
+  }
+  .plate.in .plate-meta, .plate.in .plate-caption { opacity: 1; transform: none; }
+  .plate .plate-caption {
+    position: absolute;
+    left: max(22px, calc(50vw - 660px + 40px));
+    right: max(22px, calc(50vw - 660px + 40px));
+    bottom: 22px;
+    z-index: 2;
+    display: flex; justify-content: space-between; align-items: flex-end;
+    gap: 40px;
+    pointer-events: none;
+  }
+  .plate .plate-caption p {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.02em;
+    line-height: 1.7;
+    color: var(--bone);
+    max-width: 32ch;
+    text-shadow: 0 1px 8px rgba(0,0,0,0.7);
+  }
+  .plate .plate-caption .meta { color: var(--mute); align-self: flex-end; }
+  @media (max-width: 720px) {
+    .plate { aspect-ratio: 4 / 5; margin-bottom: 48px; }
+    .plate .plate-caption { flex-direction: column; align-items: flex-start; gap: 14px; }
+  }
+
+  /* ---------- 02 problem ---------- */
+  .problem {
+    background: var(--vanta);
+  }
+  .problem-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    border-top: 1px solid var(--line);
+  }
+  .problem-cell {
+    padding: 80px 30px 60px 0;
+    border-right: 1px solid var(--line);
+    position: relative;
+  }
+  .problem-cell:last-child { border-right: none; }
+  .problem-cell .meta { margin-bottom: 40px; }
+  .problem-cell h3 {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(38px, 5vw, 72px);
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+  }
+  .problem-cell h3 em { font-style: italic; }
+  .problem-cell p { color: var(--mute); font-size: 13px; line-height: 1.7; margin-top: 28px; max-width: 28ch; }
+  @media (max-width: 720px) {
+    .problem-grid { grid-template-columns: 1fr; }
+    .problem-cell { padding: 48px 0; border-right: none; border-bottom: 1px solid var(--line); }
+    .problem-cell:last-child { border-bottom: none; }
+  }
+
+  /* ---------- 03 what this is ---------- */
+  .stmt-list { display: grid; gap: 0; border-top: 1px solid var(--line); }
+  .stmt {
+    display: grid;
+    grid-template-columns: 80px 1fr 1fr;
+    align-items: baseline;
+    gap: 40px;
+    padding: 44px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .stmt .num { font-family: var(--mono); font-size: 11px; letter-spacing: 0.22em; color: var(--dim); }
+  .stmt .is {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(28px, 3.8vw, 52px);
+    line-height: 1.05;
+    letter-spacing: -0.015em;
+  }
+  .stmt .isnt {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 300;
+    font-size: clamp(20px, 2vw, 26px);
+    color: var(--dim);
+    line-height: 1.3;
+    text-decoration: line-through;
+    text-decoration-thickness: 1px;
+    text-decoration-color: var(--dim);
+  }
+  @media (max-width: 720px) {
+    .stmt { grid-template-columns: 1fr; gap: 8px; padding: 32px 0; }
+    .stmt .num { order: -1; }
+  }
+
+  /* ---------- 04 inside ---------- */
+  .inside {
+    position: relative;
+  }
+  .inside-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 80px;
+    align-items: stretch;
+  }
+  .inside-list { display: flex; flex-direction: column; }
+  .inside-row {
+    display: grid;
+    grid-template-columns: 60px 1fr auto;
+    gap: 28px;
+    align-items: baseline;
+    padding: 36px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .inside-row:first-child { border-top: 1px solid var(--line); }
+  .inside-row .n { font-family: var(--mono); font-size: 11px; letter-spacing: 0.22em; color: var(--dim); }
+  .inside-row .label {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(26px, 2.8vw, 38px);
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+  }
+  .inside-row .tag { font-family: var(--mono); font-size: 10px; letter-spacing: 0.22em; color: var(--mute); text-transform: uppercase; }
+
+  .placeholder {
+    position: relative;
+    background: var(--char);
+    border: 1px solid var(--line);
+    min-height: 540px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 22px;
+    overflow: hidden;
+  }
+  .placeholder::before {
+    content: "";
+    position: absolute; inset: 0;
+    background-image: repeating-linear-gradient(
+      135deg,
+      rgba(237,234,227,0.025) 0 1px,
+      transparent 1px 14px
+    );
+  }
+  .placeholder.has-image::before {
+    background-image: linear-gradient(180deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.15) 35%, rgba(0,0,0,0.0) 55%, rgba(0,0,0,0.55) 100%);
+  }
+  .placeholder.has-image .ph-bg {
+    position: absolute; inset: 0;
+    background-size: cover;
+    background-position: center;
+    z-index: 0;
+  }
+  .placeholder.has-image .ph-meta,
+  .placeholder.has-image .ph-caption { z-index: 2; }
+  .placeholder.has-image .ph-caption p { color: var(--bone); }
+  .placeholder .ph-meta { display: flex; justify-content: space-between; position: relative; z-index: 1; }
+  .placeholder .ph-caption { position: relative; z-index: 1; max-width: 26ch; }
+  .placeholder .ph-caption .meta { color: var(--mute); }
+  .placeholder .ph-caption p { font-family: var(--mono); font-size: 11px; line-height: 1.7; color: var(--bone); margin-top: 10px; }
+  @media (max-width: 720px) {
+    .inside-grid { grid-template-columns: 1fr; gap: 40px; }
+    .placeholder { min-height: 360px; }
+  }
+
+  /* ---------- 05 who for / 06 who not — split ---------- */
+  .split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-top: 1px solid var(--line);
+  }
+  .split > div { padding: 80px 60px 80px 0; }
+  .split > div + div { padding-left: 60px; border-left: 1px solid var(--line); }
+  .split .col-meta { display: flex; gap: 12px; align-items: center; margin-bottom: 48px; }
+  .split .col-meta .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--bone); }
+  .split .for .col-meta .dot { background: var(--bone); }
+  .split .not .col-meta .dot { background: var(--dim); }
+  .split h3 {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(28px, 3.4vw, 44px);
+    line-height: 1.05;
+    letter-spacing: -0.015em;
+    margin-bottom: 36px;
+  }
+  .split h3 em { font-style: italic; color: var(--mute); }
+  .crit { display: flex; flex-direction: column; gap: 0; border-top: 1px solid var(--line); }
+  .crit li {
+    list-style: none;
+    padding: 26px 0;
+    border-bottom: 1px solid var(--line);
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(20px, 1.7vw, 26px);
+    line-height: 1.25;
+    color: var(--bone);
+    display: flex; gap: 18px; align-items: baseline;
+  }
+  .crit li::before {
+    content: "+";
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--mute);
+    transform: translateY(-2px);
+  }
+  .split .not .crit li { color: var(--dim); }
+  .split .not .crit li::before { content: "—"; color: var(--dim); }
+  @media (max-width: 860px) {
+    .split { grid-template-columns: 1fr; }
+    .split > div { padding: 56px 0; }
+    .split > div + div { padding-left: 0; border-left: none; border-top: 1px solid var(--line); }
+  }
+
+  /* ---------- 07 access ---------- */
+  .access {
+    background: var(--vanta);
+    text-align: left;
+    padding: 120px 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    position: relative;
+    overflow: hidden;
+  }
+  .access::before {
+    content: "";
+    position: absolute; inset: 0;
+    background: radial-gradient(60% 80% at 50% 50%, rgba(80,75,68,0.18), transparent 70%);
+    pointer-events: none;
+  }
+  .access .inner { position: relative; z-index: 1; }
+  .access-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    align-items: stretch;
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+  }
+  .access-text {
+    padding-left: max(40px, calc(50vw - 660px + 40px));
+    padding-right: 60px;
+    padding-top: 4px;
+  }
+  .access-figure {
+    position: relative;
+    background-color: var(--char);
+    min-height: 600px;
+    border-left: 1px solid var(--line);
+    overflow: hidden;
+    clip-path: inset(6% 6% 6% 0);
+    transition: clip-path 1.4s cubic-bezier(.22,.7,.18,1);
+  }
+  .access-figure.in { clip-path: inset(0% 0% 0% 0%); }
+  .access-figure .fig-bg {
+    position: absolute;
+    inset: -6%;
+    background-image: url('assets/access.png');
+    background-size: cover;
+    background-position: center;
+    will-change: transform;
+    transform: scale(1.15) translate3d(0, var(--py, 0px), 0);
+    transition: transform 1.6s cubic-bezier(.22,.7,.18,1);
+  }
+  .access-figure.in .fig-bg {
+    transform: scale(1.03) translate3d(0, var(--py, 0px), 0);
+  }
+  .access-figure .fig-meta, .access-figure .fig-caption {
+    opacity: 0; transform: translateY(8px);
+    transition: opacity 1s ease, transform 1s cubic-bezier(.22,.7,.18,1);
+    transition-delay: 600ms;
+  }
+  .access-figure.in .fig-meta, .access-figure.in .fig-caption { opacity: 1; transform: none; }
+  .access-figure::after {
+    content: "";
+    position: absolute; inset: -50%;
+    background-image: radial-gradient(circle at center, rgba(255,255,255,0.025) 0.5px, transparent 0.6px);
+    background-size: 3px 3px;
+    mix-blend-mode: overlay;
+    opacity: .7;
+    pointer-events: none;
+  }
+  .access-figure .fig-meta {
+    position: absolute;
+    inset: 22px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    z-index: 2;
+  }
+  .access-figure .fig-caption {
+    position: absolute;
+    left: 22px; bottom: 22px; right: 22px;
+    z-index: 2;
+  }
+  .access-figure .fig-caption .meta { color: var(--mute); }
+  .access-figure .fig-caption p {
+    font-family: var(--mono);
+    font-size: 11px;
+    line-height: 1.7;
+    color: var(--bone);
+    margin-top: 8px;
+    max-width: 28ch;
+    text-shadow: 0 1px 8px rgba(0,0,0,0.7);
+  }
+  @media (max-width: 860px) {
+    .access-grid { grid-template-columns: 1fr; gap: 0; }
+    .access-text { padding-left: 22px; padding-right: 22px; }
+    .access-figure { min-height: 420px; border-left: none; border-top: 1px solid var(--line); }
+  }
+  .access .meta { margin-bottom: 36px; }
+  .access h2 {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(34px, 4.6vw, 64px);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+  .access h2 em { font-style: italic; color: var(--mute); }
+  .access .stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0;
+    margin-top: 56px;
+    border-top: 1px solid var(--line);
+  }
+  .access .stat {
+    padding: 24px 24px 24px 0;
+    border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .access .stat:nth-child(2n) { border-right: none; }
+  .access .stat .meta { margin-bottom: 14px; }
+  .access .stat .v {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(28px, 3.4vw, 42px);
+    line-height: 1.1;
+    letter-spacing: -0.015em;
+  }
+  .access .stat .v em { font-style: italic; color: var(--mute); font-size: 0.7em; }
+  .access .ctas { margin-top: 48px; }
+  @media (max-width: 720px) {
+    .access { padding: 100px 0; }
+    .access .stats { grid-template-columns: 1fr 1fr; }
+    .access .stat { padding: 24px 16px 24px 0; border-bottom: 1px solid var(--line); }
+    .access .stat:nth-child(2n) { border-right: none; }
+  }
+
+  /* ---------- 08 closing ---------- */
+  .closing {
+    padding: 200px 0 240px;
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .closing-bg {
+    position: absolute; inset: 0; z-index: -2;
+    background-image: url('assets/definition.png');
+    background-size: cover;
+    background-position: center 30%;
+    background-repeat: no-repeat;
+    transform: scale(1.04);
+    animation: closeKenBurns 22s ease-in-out infinite alternate;
+    will-change: transform;
+  }
+  @keyframes closeKenBurns {
+    from { transform: scale(1.03) translate3d(-0.4%, -0.3%, 0); }
+    to   { transform: scale(1.09) translate3d(0.6%, 0.4%, 0); }
+  }
+  .closing-bg::before {
+    /* tonal grade for legibility — keeps the figure visible, darkens edges */
+    content: "";
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(180deg, rgba(5,5,5,0.55) 0%, rgba(5,5,5,0.35) 30%, rgba(5,5,5,0.55) 70%, rgba(5,5,5,0.92) 100%),
+      linear-gradient(90deg, rgba(5,5,5,0.65) 0%, rgba(5,5,5,0.15) 35%, rgba(5,5,5,0.15) 65%, rgba(5,5,5,0.65) 100%);
+  }
+  .closing-bg::after {
+    /* fine film grain to match the rest of the site */
+    content: "";
+    position: absolute; inset: -50%;
+    background-image: radial-gradient(circle at center, rgba(255,255,255,0.035) 0.5px, transparent 0.6px);
+    background-size: 3px 3px;
+    mix-blend-mode: overlay;
+    opacity: .75;
+    pointer-events: none;
+  }
+  .closing .shell { position: relative; z-index: 1; }
+  .closing .hash { color: var(--bone); opacity: .75; }
+  .closing-quote { text-shadow: 0 2px 40px rgba(0,0,0,0.65); }
+  @media (prefers-reduced-motion: reduce) {
+    .closing-bg { animation: none; transform: none; }
+  }
+  .closing-quote {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(44px, 8vw, 132px);
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+    max-width: 14ch;
+  }
+  .closing-quote em { font-style: italic; color: var(--mute); }
+  .closing .ctas { margin-top: 80px; }
+  .closing-foot {
+    margin-top: 200px;
+    padding-top: 36px;
+    border-top: 1px solid var(--line);
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+    align-items: end;
+  }
+  .closing-foot .col p { font-family: var(--mono); font-size: 11px; letter-spacing: 0.05em; color: var(--mute); line-height: 1.7; text-transform: uppercase; }
+  .closing-foot .col p.lite { color: var(--dim); }
+  .closing-foot .mark {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 22px;
+    line-height: 1;
+    color: var(--bone);
+  }
+  @media (max-width: 720px) {
+    .closing { padding: 120px 0 160px; }
+    .closing-foot { grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 100px; }
+  }
+
+  /* ---------- sticky CTA bar ---------- */
+  .sticky-cta {
+    position: fixed; right: 22px; bottom: 22px; z-index: 60;
+    display: flex; gap: 10px;
+    background: rgba(5,5,5,0.6);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid var(--line);
+    padding: 8px;
+    transition: opacity .6s ease, transform .6s ease;
+    opacity: 0; transform: translateY(10px);
+  }
+  .sticky-cta.show { opacity: 1; transform: none; }
+  .sticky-cta a {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--bone);
+    text-decoration: none;
+    padding: 10px 14px;
+    border: 1px solid transparent;
+    transition: background .4s ease, color .4s ease, border-color .4s ease;
+  }
+  .sticky-cta a.primary { border-color: var(--bone); }
+  .sticky-cta a.primary:hover { background: var(--ember); border-color: var(--ember); color: var(--bone); }
+  .sticky-cta a.ghost { color: var(--mute); }
+  .sticky-cta a.ghost:hover { color: var(--bone); }
+  @media (max-width: 540px) {
+    .sticky-cta { left: 22px; right: 22px; justify-content: space-between; }
+  }
+
+  /* large display contrast headers — number on top */
+  .hash {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    color: var(--mute);
+    text-transform: uppercase;
+  }
+
+  /* ---------- inquiry modal ---------- */
+  .modal-root {
+    position: fixed; inset: 0; z-index: 100;
+    display: flex; align-items: stretch; justify-content: stretch;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity .5s ease;
+  }
+  .modal-root.open { opacity: 1; pointer-events: auto; }
+  .modal-scrim {
+    position: absolute; inset: 0;
+    background: rgba(5,5,5,0.78);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+  .modal-card {
+    position: relative;
+    margin: auto;
+    width: min(680px, calc(100vw - 40px));
+    max-height: calc(100vh - 40px);
+    background: var(--vanta);
+    border: 1px solid var(--line);
+    padding: 56px 56px 48px;
+    overflow-y: auto;
+    transform: translateY(14px);
+    transition: transform .6s cubic-bezier(.2,.7,.2,1);
+  }
+  .modal-root.open .modal-card { transform: none; }
+  @media (max-width: 720px) {
+    .modal-card { padding: 44px 24px 36px; width: calc(100vw - 20px); max-height: calc(100vh - 20px); }
+  }
+  .modal-card .modal-head {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 28px;
+    margin-bottom: 32px;
+    gap: 24px;
+  }
+  .modal-card .modal-title {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(28px, 3.6vw, 40px);
+    line-height: 1;
+    letter-spacing: -0.015em;
+  }
+  .modal-card .modal-title em { font-style: italic; color: var(--mute); }
+  .modal-card .modal-sub { color: var(--mute); font-size: 12px; line-height: 1.6; margin-top: 12px; max-width: 38ch; }
+  .modal-close {
+    background: none; border: 1px solid var(--line); color: var(--bone);
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    font-family: var(--mono); font-size: 14px;
+    transition: background .3s ease, border-color .3s ease, color .3s ease;
+    flex-shrink: 0;
+  }
+  .modal-close:hover { background: var(--bone); color: var(--vanta); border-color: var(--bone); }
+
+  .form-grid { display: grid; gap: 24px; }
+  .field { display: flex; flex-direction: column; gap: 8px; }
+  .field label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--mute);
+  }
+  .field label .req { color: var(--bone); opacity: .6; margin-left: 4px; }
+  .field input,
+  .field textarea,
+  .field select {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: 20px;
+    line-height: 1.4;
+    color: var(--bone);
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--line);
+    padding: 8px 0 10px;
+    outline: none;
+    transition: border-color .3s ease;
+    resize: none;
+    width: 100%;
+    -webkit-appearance: none;
+            appearance: none;
+    border-radius: 0;
+  }
+  .field textarea { min-height: 60px; }
+  .field input::placeholder,
+  .field textarea::placeholder {
+    color: var(--dim);
+    font-style: italic;
+  }
+  .field input:focus,
+  .field textarea:focus,
+  .field select:focus { border-bottom-color: var(--bone); }
+  .field select { cursor: pointer; }
+  .field select option { background: var(--vanta); color: var(--bone); font-family: var(--sans); }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  @media (max-width: 540px) { .form-row { grid-template-columns: 1fr; } }
+
+  .modal-actions {
+    margin-top: 36px;
+    padding-top: 28px;
+    border-top: 1px solid var(--line);
+    display: flex; gap: 14px; flex-wrap: wrap;
+    align-items: center;
+  }
+  .modal-actions .btn { border: 1px solid var(--bone); }
+  .btn.submit-btn[disabled] { opacity: .5; cursor: wait; }
+  .form-note {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.05em;
+    color: var(--dim);
+    margin-left: auto;
+    text-transform: uppercase;
+  }
+  @media (max-width: 540px) { .form-note { margin-left: 0; width: 100%; } }
+
+  /* WhatsApp alt path */
+  .wa-row {
+    display: flex; align-items: center; gap: 14px;
+    margin-top: 28px;
+    padding: 18px 20px;
+    border: 1px solid var(--line);
+    background: rgba(237,234,227,0.02);
+  }
+  .wa-row .wa-text {
+    flex: 1; min-width: 0;
+  }
+  .wa-row .wa-text .lbl {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--mute);
+    margin-bottom: 4px;
+  }
+  .wa-row .wa-text .desc {
+    font-family: var(--serif);
+    font-size: 18px;
+    line-height: 1.2;
+    color: var(--bone);
+  }
+  .wa-row .wa-text .desc em { font-style: italic; color: var(--mute); }
+  .wa-btn {
+    flex-shrink: 0;
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--bone);
+    text-decoration: none;
+    padding: 12px 16px 11px;
+    border: 1px solid var(--bone);
+    transition: background .4s ease, color .4s ease;
+  }
+  .wa-btn:hover { background: var(--bone); color: var(--vanta); }
+  @media (max-width: 540px) {
+    .wa-row { flex-direction: column; align-items: flex-start; gap: 16px; }
+    .wa-btn { width: 100%; justify-content: center; }
+  }
+
+  /* success state */
+  .modal-success { display: none; }
+  .modal-card.is-success .form-wrap,
+  .modal-card.is-success .modal-head { display: none; }
+  .modal-card.is-success .modal-success { display: block; }
+  .modal-success-inner {
+    text-align: center;
+    padding: 40px 0;
+  }
+  .modal-success-inner .meta { margin-bottom: 24px; }
+  .modal-success-inner h3 {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(28px, 3.6vw, 44px);
+    line-height: 1.05;
+    letter-spacing: -0.015em;
+    margin-bottom: 20px;
+  }
+  .modal-success-inner h3 em { font-style: italic; color: var(--mute); }
+  .modal-success-inner p {
+    color: var(--mute);
+    font-size: 14px;
+    line-height: 1.7;
+    max-width: 36ch;
+    margin: 0 auto 32px;
+  }
+  .modal-success-inner .btn { display: inline-flex; }
+
+  body.modal-locked { overflow: hidden; }
+</style>
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<nav class="nav">
+  <div class="mark-group">
+    <a href="../../index.html" class="back">← <span class="full">Related Motion Studios</span></a>
+    <span class="sep">/</span>
+    <div class="mark">RMS Tribe<sup>EST · MMXXVI</sup></div>
+  </div>
+  <div class="nav-right">
+    <a href="#inside">Inside</a>
+    <a href="#access">Access</a>
+    <a href="#apply" class="cta-mini" data-open-form="apply">Apply</a>
+  </div>
+</nav>
+
+<!-- ============ 01 HERO ============ -->
+<header class="hero" data-screen-label="01 Hero">
+  <div class="hero-art"></div>
+
+  <div class="shell hero-top rise">
+    <div class="meta-block" style="text-align:right; margin-left:auto;">
+      <div class="meta">N° 026 — Spring Intake</div>
+    </div>
+  </div>
+
+  <div class="shell hero-mid">
+    <h1 class="rise" style="--d:120ms">
+      Most creatives<br/>
+      are <span class="strike">average</span>.<br/>
+      <em>This is not for them.</em>
+    </h1>
+    <p class="hero-sub rise" style="--d:280ms">
+      A private house for creatives who want to be seen, operate, and create at a higher level. Filtered by taste. Sustained by standard.
+    </p>
+  </div>
+
+  <div class="shell hero-bottom rise" style="--d:420ms">
+    <div class="ctas">
+      <a href="#apply" class="btn" data-open-form="apply">Apply to Join <span class="arr"></span></a>
+      <a href="#access" class="btn ghost" data-open-form="access">Request Access</a>
+    </div>
+    <div class="meta">Scroll ↓ &nbsp;&nbsp; 08 sections</div>
+  </div>
+</header>
+
+<!-- ============ 02 PROBLEM ============ -->
+<section class="section-pad problem" data-screen-label="02 Problem">
+  <div class="shell">
+    <div class="section-head rise">
+      <div class="hash">02 — The Problem</div>
+      <h2>The market is flooded with talent. <em>Almost none of it has taste.</em></h2>
+    </div>
+
+    <figure class="plate rise" aria-label="painter standing still while runners blur past">
+      <div class="plate-bg" style="background-image: url('assets/problem.png'); background-position: center 60%;"></div>
+      <div class="plate-meta">
+        <div class="meta">PL·02 — The Problem</div>
+        <div class="meta">35mm · 1/15s</div>
+      </div>
+      <div class="plate-caption">
+        <p>The world moves. Most do not stop to look. The one who does, is the work.</p>
+        <div class="meta">Vol. 026</div>
+      </div>
+    </figure>
+
+    <div class="problem-grid">
+      <div class="problem-cell rise">
+        <div class="meta">i.</div>
+        <h3>Talent is <em>everywhere.</em></h3>
+        <p>Skill has been democratized. Tools are free. The bar to entry has collapsed.</p>
+      </div>
+      <div class="problem-cell rise" style="--d:160ms">
+        <div class="meta">ii.</div>
+        <h3>Taste is <em>rare.</em></h3>
+        <p>Discernment cannot be downloaded. It is built — slowly, in the right rooms.</p>
+      </div>
+      <div class="problem-cell rise" style="--d:320ms">
+        <div class="meta">iii.</div>
+        <h3>Consistency is <em>almost nonexistent.</em></h3>
+        <p>Most creatives plateau because no one is holding the line. We hold it.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 03 WHAT THIS IS ============ -->
+<section class="section-pad" data-screen-label="03 What This Is">
+  <div class="shell">
+    <div class="section-head rise">
+      <div class="hash">03 — Definition</div>
+      <h2>This is a house. <em>Not what you've seen before.</em></h2>
+    </div>
+
+    <div class="stmt-list">
+      <div class="stmt rise">
+        <div class="num">A.</div>
+        <div class="is">A house.</div>
+        <div class="isnt">a community</div>
+      </div>
+      <div class="stmt rise" style="--d:120ms">
+        <div class="num">B.</div>
+        <div class="is">A standard.</div>
+        <div class="isnt">a safe space</div>
+      </div>
+      <div class="stmt rise" style="--d:240ms">
+        <div class="num">C.</div>
+        <div class="is">A system.</div>
+        <div class="isnt">a group chat</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 04 INSIDE ============ -->
+<section class="section-pad inside" id="inside" data-screen-label="04 Inside">
+  <div class="shell">
+    <div class="section-head rise">
+      <div class="hash">04 — Inside the House</div>
+      <h2>Four pillars. Practiced, <em>not preached.</em></h2>
+    </div>
+
+    <div class="inside-grid">
+      <div class="inside-list">
+        <div class="inside-row rise">
+          <div class="n">I.</div>
+          <div class="label">Visual identity elevation</div>
+          <div class="tag">Studio</div>
+        </div>
+        <div class="inside-row rise" style="--d:120ms">
+          <div class="n">II.</div>
+          <div class="label">High-level creative execution</div>
+          <div class="tag">Practice</div>
+        </div>
+        <div class="inside-row rise" style="--d:240ms">
+          <div class="n">III.</div>
+          <div class="label">Real collaboration <em style="font-family:var(--serif);font-style:italic;color:var(--mute);">— not talk</em></div>
+          <div class="tag">Cohort</div>
+        </div>
+        <div class="inside-row rise" style="--d:360ms">
+          <div class="n">IV.</div>
+          <div class="label">Cultural positioning</div>
+          <div class="tag">Posture</div>
+        </div>
+      </div>
+
+      <div class="placeholder has-image rise" style="--d:200ms" aria-label="studio practice — two artists working">
+        <div class="ph-bg" style="background-image: url('assets/studio.png'); background-position: center 55%;"></div>
+        <div class="ph-meta">
+          <div class="meta">PL · 04A</div>
+          <div class="meta">Studio · In Practice</div>
+        </div>
+        <div class="ph-caption">
+          <div class="meta">Inside the room</div>
+          <p>Hands moving. Standards holding. The work happens here — not in feeds, not in talk.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 05/06 WHO FOR / WHO NOT ============ -->
+<section class="section-pad" data-screen-label="05 Audience">
+  <div class="shell">
+    <div class="section-head rise">
+      <div class="hash">05 / 06 — Audience</div>
+      <h2>Two questions. <em>Answer honestly.</em></h2>
+    </div>
+
+    <figure class="plate rise" aria-label="the tribe portrait">
+      <div class="plate-bg" style="background-image: url('assets/tribe-circle.png'); background-position: center 45%;"></div>
+      <div class="plate-meta">
+        <div class="meta">PL·05 — The Tribe</div>
+        <div class="meta">N° 026 / Cohort</div>
+      </div>
+      <div class="plate-caption">
+        <p>Six creatives, one room. Filtered by taste — sustained by standard.</p>
+        <div class="meta">Members in residence</div>
+      </div>
+    </figure>
+
+    <div class="split">
+      <div class="for rise">
+        <div class="col-meta"><span class="dot"></span><span class="meta">For</span></div>
+        <h3>Who this is <em>for.</em></h3>
+        <ul class="crit">
+          <li>Creatives tired of being overlooked.</li>
+          <li>Creatives who know they are under-positioned.</li>
+          <li>Creatives ready to be pushed.</li>
+        </ul>
+      </div>
+      <div class="not rise" style="--d:160ms">
+        <div class="col-meta"><span class="dot"></span><span class="meta">Not for</span></div>
+        <h3>Who this is <em>not for.</em></h3>
+        <ul class="crit">
+          <li>Beginners looking for guidance.</li>
+          <li>Passive creatives.</li>
+          <li>People seeking motivation instead of execution.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 07 ACCESS ============ -->
+<section class="access" id="access" data-screen-label="07 Access">
+  <div class="shell">
+    <div class="inner">
+      <div class="access-grid">
+        <div class="access-text">
+          <div class="meta rise">07 — Access</div>
+          <h2 class="rise" style="--d:120ms; margin-top:24px;">
+            Membership is <em>limited.</em><br/>
+            Access is <em>reviewed.</em>
+          </h2>
+
+          <div class="stats rise" style="--d:300ms">
+            <div class="stat">
+              <div class="meta">Cohort size</div>
+              <div class="v">36 <em>seats</em></div>
+            </div>
+            <div class="stat">
+              <div class="meta">Intake</div>
+              <div class="v">Twice <em>/ year</em></div>
+            </div>
+            <div class="stat">
+              <div class="meta">Acceptance</div>
+              <div class="v">~ 4 <em>%</em></div>
+            </div>
+            <div class="stat">
+              <div class="meta">Review window</div>
+              <div class="v">14 <em>days</em></div>
+            </div>
+          </div>
+
+          <div class="ctas rise" style="--d:440ms" id="apply">
+            <a href="#apply" class="btn" data-open-form="apply">Apply to Join <span class="arr"></span></a>
+            <a href="#waitlist" class="btn ghost" data-open-form="waitlist">Join Waitlist</a>
+          </div>
+        </div>
+
+        <figure class="access-figure rise" style="--d:200ms" aria-label="lit pedestal in gallery">
+          <div class="fig-bg"></div>
+          <div class="fig-meta">
+            <div class="meta">PL·07 — On Display</div>
+            <div class="meta">Gallery · No° 026</div>
+          </div>
+          <div class="fig-caption">
+            <div class="meta">A single seat, lit</div>
+            <p>One pedestal. One light. The piece is admitted, then defended.</p>
+          </div>
+        </figure>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 08 CLOSING ============ -->
+<section class="closing" data-screen-label="08 Closing">
+  <div class="closing-bg" aria-hidden="true"></div>
+  <div class="shell">
+    <div class="hash rise">08 — Closing</div>
+    <p class="closing-quote rise" style="--d:160ms; margin-top:40px;">
+      Not everyone belongs here. <em>That's the point.</em>
+    </p>
+
+    <div class="ctas rise" style="--d:320ms">
+      <a href="#apply" class="btn" data-open-form="apply">Apply to Join <span class="arr"></span></a>
+      <a href="#waitlist" class="btn ghost" data-open-form="waitlist">Join Waitlist</a>
+    </div>
+
+    <div class="closing-foot">
+      <div class="col">
+        <div class="mark">RMS Tribe</div>
+      </div>
+      <div class="col">
+        <p>By invitation<br/>and review</p>
+      </div>
+      <div class="col">
+        <p>No fixed address<br/>members only</p>
+      </div>
+      <div class="col">
+        <p class="lite">© MMXXVI<br/>All rights reserved</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ STICKY CTA ============ -->
+<div class="sticky-cta" id="stickyCta">
+  <a href="#apply" class="primary" data-open-form="apply">Apply</a>
+  <a href="#access" class="ghost" data-open-form="access">Request Access</a>
+</div>
+
+<!-- ============ INQUIRY MODAL ============ -->
+<div class="modal-root" id="inquiryModal" aria-hidden="true" role="dialog" aria-labelledby="inquiryTitle">
+  <div class="modal-scrim" data-close></div>
+  <div class="modal-card" role="document">
+    <div class="modal-head">
+      <div>
+        <div class="meta" style="margin-bottom:14px;">N° 026 — Intake</div>
+        <h3 class="modal-title" id="inquiryTitle">Apply to the house. <em>Briefly.</em></h3>
+        <p class="modal-sub">Five quick fields. Reviewed within 14 days. We reply to every serious inquiry.</p>
+      </div>
+      <button type="button" class="modal-close" data-close aria-label="Close">✕</button>
+    </div>
+
+    <div class="form-wrap">
+      <form class="inquiry-form" id="inquiryForm" novalidate>
+        <div class="form-grid">
+          <div class="form-row">
+            <div class="field">
+              <label for="f-name">Name <span class="req">*</span></label>
+              <input type="text" id="f-name" name="name" required autocomplete="name" placeholder="Full name" />
+            </div>
+            <div class="field">
+              <label for="f-email">Email <span class="req">*</span></label>
+              <input type="email" id="f-email" name="email" required autocomplete="email" placeholder="you@studio.com" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="field">
+              <label for="f-phone">Phone</label>
+              <input type="tel" id="f-phone" name="phone" autocomplete="tel" placeholder="+1 555 000 0000" />
+            </div>
+            <div class="field">
+              <label for="f-craft">Your craft <span class="req">*</span></label>
+              <input type="text" id="f-craft" name="craft" required placeholder="Photographer, designer, director…" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="f-intent">What you want from the house <span class="req">*</span></label>
+            <select id="f-intent" name="intent" required>
+              <option value="" disabled selected>Select one</option>
+              <option value="Apply to join">Apply to join the cohort</option>
+              <option value="Request access">Request access — exploring</option>
+              <option value="Join waitlist">Join the waitlist</option>
+              <option value="Collaborate">Collaboration / partnership</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="f-message">Why this, why now</label>
+            <textarea id="f-message" name="message" rows="3" placeholder="A sentence or two. No need to oversell."></textarea>
+          </div>
+
+          <!-- FormSubmit config -->
+          <input type="hidden" name="_subject" value="RMS Tribe — New inquiry" />
+          <input type="hidden" name="_template" value="table" />
+          <input type="hidden" name="_captcha" value="false" />
+          <!-- honeypot -->
+          <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" />
+        </div>
+
+        <div class="modal-actions">
+          <button type="submit" class="btn submit-btn">Send inquiry <span class="arr"></span></button>
+          <span class="form-note" id="formNote">By submitting, you agree to be reviewed.</span>
+        </div>
+      </form>
+
+      <div class="wa-row">
+        <div class="wa-text">
+          <div class="lbl">Or — direct line</div>
+          <div class="desc">Chat with us on WhatsApp <em>— faster, more personal.</em></div>
+        </div>
+        <a href="#" class="wa-btn" id="waBtn" target="_blank" rel="noopener">WhatsApp <span class="arr"></span></a>
+      </div>
+    </div>
+
+    <div class="modal-success" aria-live="polite">
+      <div class="modal-success-inner">
+        <div class="meta">Received</div>
+        <h3>Your inquiry is in. <em>We'll be in touch.</em></h3>
+        <p>Every serious inquiry is read by a member of the house. Expect a reply within 14 days — sometimes much sooner.</p>
+        <button type="button" class="btn" data-close>Close <span class="arr"></span></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Scroll-driven parallax for plates and access figure
+  const parallaxEls = document.querySelectorAll('.plate, .access-figure');
+  const innerSel = el => el.querySelector('.plate-bg, .fig-bg');
+  let ticking = false;
+  const updateParallax = () => {
+    const vh = window.innerHeight;
+    parallaxEls.forEach(el => {
+      const r = el.getBoundingClientRect();
+      if (r.bottom < -100 || r.top > vh + 100) return;
+      // progress: -1 (below) → 0 (centered) → 1 (above)
+      const center = r.top + r.height / 2;
+      const p = (center - vh / 2) / (vh / 2 + r.height / 2);
+      const clamped = Math.max(-1, Math.min(1, p));
+      const y = clamped * -40; // px, slow drift opposite scroll
+      const inner = innerSel(el);
+      if (inner) inner.style.setProperty('--py', y.toFixed(1) + 'px');
+    });
+    ticking = false;
+  };
+  const onParallax = () => {
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(updateParallax);
+    }
+  };
+  window.addEventListener('scroll', onParallax, { passive: true });
+  window.addEventListener('resize', onParallax);
+  updateParallax();
+
+  // Scroll fade-ins
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('.rise').forEach(el => io.observe(el));
+
+  // Sticky CTA: appear after the hero is mostly out of view
+  const hero = document.querySelector('.hero');
+  const sticky = document.getElementById('stickyCta');
+  const onScroll = () => {
+    const r = hero.getBoundingClientRect();
+    if (r.bottom < window.innerHeight * 0.4) sticky.classList.add('show');
+    else sticky.classList.remove('show');
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // ---------- Inquiry modal ----------
+  // CONFIG — update these in one place
+  const INQUIRY_EMAIL = 'trybe@relatedmotionstudios.com';
+  const WHATSAPP_NUMBER = '2348112225555'; // 0811 222 5555 (Nigeria +234) — change country code if different
+  const WHATSAPP_PREFILL = "Hi RMS Tribe — I'd like to learn more about the house.";
+
+  const modal = document.getElementById('inquiryModal');
+  const modalCard = modal.querySelector('.modal-card');
+  const form = document.getElementById('inquiryForm');
+  const formNote = document.getElementById('formNote');
+  const intentSelect = document.getElementById('f-intent');
+  const modalTitle = document.getElementById('inquiryTitle');
+  const waBtn = document.getElementById('waBtn');
+
+  // build WhatsApp link
+  const WA_URL = 'https://wa.me/' + WHATSAPP_NUMBER + '?text=' + encodeURIComponent(WHATSAPP_PREFILL);
+  waBtn.href = WA_URL;
+  // Programmatic open — bypasses iframe sandboxes that swallow target=_blank on anchor clicks
+  waBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    const w = window.open(WA_URL, '_blank', 'noopener,noreferrer');
+    if (!w) {
+      // Popup blocked — last resort, attempt top-level nav
+      try { window.top.location.href = WA_URL; } catch (_) { window.location.href = WA_URL; }
+    }
+  });
+
+  // Build a mailto fallback from current form values
+  function buildMailto() {
+    const d = new FormData(form);
+    const lines = [
+      'Name: '   + (d.get('name')    || ''),
+      'Email: '  + (d.get('email')   || ''),
+      'Phone: '  + (d.get('phone')   || ''),
+      'Craft: '  + (d.get('craft')   || ''),
+      'Intent: ' + (d.get('intent')  || ''),
+      '',
+      'Why this, why now:',
+      (d.get('message') || ''),
+    ];
+    return 'mailto:' + INQUIRY_EMAIL
+      + '?subject=' + encodeURIComponent('RMS Tribe — New inquiry')
+      + '&body='    + encodeURIComponent(lines.join('\n'));
+  }
+
+  // open modal, optionally pre-selecting intent and tweaking title
+  function openModal(intent) {
+    modalCard.classList.remove('is-success');
+    // If a previous failure swapped the submit button into a mailto link, restore it
+    const fallback = document.getElementById('mailtoFallbackBtn');
+    if (fallback) {
+      fallback.outerHTML = '<button type="submit" class="btn submit-btn">Send inquiry <span class="arr"></span></button>';
+    }
+    // re-acquire reference (in case it was replaced)
+    const liveBtn = form.querySelector('.submit-btn');
+    liveBtn.disabled = false;
+    liveBtn.innerHTML = 'Send inquiry <span class="arr"></span>';
+    formNote.textContent = 'By submitting, you agree to be reviewed.';
+    formNote.style.color = '';
+
+    if (intent === 'apply') {
+      intentSelect.value = 'Apply to join';
+      modalTitle.innerHTML = 'Apply to the house. <em>Briefly.</em>';
+    } else if (intent === 'access') {
+      intentSelect.value = 'Request access';
+      modalTitle.innerHTML = 'Request access. <em>Tell us who you are.</em>';
+    } else if (intent === 'waitlist') {
+      intentSelect.value = 'Join waitlist';
+      modalTitle.innerHTML = 'Join the waitlist. <em>Next intake.</em>';
+    } else {
+      modalTitle.innerHTML = 'Apply to the house. <em>Briefly.</em>';
+    }
+
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('modal-locked');
+    setTimeout(() => {
+      const firstField = form.querySelector('input[name="name"]');
+      if (firstField) firstField.focus();
+    }, 350);
+  }
+
+  function closeModal() {
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('modal-locked');
+  }
+
+  // Wire every CTA — anything with data-open-form, plus links/buttons pointing to #apply / #access / #waitlist
+  function bindOpener(el) {
+    el.addEventListener('click', (e) => {
+      e.preventDefault();
+      const intent = el.getAttribute('data-open-form')
+        || (el.getAttribute('href') === '#apply' ? 'apply'
+          : el.getAttribute('href') === '#access' ? 'access'
+          : el.getAttribute('href') === '#waitlist' ? 'waitlist'
+          : 'apply');
+      openModal(intent);
+    });
+  }
+  document.querySelectorAll('[data-open-form]').forEach(bindOpener);
+
+  // Close handlers — scrim, X button, Escape
+  modal.querySelectorAll('[data-close]').forEach(el => el.addEventListener('click', closeModal));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal.classList.contains('open')) closeModal();
+  });
+
+  // Submit via FormSubmit AJAX so user stays on page
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!form.reportValidity()) return;
+
+    const liveBtn = form.querySelector('.submit-btn');
+    liveBtn.disabled = true;
+    liveBtn.textContent = 'Sending…';
+    formNote.textContent = '';
+
+    const data = new FormData(form);
+
+    try {
+      const res = await fetch('https://formsubmit.co/ajax/' + INQUIRY_EMAIL, {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' },
+        body: data,
+      });
+      const json = await res.json().catch(() => ({}));
+      if (res.ok && (json.success === 'true' || json.success === true)) {
+        modalCard.classList.add('is-success');
+        form.reset();
+      } else {
+        throw new Error(json.message || 'Submission failed');
+      }
+    } catch (err) {
+      // Swap submit button into a mailto fallback so the inquiry never gets lost
+      liveBtn.outerHTML = '<a href="' + buildMailto() + '" class="btn submit-btn" id="mailtoFallbackBtn">Send via email <span class="arr"></span></a>';
+      formNote.style.color = '#c98a6a';
+      formNote.textContent = 'Direct submit unavailable here. Use email or WhatsApp — both work.';
+      console.error('[inquiry] submit error', err);
+    }
+  });
+</script>
+
+<script src="mobile-preview.js"></script>
+</body>
+</html>
