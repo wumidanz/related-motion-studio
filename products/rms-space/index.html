@@ -515,6 +515,8 @@
       background:var(--paper);
     }
     .atm > image-slot { position:absolute; inset:0; width:100%; height:100%; display:block; }
+    /* Plain <img> fallback used in static deployment (replaces image-slot src=) */
+    .atm-bg { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; }
     /* film vignette + grain over every atmospheric panel */
     .atm::after {
       content:""; position:absolute; inset:0; pointer-events:none;
@@ -741,8 +743,8 @@
 
     <div class="right">
       <div class="slot-wrap reveal d2">
-        <div class="atm atm--hero">
-          <image-slot id="hero-img" shape="rect" fit="cover" src="images/hero-aerial.webp" placeholder="Drop hero still — atmospheric, low light, a single world."></image-slot>
+        <div class="atm atm--hero has-image">
+          <img src="images/hero-aerial.webp" class="atm-bg" alt="RMS Space">
           <div class="atm-mood"><em>The Bath House, dusk.</em><span>placeholder · plate I</span></div>
         </div>
         <div class="caption">
@@ -827,14 +829,14 @@
 
         <div class="preview reveal d2">
           <div class="preview-frame" id="preview-frame">
-            <div class="atm atm--w1 on" data-i="0"><image-slot id="ws-0" shape="rect" fit="cover" src="images/w1-vacation.webp" placeholder="World 01 — The Vacation House"></image-slot><div class="atm-mood"><em>Linen-warm. Sun-bleached.</em><span>01 · vacation house</span></div></div>
-            <div class="atm atm--w2"     data-i="1"><image-slot id="ws-1" shape="rect" fit="cover" src="images/w2-penthouse.webp" placeholder="World 02 — The Penthouse"></image-slot><div class="atm-mood"><em>Glass. Skyline. A held breath.</em><span>02 · penthouse</span></div></div>
-            <div class="atm atm--w3"     data-i="2"><image-slot id="ws-2" shape="rect" fit="cover" src="images/w3-tatami.webp" placeholder="World 03 — The Japanese Minimal Room"></image-slot><div class="atm-mood"><em>Paper light. Silence.</em><span>03 · tatami room</span></div></div>
-            <div class="atm atm--w4"     data-i="3"><image-slot id="ws-3" shape="rect" fit="cover" src="images/w4-rainy.webp" placeholder="World 04 — The Rainy Apartment"></image-slot><div class="atm-mood"><em>Petrichor. Yellow lamp.</em><span>04 · rainy apartment</span></div></div>
-            <div class="atm atm--w5"     data-i="4"><image-slot id="ws-4" shape="rect" fit="cover" src="images/w5-library.webp" placeholder="World 05 — The Old-Money Library"></image-slot><div class="atm-mood"><em>Walnut. Brass. A century.</em><span>05 · old-money library</span></div></div>
-            <div class="atm atm--w6"     data-i="5"><image-slot id="ws-5" shape="rect" fit="cover" src="images/w6-paris.webp" placeholder="World 06 — The Paris Café"></image-slot><div class="atm-mood"><em>Marble. Espresso. A folded paper.</em><span>06 · paris café</span></div></div>
-            <div class="atm atm--w7"     data-i="6"><image-slot id="ws-6" shape="rect" fit="cover" src="images/w7-loft.webp" placeholder="World 07 — The Creative Loft"></image-slot><div class="atm-mood"><em>Concrete. North light.</em><span>07 · creative loft</span></div></div>
-            <div class="atm atm--w8"     data-i="7"><image-slot id="ws-7" shape="rect" fit="cover" src="images/w8-african.webp" placeholder="World 08 — Modern African Luxury"></image-slot><div class="atm-mood"><em>Clay. Mahogany. Gold afternoon.</em><span>08 · african luxury</span></div></div>
+            <div class="atm atm--w1 has-image on" data-i="0"><img src="images/w1-vacation.webp" class="atm-bg" alt="The Vacation House"><div class="atm-mood"><em>Linen-warm. Sun-bleached.</em><span>01 · vacation house</span></div></div>
+            <div class="atm atm--w2 has-image"     data-i="1"><img src="images/w2-penthouse.webp" class="atm-bg" alt="The Penthouse"><div class="atm-mood"><em>Glass. Skyline. A held breath.</em><span>02 · penthouse</span></div></div>
+            <div class="atm atm--w3 has-image"     data-i="2"><img src="images/w3-tatami.webp" class="atm-bg" alt="The Japanese Minimal Room"><div class="atm-mood"><em>Paper light. Silence.</em><span>03 · tatami room</span></div></div>
+            <div class="atm atm--w4 has-image"     data-i="3"><img src="images/w4-rainy.webp" class="atm-bg" alt="The Rainy Apartment"><div class="atm-mood"><em>Petrichor. Yellow lamp.</em><span>04 · rainy apartment</span></div></div>
+            <div class="atm atm--w5 has-image"     data-i="4"><img src="images/w5-library.webp" class="atm-bg" alt="The Old-Money Library"><div class="atm-mood"><em>Walnut. Brass. A century.</em><span>05 · old-money library</span></div></div>
+            <div class="atm atm--w6 has-image"     data-i="5"><img src="images/w6-paris.webp" class="atm-bg" alt="The Paris Café"><div class="atm-mood"><em>Marble. Espresso. A folded paper.</em><span>06 · paris café</span></div></div>
+            <div class="atm atm--w7 has-image"     data-i="6"><img src="images/w7-loft.webp" class="atm-bg" alt="The Creative Loft"><div class="atm-mood"><em>Concrete. North light.</em><span>07 · creative loft</span></div></div>
+            <div class="atm atm--w8 has-image"     data-i="7"><img src="images/w8-african.webp" class="atm-bg" alt="Modern African Luxury"><div class="atm-mood"><em>Clay. Mahogany. Gold afternoon.</em><span>08 · african luxury</span></div></div>
           </div>
           <div class="preview-cap">
             <span class="now" id="preview-now"><em>The Vacation House</em></span>
