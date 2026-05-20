@@ -313,11 +313,12 @@ function ScrollBadge() {
 
 function Hero() {
   const navLinks = [
-    { label: 'WORK', active: true, href: 'index.html' },
-    { label: 'MANIFESTO', href: 'index.html#manifesto' },
-    { label: 'STUDIO', href: 'Studio.html' },
-    { label: 'PRODUCTS', href: 'products/index.html' },
-    { label: 'CONTACT', href: 'index.html#contact' },
+    { label: 'RMS TRYBE',    href: 'products/rms-trybe/index.html' },
+    { label: 'RMS IDENTITY', href: 'products/rms-identity/index.html' },
+    { label: 'RMS FRAMES',   href: 'products/rms-frames/index.html' },
+    { label: 'RMS SPACE',    href: 'products/rms-space/index.html' },
+    { label: 'STUDIO',       href: 'Studio.html' },
+    { label: 'CONTACT',      href: 'index.html#contact' },
   ];
   const langs = ['EN'];
   const [activeLang, setActiveLang] = useState('EN');
