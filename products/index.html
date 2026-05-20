@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Products — Related Motion Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Manrope:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg:     #050505;
+    --ink:    #EDEAE3;
+    --mute:   #8A847B;
+    --dim:    #5A554E;
+    --line:   #1E1E1E;
+    --accent: #B14A2C;
+    --serif:  "Cormorant Garamond", "Times New Roman", serif;
+    --sans:   "Manrope", system-ui, sans-serif;
+    --mono:   "JetBrains Mono", ui-monospace, monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--bg); color: var(--ink); font-family: var(--sans); font-weight: 300; -webkit-font-smoothing: antialiased; min-height: 100vh; }
+  a { color: inherit; text-decoration: none; }
+  ::-webkit-scrollbar { width: 0; }
+
+  /* Nav */
+  header {
+    position: fixed; top: 0; inset-x: 0; z-index: 50;
+    padding: 28px 48px;
+    display: flex; align-items: flex-start; justify-content: space-between;
+    border-bottom: 1px solid var(--line);
+    background: rgba(5,5,5,0.88);
+    backdrop-filter: blur(18px);
+  }
+  .logo { display: flex; align-items: baseline; gap: 8px; }
+  .logo-main { font-family: var(--sans); font-weight: 600; font-size: 17px; letter-spacing: -0.01em; }
+  .logo-sub { font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--mute); }
+  nav { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+  nav a {
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--mute); transition: color .25s ease;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  nav a:hover { color: var(--ink); }
+  nav a.active { color: var(--ink); }
+  nav a.active::before { content: "→"; }
+
+  /* Hero */
+  .page-hero {
+    padding: 160px 48px 64px;
+    border-bottom: 1px solid var(--line);
+  }
+  .eyebrow {
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.28em; text-transform: uppercase;
+    color: var(--mute); margin-bottom: 20px;
+  }
+  .page-title {
+    font-family: var(--serif); font-weight: 300; font-size: clamp(44px, 7vw, 88px);
+    line-height: 1; letter-spacing: -0.02em; color: var(--ink);
+    max-width: 14ch;
+  }
+  .page-title em { font-style: italic; color: var(--mute); }
+  .page-sub {
+    margin-top: 24px; font-size: 14px; line-height: 1.7; color: var(--mute); max-width: 46ch;
+  }
+
+  /* Grid */
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    border-left: 1px solid var(--line);
+  }
+  @media (max-width: 720px) {
+    .products-grid { grid-template-columns: 1fr; }
+    header { padding: 20px 24px; }
+    .page-hero { padding: 120px 24px 48px; }
+  }
+
+  .product-card {
+    border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    padding: 48px 48px 56px;
+    position: relative;
+    display: flex; flex-direction: column;
+    transition: background .4s ease;
+    overflow: hidden;
+  }
+  @media (max-width: 720px) {
+    .product-card { padding: 36px 24px 44px; }
+  }
+  .product-card::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.015) 0%, transparent 60%);
+    opacity: 0; transition: opacity .4s ease;
+    pointer-events: none;
+  }
+  .product-card:hover { background: rgba(255,255,255,0.018); }
+  .product-card:hover::after { opacity: 1; }
+
+  .card-num {
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--dim); margin-bottom: 40px;
+  }
+  .card-tag {
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--mute); margin-bottom: 16px;
+  }
+  .card-title {
+    font-family: var(--serif); font-weight: 300; font-size: clamp(32px, 4vw, 52px);
+    line-height: 1; letter-spacing: -0.015em; color: var(--ink); margin-bottom: 20px;
+  }
+  .card-title em { font-style: italic; color: var(--mute); }
+  .card-desc {
+    font-size: 13px; line-height: 1.75; color: var(--mute); max-width: 36ch; flex: 1;
+  }
+  .card-cta {
+    margin-top: 40px;
+    display: inline-flex; align-items: center; gap: 12px;
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--ink);
+    padding: 14px 20px 13px;
+    border: 1px solid var(--dim);
+    align-self: flex-start;
+    transition: border-color .3s ease, background .3s ease, color .3s ease;
+  }
+  .product-card:hover .card-cta {
+    border-color: var(--ink);
+    background: var(--ink);
+    color: var(--bg);
+  }
+  .card-cta .arr {
+    width: 18px; height: 1px; background: currentColor; position: relative; transition: width .4s ease;
+  }
+  .card-cta .arr::after {
+    content: ""; position: absolute; right: 0; top: -3px;
+    width: 6px; height: 6px;
+    border-top: 1px solid currentColor;
+    border-right: 1px solid currentColor;
+    transform: rotate(45deg);
+  }
+  .product-card:hover .card-cta .arr { width: 26px; }
+
+  /* Footer */
+  footer {
+    padding: 40px 48px;
+    border-top: 1px solid var(--line);
+    display: flex; align-items: center; justify-content: space-between;
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--dim);
+  }
+  @media (max-width: 720px) {
+    footer { padding: 32px 24px; flex-direction: column; gap: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="../index.html" class="logo">
+    <span class="logo-main">related</span>
+    <span class="logo-sub">motion studio</span>
+  </a>
+  <nav>
+    <a href="../index.html">Work</a>
+    <a href="../index.html#manifesto">Manifesto</a>
+    <a href="../Studio.html">Studio</a>
+    <a href="index.html" class="active">Products</a>
+    <a href="../index.html#contact">Contact</a>
+  </nav>
+</header>
+
+<main>
+  <div class="page-hero">
+    <p class="eyebrow">N° 001 — Our offerings</p>
+    <h1 class="page-title">The <em>tools</em> we built for the work.</h1>
+    <p class="page-sub">Four distinct products. Each one purpose-built — for a space, a tribe, a frame, an identity.</p>
+  </div>
+
+  <div class="products-grid">
+
+    <a href="rms-trybe/index.html" class="product-card">
+      <div class="card-num">01 / 04</div>
+      <div class="card-tag">Community</div>
+      <h2 class="card-title">RMS <em>Tribe</em></h2>
+      <p class="card-desc">A private creative house. Built for the people who make things happen — and the collaborators who keep them moving.</p>
+      <span class="card-cta">Enter <span class="arr"></span></span>
+    </a>
+
+    <a href="rms-space/index.html" class="product-card">
+      <div class="card-num">02 / 04</div>
+      <div class="card-tag">Studio Spaces</div>
+      <h2 class="card-title">RMS <em>Space</em></h2>
+      <p class="card-desc">Eight worlds inside Lagos. Production-ready environments crafted for shoots, sessions, and creative residencies.</p>
+      <span class="card-cta">Book a space <span class="arr"></span></span>
+    </a>
+
+    <a href="rms-frames/index.html" class="product-card">
+      <div class="card-num">03 / 04</div>
+      <div class="card-tag">Post-Production</div>
+      <h2 class="card-title">RMS <em>Frames</em></h2>
+      <p class="card-desc">A cinematic identity studio. We bring the edit, the grade, and the story — from raw footage to final frame.</p>
+      <span class="card-cta">See the work <span class="arr"></span></span>
+    </a>
+
+    <a href="rms-identity/index.html" class="product-card">
+      <div class="card-num">04 / 04</div>
+      <div class="card-tag">Brand Testing</div>
+      <h2 class="card-title">RMS <em>Identity</em></h2>
+      <p class="card-desc">Test the ad before you shoot it. Validate concepts, copy, and visuals against real market data — before a frame is captured.</p>
+      <span class="card-cta">Start testing <span class="arr"></span></span>
+    </a>
+
+  </div>
+</main>
+
+<footer>
+  <span>© 2026 Related Motion Studio</span>
+  <span>Lagos, Nigeria</span>
+</footer>
+
+</body>
+</html>

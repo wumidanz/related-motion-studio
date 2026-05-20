@@ -54,6 +54,7 @@ function TopBar() {
     { label: 'WORK',      href: 'index.html' },
     { label: 'MANIFESTO', href: 'index.html#manifesto' },
     { label: 'STUDIO',    href: 'Studio.html', active: true },
+    { label: 'PRODUCTS',  href: 'products/index.html' },
     { label: 'CONTACT',   href: 'index.html#contact' },
   ];
   const langs = ['EN'];
