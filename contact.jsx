@@ -151,14 +151,14 @@ function Contact() {
             </div>
             <ul className="space-y-3">
               {emails.map((e) => (
-                <li key={e.label} className="grid grid-cols-12 items-baseline gap-3">
-                  <span className="col-span-4 md:col-span-3 text-[10.5px] uppercase tracking-[0.22em] text-white/45">
+                <li key={e.label} className="flex flex-col gap-0.5 md:grid md:grid-cols-12 md:items-baseline md:gap-3">
+                  <span className="md:col-span-3 text-[10.5px] uppercase tracking-[0.22em] text-white/45">
                     {e.label}
                   </span>
                   <a
                     href={`mailto:${e.address}`}
                     data-hover
-                    className="col-span-8 md:col-span-9 font-display font-light text-[15px] md:text-[17px] text-white hover:text-white/70 transition-colors truncate">
+                    className="md:col-span-9 font-display font-light text-[13px] md:text-[17px] text-white hover:text-white/70 transition-colors break-all">
                     {e.address}
                   </a>
                 </li>
