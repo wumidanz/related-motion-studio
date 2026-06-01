@@ -1398,12 +1398,16 @@
             <textarea id="f-message" name="message" rows="3" placeholder="A sentence or two. No need to oversell."></textarea>
           </div>
 
-          <!-- FormSubmit config -->
+          <!-- Submission config (Web3Forms + FormSubmit-compatible) -->
+          <input type="hidden" name="subject" value="RMS Trybe — New inquiry" />
+          <input type="hidden" name="from_name" value="RMS Trybe website" />
+          <input type="hidden" name="product" value="RMS Trybe" />
           <input type="hidden" name="_subject" value="RMS Trybe — New inquiry" />
           <input type="hidden" name="_template" value="table" />
           <input type="hidden" name="_captcha" value="false" />
-          <!-- honeypot -->
+          <!-- honeypots (FormSubmit + Web3Forms) -->
           <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" />
+          <input type="checkbox" name="botcheck" style="display:none" tabindex="-1" />
         </div>
 
         <div class="modal-actions">
@@ -1487,6 +1491,7 @@
   // ---------- Inquiry modal ----------
   // CONFIG — update these in one place
   const INQUIRY_EMAIL = 'trybe@relatedmotionstudios.com';
+  const WEB3FORMS_KEY = '423be443-6b52-4827-b977-9a43aba994e4';
   const WHATSAPP_NUMBER = '2348112225555'; // 0811 222 5555 (Nigeria +234) — change country code if different
   const WHATSAPP_PREFILL = "Hi RMS Trybe — I'd like to learn more about the house.";
 
@@ -1608,8 +1613,17 @@
 
     const data = new FormData(form);
 
+    // Use Web3Forms when a key is configured; otherwise fall back to FormSubmit
+    let endpoint;
+    if (WEB3FORMS_KEY) {
+      data.append('access_key', WEB3FORMS_KEY);
+      endpoint = 'https://api.web3forms.com/submit';
+    } else {
+      endpoint = 'https://formsubmit.co/ajax/' + INQUIRY_EMAIL;
+    }
+
     try {
-      const res = await fetch('https://formsubmit.co/ajax/' + INQUIRY_EMAIL, {
+      const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Accept': 'application/json' },
         body: data,
