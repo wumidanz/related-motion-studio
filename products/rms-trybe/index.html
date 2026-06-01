@@ -1312,20 +1312,85 @@
             </div>
             <div class="field">
               <label for="f-craft">Your craft <span class="req">*</span></label>
-              <input type="text" id="f-craft" name="craft" required placeholder="Photographer, designer, director…" />
+              <select id="f-craft" name="craft" required>
+                <option value="" disabled selected>Select your discipline</option>
+                <option value="Photographer">Photographer</option>
+                <option value="Director">Director / Filmmaker</option>
+                <option value="Cinematographer">Cinematographer / DOP</option>
+                <option value="Editor">Editor / Post-production</option>
+                <option value="Motion Designer">Motion designer / Animator</option>
+                <option value="Graphic Designer">Graphic designer</option>
+                <option value="Art Director">Art director / Creative director</option>
+                <option value="Stylist">Stylist</option>
+                <option value="Set Designer">Set designer / Production designer</option>
+                <option value="Producer">Producer</option>
+                <option value="Sound Designer">Sound / Music</option>
+                <option value="Writer">Writer / Strategist</option>
+                <option value="Multidisciplinary">Multidisciplinary</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="field">
+              <label for="f-experience">Experience <span class="req">*</span></label>
+              <select id="f-experience" name="experience" required>
+                <option value="" disabled selected>Where you are</option>
+                <option value="Emerging">Emerging — 0–2 years</option>
+                <option value="Mid">Mid-career — 3–6 years</option>
+                <option value="Established">Established — 7–12 years</option>
+                <option value="Senior">Senior — 12+ years</option>
+                <option value="Student">Student / just starting</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="f-region">Region <span class="req">*</span></label>
+              <select id="f-region" name="region" required>
+                <option value="" disabled selected>Where you're based</option>
+                <option value="Lagos">Lagos, Nigeria</option>
+                <option value="Nigeria">Nigeria — other city</option>
+                <option value="West Africa">West Africa</option>
+                <option value="Africa">Africa — other</option>
+                <option value="Europe">Europe</option>
+                <option value="North America">North America</option>
+                <option value="Asia">Asia</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="field">
+              <label for="f-intent">What you want from the house <span class="req">*</span></label>
+              <select id="f-intent" name="intent" required>
+                <option value="" disabled selected>Select one</option>
+                <option value="Apply to join">Apply to join the cohort</option>
+                <option value="Request access">Request access — exploring</option>
+                <option value="Join waitlist">Join the waitlist</option>
+                <option value="Collaborate">Collaboration / partnership</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="f-referral">How you heard about us</label>
+              <select id="f-referral" name="referral">
+                <option value="" disabled selected>Select one</option>
+                <option value="Instagram">Instagram</option>
+                <option value="X / Twitter">X / Twitter</option>
+                <option value="LinkedIn">LinkedIn</option>
+                <option value="A friend / member">A friend / member</option>
+                <option value="Press / article">Press / article</option>
+                <option value="Search">Found via search</option>
+                <option value="Event">Event / show</option>
+                <option value="Other">Other</option>
+              </select>
             </div>
           </div>
 
           <div class="field">
-            <label for="f-intent">What you want from the house <span class="req">*</span></label>
-            <select id="f-intent" name="intent" required>
-              <option value="" disabled selected>Select one</option>
-              <option value="Apply to join">Apply to join the cohort</option>
-              <option value="Request access">Request access — exploring</option>
-              <option value="Join waitlist">Join the waitlist</option>
-              <option value="Collaborate">Collaboration / partnership</option>
-              <option value="Other">Other</option>
-            </select>
+            <label for="f-portfolio">Portfolio / work link</label>
+            <input type="url" id="f-portfolio" name="portfolio" placeholder="https:// …" />
           </div>
 
           <div class="field">
@@ -1450,11 +1515,15 @@
   function buildMailto() {
     const d = new FormData(form);
     const lines = [
-      'Name: '   + (d.get('name')    || ''),
-      'Email: '  + (d.get('email')   || ''),
-      'Phone: '  + (d.get('phone')   || ''),
-      'Craft: '  + (d.get('craft')   || ''),
-      'Intent: ' + (d.get('intent')  || ''),
+      'Name: '       + (d.get('name')       || ''),
+      'Email: '      + (d.get('email')      || ''),
+      'Phone: '      + (d.get('phone')      || ''),
+      'Craft: '      + (d.get('craft')      || ''),
+      'Experience: ' + (d.get('experience') || ''),
+      'Region: '     + (d.get('region')     || ''),
+      'Intent: '     + (d.get('intent')     || ''),
+      'Heard via: '  + (d.get('referral')   || ''),
+      'Portfolio: '  + (d.get('portfolio')  || ''),
       '',
       'Why this, why now:',
       (d.get('message') || ''),
