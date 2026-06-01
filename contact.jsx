@@ -77,9 +77,15 @@ function Contact() {
     { label: 'General', address: 'info@relatedmotionstudios.com' },
     { label: 'Help',    address: 'support@relatedmotionstudios.com' },
   ];
+
+  // Contact-action CTAs — Lagos pace, no calendar slot picking.
+  const WA_NUMBER = '2348112225555';
+  const WA_PREFILL = "Hi RMS — I'd like to talk.";
+  const PHONE_HUMAN = '+234 811 222 5555';
+
   const socials = [
-    { name: 'Instagram', href: 'mailto:support@relatedmotionstudios.com' },
-    { name: 'LinkedIn',  href: '#' },
+    { name: 'Instagram', href: 'https://instagram.com/relatedmotionstudios' },
+    { name: 'LinkedIn',  href: 'https://ng.linkedin.com/company/relatedmotion' },
   ];
 
   return (
@@ -142,6 +148,75 @@ function Contact() {
         </motionC.h2>
       </div>
 
+      {/* Three-way CTA — Lagos pace, "right now" not "next week" */}
+      <div className="relative z-10 px-6 md:px-10 pb-10 md:pb-16">
+        <div className="text-center mb-6 md:mb-8">
+          <div className="text-[10.5px] uppercase tracking-[0.28em] text-white/45">
+            → Talk to us now
+          </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-5 max-w-[1240px] mx-auto">
+          {/* WhatsApp — fastest */}
+          <a
+            href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(WA_PREFILL)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-hover
+            className="group flex items-center justify-between gap-6 border border-white/15 hover:border-white/45 bg-white/[0.015] hover:bg-white/[0.04] transition-colors duration-500 px-7 py-7 md:px-8 md:py-9">
+            <div className="flex flex-col gap-1">
+              <span className="text-[10.5px] font-mono uppercase tracking-[0.28em] text-white/45">
+                Fastest
+              </span>
+              <span className="font-display font-light text-[22px] md:text-[26px] leading-[1.15] text-white">
+                WhatsApp <span className="italic-accent">now</span>
+              </span>
+              <span className="text-[12px] text-white/55 font-mono">
+                {PHONE_HUMAN}
+              </span>
+            </div>
+            <span className="inline-block h-px w-10 bg-white/55 group-hover:w-16 transition-[width] duration-500" />
+          </a>
+
+          {/* Call — tap to dial */}
+          <a
+            href={`tel:+${WA_NUMBER}`}
+            data-hover
+            className="group flex items-center justify-between gap-6 border border-white/15 hover:border-white/45 bg-white/[0.015] hover:bg-white/[0.04] transition-colors duration-500 px-7 py-7 md:px-8 md:py-9">
+            <div className="flex flex-col gap-1">
+              <span className="text-[10.5px] font-mono uppercase tracking-[0.28em] text-white/45">
+                Right now
+              </span>
+              <span className="font-display font-light text-[22px] md:text-[26px] leading-[1.15] text-white">
+                Call <span className="italic-accent">the studio</span>
+              </span>
+              <span className="text-[12px] text-white/55 font-mono">
+                Tap to dial · Mon–Sat 9–7
+              </span>
+            </div>
+            <span className="inline-block h-px w-10 bg-white/55 group-hover:w-16 transition-[width] duration-500" />
+          </a>
+
+          {/* Email — slower lane */}
+          <a
+            href="mailto:info@relatedmotionstudios.com?subject=Hello%20RMS"
+            data-hover
+            className="group flex items-center justify-between gap-6 border border-white/15 hover:border-white/45 bg-white/[0.015] hover:bg-white/[0.04] transition-colors duration-500 px-7 py-7 md:px-8 md:py-9">
+            <div className="flex flex-col gap-1">
+              <span className="text-[10.5px] font-mono uppercase tracking-[0.28em] text-white/45">
+                Slower lane
+              </span>
+              <span className="font-display font-light text-[22px] md:text-[26px] leading-[1.15] text-white">
+                Email <span className="italic-accent">us</span>
+              </span>
+              <span className="text-[12px] text-white/55 font-mono break-all">
+                info@relatedmotionstudios.com
+              </span>
+            </div>
+            <span className="inline-block h-px w-10 bg-white/55 group-hover:w-16 transition-[width] duration-500" />
+          </a>
+        </div>
+      </div>
+
       {/* Address grid */}
       <div className="relative z-10 px-10 pb-16">
         <div className="grid grid-cols-12 gap-10 border-t border-white/10 pt-12">
@@ -185,6 +260,8 @@ function Contact() {
                 <li key={s.name}>
                   <a
                     href={s.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     data-hover
                     className="group inline-flex items-center gap-2 text-[14px] text-white hover:text-white/70 transition-colors">
                     <span>{s.name}</span>
