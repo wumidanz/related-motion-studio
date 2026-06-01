@@ -1310,7 +1310,7 @@
               <label for="f-phone">Phone</label>
               <input type="tel" id="f-phone" name="phone" autocomplete="tel" placeholder="+1 555 000 0000" />
             </div>
-            <div class="field">
+            <div class="field" data-other-toggle="true">
               <label for="f-craft">Your craft <span class="req">*</span></label>
               <select id="f-craft" name="craft" required>
                 <option value="" disabled selected>Select your discipline</option>
@@ -1329,6 +1329,7 @@
                 <option value="Multidisciplinary">Multidisciplinary</option>
                 <option value="Other">Other</option>
               </select>
+              <input type="text" id="f-craft-other" name="craft_other" class="other-input" placeholder="Tell us your craft" autocomplete="off" style="display:none; margin-top:8px;" />
             </div>
           </div>
 
@@ -1344,7 +1345,7 @@
                 <option value="Student">Student / just starting</option>
               </select>
             </div>
-            <div class="field">
+            <div class="field" data-other-toggle="true">
               <label for="f-region">Region <span class="req">*</span></label>
               <select id="f-region" name="region" required>
                 <option value="" disabled selected>Where you're based</option>
@@ -1357,11 +1358,12 @@
                 <option value="Asia">Asia</option>
                 <option value="Other">Other</option>
               </select>
+              <input type="text" id="f-region-other" name="region_other" class="other-input" placeholder="Tell us where you're based" autocomplete="off" style="display:none; margin-top:8px;" />
             </div>
           </div>
 
           <div class="form-row">
-            <div class="field">
+            <div class="field" data-other-toggle="true">
               <label for="f-intent">What you want from the house <span class="req">*</span></label>
               <select id="f-intent" name="intent" required>
                 <option value="" disabled selected>Select one</option>
@@ -1371,8 +1373,9 @@
                 <option value="Collaborate">Collaboration / partnership</option>
                 <option value="Other">Other</option>
               </select>
+              <input type="text" id="f-intent-other" name="intent_other" class="other-input" placeholder="Tell us what you have in mind" autocomplete="off" style="display:none; margin-top:8px;" />
             </div>
-            <div class="field">
+            <div class="field" data-other-toggle="true">
               <label for="f-referral">How you heard about us</label>
               <select id="f-referral" name="referral">
                 <option value="" disabled selected>Select one</option>
@@ -1385,6 +1388,7 @@
                 <option value="Event">Event / show</option>
                 <option value="Other">Other</option>
               </select>
+              <input type="text" id="f-referral-other" name="referral_other" class="other-input" placeholder="Tell us how you heard about us" autocomplete="off" style="display:none; margin-top:8px;" />
             </div>
           </div>
 
@@ -1516,6 +1520,13 @@
     }
   });
 
+  // Helper: combine select value with "_other" free-text field when "Other" was picked
+  function combined(d, key) {
+    const v = (d.get(key) || '').toString();
+    const other = (d.get(key + '_other') || '').toString();
+    return /^(other|something else)$/i.test(v.trim()) && other ? `Other — ${other}` : v;
+  }
+
   // Build a mailto fallback from current form values
   function buildMailto() {
     const d = new FormData(form);
@@ -1523,11 +1534,11 @@
       'Name: '       + (d.get('name')       || ''),
       'Email: '      + (d.get('email')      || ''),
       'Phone: '      + (d.get('phone')      || ''),
-      'Craft: '      + (d.get('craft')      || ''),
+      'Craft: '      + combined(d, 'craft'),
       'Experience: ' + (d.get('experience') || ''),
-      'Region: '     + (d.get('region')     || ''),
-      'Intent: '     + (d.get('intent')     || ''),
-      'Heard via: '  + (d.get('referral')   || ''),
+      'Region: '     + combined(d, 'region'),
+      'Intent: '     + combined(d, 'intent'),
+      'Heard via: '  + combined(d, 'referral'),
       'Portfolio: '  + (d.get('portfolio')  || ''),
       '',
       'Why this, why now:',
@@ -1537,6 +1548,23 @@
       + '?subject=' + encodeURIComponent('RMS Trybe — New inquiry')
       + '&body='    + encodeURIComponent(lines.join('\n'));
   }
+
+  // "Other" toggle — reveal & require sibling text input when a select picks Other
+  form.addEventListener('change', (e) => {
+    if (e.target.tagName !== 'SELECT') return;
+    const field = e.target.closest('.field[data-other-toggle="true"]');
+    if (!field) return;
+    const other = field.querySelector('.other-input');
+    if (!other) return;
+    const isOther = /^(other|something else)$/i.test(String(e.target.value).trim());
+    other.style.display = isOther ? '' : 'none';
+    if (isOther) {
+      other.required = e.target.required;
+    } else {
+      other.required = false;
+      other.value = '';
+    }
+  });
 
   // open modal, optionally pre-selecting intent and tweaking title
   function openModal(intent) {
