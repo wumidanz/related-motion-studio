@@ -360,7 +360,7 @@
     });
     const otherField = hasOther ? `
         <input type="text" id="im-${f.id}__other" name="${f.id}_other"
-          class="im-other-input" placeholder="Please specify…"
+          class="im-other-input" placeholder="${esc(f.otherPlaceholder || 'Please specify…')}"
           style="display:none; margin-top:10px;" autocomplete="off" />
     ` : '';
     return `
