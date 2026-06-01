@@ -85,7 +85,7 @@ function Contact() {
 
   const socials = [
     { name: 'Instagram', href: 'https://instagram.com/relatedmotionstudios' },
-    { name: 'LinkedIn',  href: 'https://www.linkedin.com/company/relatedmotionstudios' },
+    { name: 'LinkedIn',  href: 'https://ng.linkedin.com/company/relatedmotion' },
   ];
 
   return (
