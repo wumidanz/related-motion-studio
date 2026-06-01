@@ -68,14 +68,18 @@
         <form class="im-form" id="imForm" novalidate>
           <div class="im-grid">
             ${fieldsHTML}
-            <!-- FormSubmit config -->
+            <!-- Submission config (Web3Forms + FormSubmit-compatible) -->
+            <input type="hidden" name="subject" value="${esc(CFG.productLabel || 'RMS')} — New inquiry" />
+            <input type="hidden" name="from_name" value="${esc(CFG.productLabel || 'RMS')} website" />
             <input type="hidden" name="_subject" value="${esc(CFG.productLabel || 'RMS')} — New inquiry" />
             <input type="hidden" name="_template" value="table" />
             <input type="hidden" name="_captcha" value="false" />
             <input type="hidden" name="_product" value="${esc(CFG.productLabel || 'RMS')}" />
+            <input type="hidden" name="product" value="${esc(CFG.productLabel || 'RMS')}" />
             <input type="hidden" name="intent" id="imIntent" value="" />
-            <!-- honeypot -->
+            <!-- honeypots (FormSubmit + Web3Forms) -->
             <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" />
+            <input type="checkbox" name="botcheck" style="display:none" tabindex="-1" />
           </div>
 
           <div class="im-actions">
@@ -231,14 +235,25 @@
 
     const data = new FormData(form);
 
+    // Choose submission backend: Web3Forms (preferred) or FormSubmit
+    let endpoint, isOk;
+    if (CFG.accessKey) {
+      data.append('access_key', CFG.accessKey);
+      endpoint = 'https://api.web3forms.com/submit';
+      isOk = (res, json) => res.ok && (json.success === true || json.success === 'true');
+    } else {
+      endpoint = 'https://formsubmit.co/ajax/' + CFG.email;
+      isOk = (res, json) => res.ok && (json.success === 'true' || json.success === true);
+    }
+
     try {
-      const res = await fetch('https://formsubmit.co/ajax/' + CFG.email, {
+      const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Accept': 'application/json' },
         body: data,
       });
       const json = await res.json().catch(() => ({}));
-      if (res.ok && (json.success === 'true' || json.success === true)) {
+      if (isOk(res, json)) {
         card.classList.add('is-success');
         form.reset();
       } else {
