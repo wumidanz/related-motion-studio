@@ -1361,14 +1361,14 @@
     whatsappPrefill: "Hi RMS Identity — I want to brief the studio.",
     productLabel: 'RMS Identity',
     metaLabel: 'Q3 2026 — Briefing',
-    defaultTitle: 'Brief the studio. <em>No fluff.</em>',
-    defaultSub: 'Tell us what you want to test or build. We reply within 48 hours.',
+    defaultTitle: 'Brief the studio. <em>Or share the problem.</em>',
+    defaultSub: 'Tell us what you want to build — or the problem you\'re facing. We reply within 48 hours.',
     waLabel: 'Or — direct line',
     waDesc: 'WhatsApp the studio <em>— for fast back-and-forth.</em>',
     intents: {
       brief: {
-        title: 'Brief the studio. <em>No fluff.</em>',
-        sub: 'Tell us what you want to test or build. We reply within 48 hours.',
+        title: 'Brief the studio. <em>Or share the problem.</em>',
+        sub: 'Tell us what you want to build — or the problem you\'re facing. We reply within 48 hours.',
         intentValue: 'Brief — new project',
       },
     },
@@ -1379,20 +1379,21 @@
       { id: 'company', label: 'Company / brand', type: 'text', placeholder: 'Where you work', row: 1 },
       { id: 'phone',   label: 'Phone',           type: 'tel',  autocomplete: 'tel', placeholder: '+234 …', row: 1 },
 
-      { id: 'stage', label: 'Where you are', type: 'select', required: true, placeholder: 'Select one', row: 2,
+      { id: 'mode', label: 'How can we help', type: 'select', required: true, placeholder: 'Select one', row: 2,
         options: [
-          'Starting from scratch — no concept yet',
-          'Have a concept — want to test it',
-          'Have a campaign — want to validate before spend',
+          'I have a brief — let\'s build',
+          'I have a problem — need a solution',
+          'I have a concept — want to test it',
+          'I have a campaign — validate before spend',
           'Just exploring — early conversation',
         ],
       },
-      { id: 'timeline', label: 'Timeline', type: 'select', placeholder: 'When are you shooting?', row: 2,
+      { id: 'timeline', label: 'Timeline', type: 'select', placeholder: 'When do you need this?', row: 2,
         options: ['Within 30 days', 'Within 90 days', 'Q4 2026', '2027', 'No fixed date'],
       },
 
-      { id: 'message', label: 'What you want to test or build', type: 'textarea', required: true, full: true,
-        placeholder: 'A few sentences. The clearer the brief, the sharper the reply.', rows: 5 },
+      { id: 'message', label: 'Your brief — or the problem you\'re facing', type: 'textarea', required: true, full: true,
+        placeholder: 'Describe what you want to build, or the problem you need solved. The clearer you write it, the sharper the reply.', rows: 5 },
     ],
   };
 </script>
