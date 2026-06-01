@@ -162,6 +162,19 @@
       sub.textContent = CFG.defaultSub || 'A few quick fields.';
       intent.value = intentKey || 'General';
     }
+    // Pre-fill fields when intent has a prefill map: { fieldId: value, ... }
+    if (intentCfg && intentCfg.prefill) {
+      Object.keys(intentCfg.prefill).forEach((fieldId) => {
+        const val = intentCfg.prefill[fieldId];
+        const radios = form.querySelectorAll('input[type="radio"][name="' + fieldId + '"]');
+        if (radios.length) {
+          radios.forEach((r) => { r.checked = (r.value === val); });
+          return;
+        }
+        const el = form.querySelector('[name="' + fieldId + '"]');
+        if (el) el.value = val;
+      });
+    }
     note.textContent = 'By submitting, you agree to be reviewed.';
     note.style.color = '';
 
@@ -207,15 +220,37 @@
     if (e.key === 'Escape' && modalRoot.classList.contains('open')) closeModal();
   });
 
+  // "Other" reveal — when a select with [data-other-toggle="true"] picks Other,
+  // show & require the sibling text input. Hide & clear it otherwise.
+  modalRoot.addEventListener('change', (e) => {
+    if (e.target.tagName !== 'SELECT') return;
+    const field = e.target.closest('.im-field[data-other-toggle="true"]');
+    if (!field) return;
+    const other = field.querySelector('.im-other-input');
+    if (!other) return;
+    const isOther = /^(other|something else)$/i.test(String(e.target.value).trim());
+    other.style.display = isOther ? '' : 'none';
+    if (isOther) {
+      other.required = e.target.required;
+    } else {
+      other.required = false;
+      other.value = '';
+    }
+  });
+
   // ---------- Submit ----------
   function buildMailto() {
     const d = new FormData(form);
     const lines = [];
     (CFG.fields || []).forEach(f => {
-      const v = d.get(f.id);
-      if (v !== null && v !== '') {
-        lines.push((f.label || f.id) + ': ' + v);
+      let v = d.get(f.id);
+      if (v == null || v === '') return;
+      // Combine with the "_other" free-text input when "Other" was picked
+      if (/^(other|something else)$/i.test(String(v).trim())) {
+        const other = d.get(f.id + '_other');
+        if (other) v = 'Other — ' + other;
       }
+      lines.push((f.label || f.id) + ': ' + v);
     });
     const intentVal = d.get('intent');
     if (intentVal) lines.unshift('Intent: ' + intentVal);
@@ -330,13 +365,24 @@
       const l = (typeof o === 'string') ? o : (o.label || o.value);
       return '<option value="' + esc(v) + '">' + esc(l) + '</option>';
     }).join('');
+    // If any option is "Other" / "Something else", render a follow-up text input
+    // that becomes visible (and required) when that option is selected.
+    const hasOther = (f.options || []).some(o => {
+      const v = (typeof o === 'string') ? o : (o.value || o.label || '');
+      return /^(other|something else)$/i.test(String(v).trim());
+    });
+    const otherField = hasOther ? `
+        <input type="text" id="im-${f.id}__other" name="${f.id}_other"
+          class="im-other-input" placeholder="${esc(f.otherPlaceholder || 'Please specify…')}"
+          style="display:none; margin-top:10px;" autocomplete="off" />
+    ` : '';
     return `
-      <div class="im-field">
+      <div class="im-field" data-other-toggle="${hasOther ? 'true' : 'false'}">
         <label for="im-${f.id}">${esc(f.label)} ${reqStar}</label>
         <select id="im-${f.id}" name="${f.id}" ${f.required ? 'required' : ''}>
           <option value="" disabled selected>${esc(f.placeholder || 'Select one')}</option>
           ${opts}
-        </select>
+        </select>${otherField}
       </div>
     `;
   }

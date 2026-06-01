@@ -7,6 +7,23 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="products/_shared/inquiry-modal.css" />
+<style>
+  /* Studio booking modal — match the page palette (warm cream/black) */
+  .inquiry-modal {
+    --im-bg: #0a0a0a;
+    --im-card-bg: #0a0a0a;
+    --im-ink: #FFF7E8;
+    --im-mute: #B7AC95;
+    --im-dim: #6B604E;
+    --im-line: rgba(255,247,232,0.12);
+    --im-accent: #D3B88A;
+    --im-soft: rgba(255,247,232,0.04);
+    --im-scrim: rgba(0,0,0,0.82);
+    --im-serif: 'Instrument Serif', 'Times New Roman', serif;
+    --im-sans: 'Manrope', system-ui, sans-serif;
+  }
+</style>
 <script src="https://cdn.tailwindcss.com"></script>
 <script>
   tailwind.config = {
@@ -235,5 +252,86 @@
 
   <script type="text/babel" src="in-orbit.jsx"></script>
   <script type="text/babel" src="studio.jsx"></script>
+
+  <!-- ============================ INQUIRY MODAL ============================ -->
+  <script>
+    window.INQUIRY_CONFIG = {
+      email: 'bookings@relatedmotionstudios.com',
+      accessKey: 'TBD_STUDIO_WEB3FORMS_KEY',
+      whatsapp: '2348112225555',
+      whatsappPrefill: "Hi RMS — I'd like to book the studio.",
+      productLabel: 'RMS Studio',
+      metaLabel: '04 — Booking',
+      defaultTitle: 'Reserve the r<em>o</em>om. <em>Briefly.</em>',
+      defaultSub: "Pick your tier, give us the dates, and we'll write back within 24 hours with a hold and quote.",
+      waLabel: 'Or — direct line',
+      waDesc: 'Reach the studio on WhatsApp <em>— faster, more personal.</em>',
+      intents: {
+        book: {
+          title: 'Reserve the r<em>o</em>om. <em>Briefly.</em>',
+          sub: "Pick your tier, give us the dates, and we'll write back within 24 hours with a hold and quote.",
+          intentValue: 'Booking',
+        },
+        'tier-01': {
+          title: 'Book — <em>Space Only</em>.',
+          sub: "The room + baseline lighting. Tell us the dates and we'll send the hold.",
+          intentValue: 'Booking — Tier 01 Space Only',
+          prefill: { tier: 'Tier 01 — Space Only' },
+        },
+        'tier-02': {
+          title: 'Book — <em>Space + Stylist</em>.',
+          sub: "Add styling, MUA, or set design. Tell us the dates and brief.",
+          intentValue: 'Booking — Tier 02 Space + Stylist',
+          prefill: { tier: 'Tier 02 — Space + Stylist' },
+        },
+        'tier-03': {
+          title: 'Book — <em>Full Direction</em>.',
+          sub: "Concept to delivery. Send the brief, the dates, and the deliverables.",
+          intentValue: 'Booking — Tier 03 Full Direction',
+          prefill: { tier: 'Tier 03 — Full Direction' },
+        },
+      },
+      fields: [
+        { id: 'name',  label: 'Name',  type: 'text',  required: true, autocomplete: 'name',  placeholder: 'Full name or studio', row: 0 },
+        { id: 'email', label: 'Email', type: 'email', required: true, autocomplete: 'email', placeholder: 'you@domain.com',     row: 0 },
+
+        { id: 'company', label: 'Company / brand', type: 'text', placeholder: 'Where you work', row: 1 },
+        { id: 'phone',   label: 'Phone',           type: 'tel',  autocomplete: 'tel', placeholder: '+234 …', row: 1 },
+
+        { id: 'tier', label: 'Tier', type: 'options', required: true, row: 2,
+          options: [
+            { value: 'Tier 01 — Space Only',        tag: 'Tier 01', name: 'Space <em>Only</em>',       meta: 'Entry · room + baseline lighting' },
+            { value: 'Tier 02 — Space + Stylist',   tag: 'Tier 02', name: 'Space <em>+ Stylist</em>',  meta: 'Add-on · styling, MUA, set' },
+            { value: 'Tier 03 — Full Direction',    tag: 'Tier 03', name: 'Full <em>Direction</em>',   meta: 'Premium · concept to delivery' },
+          ],
+        },
+
+        { id: 'startDate', label: 'Start date', type: 'date', required: true, row: 3 },
+        { id: 'endDate',   label: 'End date',   type: 'date', required: true, row: 3 },
+
+        { id: 'project', label: 'Project type', type: 'select', placeholder: 'Select one', row: 4,
+          otherPlaceholder: 'Tell us briefly',
+          options: [
+            'Editorial campaign',
+            'Brand film',
+            'Music video',
+            'Lookbook',
+            'E-commerce',
+            'Launch / event',
+            { value: 'Other', label: 'Something else' },
+          ],
+        },
+        { id: 'crew', label: 'Crew size', type: 'number', placeholder: 'e.g. 6', min: 1, row: 4 },
+
+        { id: 'equipment', label: 'Equipment list', type: 'textarea', full: true,
+          placeholder: "What you need from us (lights, lenses, grip, stylist add-ons) or what you'll bring. Have a brief PDF? Mention it — we'll reply by email.",
+          rows: 4 },
+
+        { id: 'message', label: 'Anything else', type: 'textarea', full: true,
+          placeholder: 'Brief, references, deliverables, deadlines…', rows: 3 },
+      ],
+    };
+  </script>
+  <script src="products/_shared/inquiry-modal.js"></script>
 </body>
 </html>
