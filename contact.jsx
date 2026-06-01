@@ -71,10 +71,11 @@ function Contact() {
   });
   const yHeadline = useTransformC(scrollYProgress, [0, 1], [80, -80]);
 
+  // Booking is handled via the studio pop-up, not a raw mailto.
+  // Keep general + help as the only address tiles.
   const emails = [
-    { label: 'General',        address: 'info@relatedmotionstudios.com' },
-    { label: 'Studio booking', address: 'bookings@relatedmotionstudios.com' },
-    { label: 'Help',           address: 'support@relatedmotionstudios.com' },
+    { label: 'General', address: 'info@relatedmotionstudios.com' },
+    { label: 'Help',    address: 'support@relatedmotionstudios.com' },
   ];
   const socials = [
     { name: 'Instagram', href: 'mailto:support@relatedmotionstudios.com' },

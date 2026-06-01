@@ -162,6 +162,19 @@
       sub.textContent = CFG.defaultSub || 'A few quick fields.';
       intent.value = intentKey || 'General';
     }
+    // Pre-fill fields when intent has a prefill map: { fieldId: value, ... }
+    if (intentCfg && intentCfg.prefill) {
+      Object.keys(intentCfg.prefill).forEach((fieldId) => {
+        const val = intentCfg.prefill[fieldId];
+        const radios = form.querySelectorAll('input[type="radio"][name="' + fieldId + '"]');
+        if (radios.length) {
+          radios.forEach((r) => { r.checked = (r.value === val); });
+          return;
+        }
+        const el = form.querySelector('[name="' + fieldId + '"]');
+        if (el) el.value = val;
+      });
+    }
     note.textContent = 'By submitting, you agree to be reviewed.';
     note.style.color = '';
 

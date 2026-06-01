@@ -423,26 +423,22 @@ const tiers = [
   },
 ];
 
-function TierCard({ tier, onSelect, selected }) {
-  const isSel = selected === tier.n;
+function TierCard({ tier }) {
+  const openBookingModal = () => {
+    if (window.openInquiryModal) window.openInquiryModal('tier-' + tier.n);
+  };
   return (
     <motionS.button
       type="button"
-      onClick={() => onSelect(tier.n)}
+      onClick={openBookingModal}
       initial={{ opacity: 0, y: 22 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-10% 0px' }}
       transition={{ duration: 0.9, ease: sEase }}
       data-hover
       className={`group relative text-left p-8 md:p-10 border transition-colors duration-500
-        ${isSel ? 'border-white/60 bg-white/[0.04]' : tier.featured ? 'border-white/25 bg-white/[0.015]' : 'border-white/10 hover:border-white/30'}`}>
-      {/* selected tick */}
-      {isSel && (
-        <span className="absolute right-5 top-5 flex h-5 w-5 items-center justify-center rounded-full" style={{ background: tier.accent }}>
-          <svg width="10" height="8" viewBox="0 0 10 8"><path d="M1 4L4 7L9 1" fill="none" stroke="#0a0a0a" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
-        </span>
-      )}
-      {tier.featured && !isSel && (
+        ${tier.featured ? 'border-white/25 bg-white/[0.015]' : 'border-white/10 hover:border-white/30'}`}>
+      {tier.featured && (
         <span className="absolute right-5 top-5 text-[9.5px] font-mono uppercase tracking-[0.3em] text-white/55">Most booked</span>
       )}
 
@@ -464,14 +460,18 @@ function TierCard({ tier, onSelect, selected }) {
       </ul>
 
       <div className="mt-10 flex items-center gap-3 text-[10.5px] uppercase tracking-[0.3em]" style={{ color: tier.accent }}>
-        <span>{isSel ? 'Selected' : 'Select tier'}</span>
+        <span>Book this tier</span>
         <svg width="18" height="8" viewBox="0 0 18 8"><path d="M1 4 H17 M13 1 L17 4 L13 7" fill="none" stroke="currentColor" strokeWidth="0.9" strokeLinecap="round" strokeLinejoin="round" /></svg>
       </div>
     </motionS.button>
   );
 }
 
-function BookingForm({ selectedTier, setSelectedTier }) {
+// Legacy BookingForm + LabeledField — kept for reference, no longer rendered.
+// Booking is now handled by the shared inquiry-modal (opened from any TierCard
+// or the "Book the studio" CTA). See Studio.html INQUIRY_CONFIG.
+// eslint-disable-next-line no-unused-vars
+function BookingForm_DEPRECATED({ selectedTier, setSelectedTier }) {
   const [startDate, setStartDate] = React.useState('');
   const [endDate, setEndDate]     = React.useState('');
   const [name, setName]           = React.useState('');
@@ -647,9 +647,11 @@ function LabeledField({ label, hint, children }) {
 }
 
 function Bookings() {
-  const [selectedTier, setSelectedTier] = React.useState('02');
+  const openBookingModal = () => {
+    if (window.openInquiryModal) window.openInquiryModal('book');
+  };
   return (
-    <section className="relative bg-black text-white px-10 pt-20 pb-24 md:pt-24 md:pb-28 overflow-hidden">
+    <section id="bookings" className="relative bg-black text-white px-10 pt-20 pb-24 md:pt-24 md:pb-28 overflow-hidden">
       <div className="grid grid-cols-12 items-end mb-12 md:mb-16">
         <motionS.div {...fadeIn(0)} className="col-span-12 md:col-span-2">
           <div className="text-[10.5px] uppercase tracking-[0.28em] text-white/45">
@@ -669,16 +671,38 @@ function Bookings() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {tiers.map((t) => (
-          <TierCard
-            key={t.n}
-            tier={t}
-            selected={selectedTier}
-            onSelect={setSelectedTier}
-          />
+          <TierCard key={t.n} tier={t} />
         ))}
       </div>
 
-      <BookingForm selectedTier={selectedTier} setSelectedTier={setSelectedTier} />
+      {/* Single CTA — opens the booking modal without a tier preselected.
+          (Tap any tier card above to open the modal with that tier already chosen.) */}
+      <motionS.div {...fadeUp(0.2)} className="mt-14 md:mt-16 border-t border-white/10 pt-12 grid grid-cols-12 items-end gap-6">
+        <div className="col-span-12 md:col-span-8">
+          <div className="font-display font-light text-[28px] md:text-[40px] leading-[1.1] text-white max-w-[18ch]">
+            Reserve the r<span className="italic-accent">o</span>om.
+          </div>
+          <p className="mt-4 text-[14px] leading-[1.7] text-white/55 max-w-[52ch]">
+            Tell us the dates, the tier, and the equipment you'll bring or need. We write back within 24 hours with a hold + quote. Or tap a tier above to start there.
+          </p>
+        </div>
+        <div className="col-span-12 md:col-span-4 md:text-right">
+          <button
+            type="button"
+            onClick={openBookingModal}
+            data-hover
+            className="group inline-flex items-center gap-4 text-[12px] uppercase tracking-[0.32em] text-white hover:text-white/85 transition-colors">
+            <span className="inline-block h-px w-10 bg-white/55 group-hover:w-16 transition-[width] duration-500" />
+            <span>Book the studio</span>
+            <svg width="22" height="10" viewBox="0 0 22 10" className="transition-transform duration-500 group-hover:translate-x-1.5">
+              <path d="M1 5 H21 M16 1 L21 5 L16 9" fill="none" stroke="currentColor" strokeWidth="0.9" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+          <div className="mt-6 text-[10.5px] uppercase tracking-[0.28em] text-white/40">
+            We review every booking by hand
+          </div>
+        </div>
+      </motionS.div>
     </section>
   );
 }
@@ -711,7 +735,6 @@ function ClosingCTA() {
           </a>
           <div className="mt-10 text-[10.5px] uppercase tracking-[0.28em] text-white/45 md:text-right leading-[1.9]">
             <div>info@relatedmotionstudios.com</div>
-            <div>bookings@relatedmotionstudios.com</div>
             <div>support@relatedmotionstudios.com</div>
           </div>
         </motionS.div>
