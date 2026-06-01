@@ -71,6 +71,25 @@ function Contact() {
   });
   const yHeadline = useTransformC(scrollYProgress, [0, 1], [80, -80]);
 
+  // Programmatic anchor scroll — the browser's native #contact anchor lookup
+  // can fail when (a) the section mounts after the initial scroll attempt,
+  // or (b) a stale-cached contact.jsx was loaded without id="contact".
+  // Listen for hash changes AND fire once on mount.
+  useEffect(() => {
+    const scrollToSelf = () => {
+      if (window.location.hash === '#contact' && ref.current) {
+        ref.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    };
+    // Defer the initial scroll a tick so React has painted the section.
+    const t = setTimeout(scrollToSelf, 50);
+    window.addEventListener('hashchange', scrollToSelf);
+    return () => {
+      clearTimeout(t);
+      window.removeEventListener('hashchange', scrollToSelf);
+    };
+  }, []);
+
   // Booking is handled via the studio pop-up, not a raw mailto.
   // Keep general + help as the only address tiles.
   const emails = [
