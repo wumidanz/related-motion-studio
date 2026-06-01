@@ -91,6 +91,7 @@ function Contact() {
   return (
     <section
       ref={ref}
+      id="contact"
       data-screen-label="Contact"
       className="relative text-white overflow-hidden min-h-[100vh] flex flex-col justify-between">
       {/* Ambient morphing blobs — dark palette. Sits behind everything. */}
