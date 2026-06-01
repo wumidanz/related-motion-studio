@@ -71,24 +71,47 @@ function Contact() {
   });
   const yHeadline = useTransformC(scrollYProgress, [0, 1], [80, -80]);
 
-  // Programmatic anchor scroll — the browser's native #contact anchor lookup
-  // can fail when (a) the section mounts after the initial scroll attempt,
-  // or (b) a stale-cached contact.jsx was loaded without id="contact".
-  // Listen for hash changes AND fire once on mount.
+  // Contact pop-up state. Triggered by:
+  //   - The CONTACT nav link (which sets window.location.hash to '#contact')
+  //   - Anyone calling window.openContactPopup()
+  //   - Arriving on this page with #contact already in the URL
+  // Closing clears the hash so reloads don't trap users in the popup.
+  const [popupOpen, setPopupOpen] = useState(false);
   useEffect(() => {
-    const scrollToSelf = () => {
-      if (window.location.hash === '#contact' && ref.current) {
-        ref.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
+    const open = () => setPopupOpen(true);
+    const close = () => setPopupOpen(false);
+    const onHash = () => {
+      if (window.location.hash === '#contact') open();
     };
-    // Defer the initial scroll a tick so React has painted the section.
-    const t = setTimeout(scrollToSelf, 50);
-    window.addEventListener('hashchange', scrollToSelf);
+    const onKey = (e) => {
+      if (e.key === 'Escape') close();
+    };
+    window.openContactPopup = open;
+    window.closeContactPopup = close;
+    window.addEventListener('hashchange', onHash);
+    window.addEventListener('keydown', onKey);
+    // Open on initial mount if URL already has #contact
+    const t = setTimeout(onHash, 50);
     return () => {
       clearTimeout(t);
-      window.removeEventListener('hashchange', scrollToSelf);
+      window.removeEventListener('hashchange', onHash);
+      window.removeEventListener('keydown', onKey);
+      delete window.openContactPopup;
+      delete window.closeContactPopup;
     };
   }, []);
+  useEffect(() => {
+    // Lock body scroll while popup open; clear hash on close.
+    if (popupOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+      if (window.location.hash === '#contact') {
+        history.replaceState(null, '', window.location.pathname + window.location.search);
+      }
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [popupOpen]);
 
   // Booking is handled via the studio pop-up, not a raw mailto.
   // Keep general + help as the only address tiles.
@@ -314,6 +337,120 @@ function Contact() {
           </div>
         </div>
       </div>
+
+      {/* CONTACT POP-UP — opens when CONTACT nav is clicked (#contact hash)
+          or programmatically via window.openContactPopup(). */}
+      {popupOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="contact-popup-title"
+          className="fixed inset-0 z-[200] flex items-center justify-center px-4 py-6"
+          onClick={() => setPopupOpen(false)}>
+          {/* Scrim */}
+          <div
+            aria-hidden
+            className="absolute inset-0 bg-black/85"
+            style={{ backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)' }}
+          />
+          {/* Card */}
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="relative w-full max-w-[640px] max-h-[calc(100vh-32px)] overflow-y-auto bg-[#0a0a0a] border border-white/15 p-7 md:p-12">
+            {/* Close */}
+            <button
+              type="button"
+              onClick={() => setPopupOpen(false)}
+              aria-label="Close"
+              data-hover
+              className="absolute top-5 right-5 flex h-9 w-9 items-center justify-center border border-white/15 text-white/70 hover:text-white hover:border-white/45 transition-colors">
+              <span aria-hidden>✕</span>
+            </button>
+
+            {/* Heading */}
+            <div className="text-[10.5px] font-mono uppercase tracking-[0.28em] text-white/45">
+              → Get in touch
+            </div>
+            <h2
+              id="contact-popup-title"
+              className="mt-3 font-display font-light tracking-[-0.02em] leading-[1.05] text-white text-[36px] md:text-[48px]">
+              Talk to us. <span className="italic-accent">Now.</span>
+            </h2>
+            <p className="mt-4 text-[14px] leading-[1.65] text-white/55 max-w-[44ch]">
+              Pick the fastest lane. Lagos hours: Mon–Sat, 9–7.
+            </p>
+
+            {/* Three actions */}
+            <div className="mt-8 grid grid-cols-1 gap-3">
+              {/* WhatsApp */}
+              <a
+                href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(WA_PREFILL)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-hover
+                onClick={() => setTimeout(() => setPopupOpen(false), 100)}
+                className="group flex items-center justify-between gap-5 border border-white/15 hover:border-white/45 bg-white/[0.015] hover:bg-white/[0.04] transition-colors duration-500 px-6 py-5 md:px-7 md:py-6">
+                <div className="flex flex-col gap-0.5">
+                  <span className="text-[10.5px] font-mono uppercase tracking-[0.28em] text-white/45">
+                    Fastest
+                  </span>
+                  <span className="font-display font-light text-[20px] md:text-[24px] leading-[1.15] text-white">
+                    Message on <span className="italic-accent">WhatsApp</span>
+                  </span>
+                  <span className="text-[11.5px] text-white/55 font-mono mt-0.5">
+                    {PHONE_HUMAN}
+                  </span>
+                </div>
+                <span className="inline-block h-px w-9 bg-white/55 group-hover:w-14 transition-[width] duration-500" />
+              </a>
+
+              {/* Call now */}
+              <a
+                href={`tel:+${WA_NUMBER}`}
+                data-hover
+                onClick={() => setTimeout(() => setPopupOpen(false), 100)}
+                className="group flex items-center justify-between gap-5 border border-white/15 hover:border-white/45 bg-white/[0.015] hover:bg-white/[0.04] transition-colors duration-500 px-6 py-5 md:px-7 md:py-6">
+                <div className="flex flex-col gap-0.5">
+                  <span className="text-[10.5px] font-mono uppercase tracking-[0.28em] text-white/45">
+                    Right now
+                  </span>
+                  <span className="font-display font-light text-[20px] md:text-[24px] leading-[1.15] text-white">
+                    Book a call <span className="italic-accent">now</span>
+                  </span>
+                  <span className="text-[11.5px] text-white/55 font-mono mt-0.5">
+                    Tap to dial · same line
+                  </span>
+                </div>
+                <span className="inline-block h-px w-9 bg-white/55 group-hover:w-14 transition-[width] duration-500" />
+              </a>
+
+              {/* Email */}
+              <a
+                href="mailto:info@relatedmotionstudios.com?subject=Hello%20RMS"
+                data-hover
+                onClick={() => setTimeout(() => setPopupOpen(false), 100)}
+                className="group flex items-center justify-between gap-5 border border-white/15 hover:border-white/45 bg-white/[0.015] hover:bg-white/[0.04] transition-colors duration-500 px-6 py-5 md:px-7 md:py-6">
+                <div className="flex flex-col gap-0.5">
+                  <span className="text-[10.5px] font-mono uppercase tracking-[0.28em] text-white/45">
+                    Slower lane
+                  </span>
+                  <span className="font-display font-light text-[20px] md:text-[24px] leading-[1.15] text-white">
+                    Send an <span className="italic-accent">email</span>
+                  </span>
+                  <span className="text-[11.5px] text-white/55 font-mono mt-0.5 break-all">
+                    info@relatedmotionstudios.com
+                  </span>
+                </div>
+                <span className="inline-block h-px w-9 bg-white/55 group-hover:w-14 transition-[width] duration-500" />
+              </a>
+            </div>
+
+            <div className="mt-6 text-[10.5px] font-mono uppercase tracking-[0.28em] text-white/35 text-center">
+              · Press <kbd className="font-sans not-italic">Esc</kbd> to close ·
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
