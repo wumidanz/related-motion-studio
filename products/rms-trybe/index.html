@@ -1623,6 +1623,40 @@
   }
   document.querySelectorAll('[data-open-form]').forEach(bindOpener);
 
+  // Deep-link auto-open — ?open=<intent> or #<intent> in the URL
+  // auto-opens the matching modal. Used for Instagram-bio links.
+  (function autoOpenFromURL() {
+    const VALID = ['apply', 'access', 'waitlist'];
+    let intentKey = null, cleanType = null;
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const fromQuery = params.get('open');
+      if (fromQuery && VALID.indexOf(fromQuery) !== -1) {
+        intentKey = fromQuery; cleanType = 'query';
+      } else {
+        const fromHash = (window.location.hash || '').replace(/^#/, '');
+        if (fromHash && VALID.indexOf(fromHash) !== -1) {
+          intentKey = fromHash; cleanType = 'hash';
+        }
+      }
+    } catch (_) {}
+    if (!intentKey) return;
+    setTimeout(function () {
+      openModal(intentKey);
+      try {
+        if (cleanType === 'query') {
+          const p = new URLSearchParams(window.location.search);
+          p.delete('open');
+          const qs = p.toString();
+          const clean = window.location.pathname + (qs ? '?' + qs : '') + window.location.hash;
+          history.replaceState(null, '', clean);
+        } else if (cleanType === 'hash') {
+          history.replaceState(null, '', window.location.pathname + window.location.search);
+        }
+      } catch (_) {}
+    }, 300);
+  })();
+
   // Close handlers — scrim, X button, Escape
   modal.querySelectorAll('[data-close]').forEach(el => el.addEventListener('click', closeModal));
   document.addEventListener('keydown', (e) => {

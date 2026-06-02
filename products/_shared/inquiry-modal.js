@@ -214,6 +214,47 @@
   }
   document.querySelectorAll('[data-open-form]').forEach(bindOpener);
 
+  // Deep-link auto-open — landing on the page with ?open=<intentKey>
+  // (or #<intentKey>) auto-opens the matching modal. Used for Instagram
+  // bio links per product. Falls back to defaults if the key is unknown
+  // but a global default ('book' / 'brief' / 'apply') is reasonable.
+  function autoOpenFromURL() {
+    let intentKey = null;
+    let cleanType = null;
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const fromQuery = params.get('open');
+      if (fromQuery) {
+        intentKey = fromQuery;
+        cleanType = 'query';
+      } else {
+        const fromHash = (window.location.hash || '').replace(/^#/, '');
+        if (fromHash && CFG.intents && CFG.intents[fromHash]) {
+          intentKey = fromHash;
+          cleanType = 'hash';
+        }
+      }
+    } catch (_) { /* ignore */ }
+    if (!intentKey) return;
+    // Defer so the rest of the page (fonts, layout) is painted first.
+    setTimeout(() => {
+      openModal(intentKey);
+      // Clean URL so reload doesn't re-open
+      try {
+        if (cleanType === 'query') {
+          const p = new URLSearchParams(window.location.search);
+          p.delete('open');
+          const qs = p.toString();
+          const clean = window.location.pathname + (qs ? '?' + qs : '') + window.location.hash;
+          history.replaceState(null, '', clean);
+        } else if (cleanType === 'hash') {
+          history.replaceState(null, '', window.location.pathname + window.location.search);
+        }
+      } catch (_) { /* ignore */ }
+    }, 300);
+  }
+  autoOpenFromURL();
+
   // close handlers
   modalRoot.querySelectorAll('[data-close]').forEach(el => el.addEventListener('click', closeModal));
   document.addEventListener('keydown', (e) => {
