@@ -121,9 +121,9 @@ function Contact() {
   ];
 
   // Contact-action CTAs — Lagos pace, no calendar slot picking.
-  const WA_NUMBER = '2348112225555';
+  const WA_NUMBER = '2348154812657';
   const WA_PREFILL = "Hi RMS — I'd like to talk.";
-  const PHONE_HUMAN = '+234 811 222 5555';
+  const PHONE_HUMAN = '+234 815 481 2657';
 
   const socials = [
     { name: 'Instagram', href: 'https://instagram.com/relatedmotionstudios' },
