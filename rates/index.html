@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Rate Card · Related Motion Studio</title>
+  <meta name="description" content="Booking rates for Related Motion Studio — six worlds inside Lagos. WhatsApp to reserve." />
+  <meta name="theme-color" content="#0a0a0a" />
+
+  <meta property="og:title" content="Rate Card · Related Motion Studio" />
+  <meta property="og:description" content="Six worlds inside Lagos. WhatsApp to book any space." />
+  <meta property="og:image" content="https://relatedmotionstudios.com/rates/page-01.webp" />
+  <meta property="og:url" content="https://relatedmotionstudios.com/rates/" />
+  <meta property="og:type" content="website" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="preload" as="image" href="page-01.webp" />
+
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      background: #0a0a0a; color: #FFF7E8;
+      font-family: 'Manrope', system-ui, sans-serif;
+      font-weight: 300; line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      min-height: 100vh;
+    }
+    .container { max-width: 920px; margin: 0 auto; padding: 0 16px; }
+
+    .header {
+      padding: 56px 16px 36px; text-align: center;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .eyebrow {
+      font-family: monospace; font-size: 10.5px; letter-spacing: 0.28em;
+      text-transform: uppercase; color: rgba(255,255,255,0.45); margin-bottom: 16px;
+    }
+    .h1 {
+      font-family: 'Instrument Serif', serif; font-weight: 400;
+      font-size: clamp(44px, 9vw, 80px); line-height: 1;
+      letter-spacing: -0.02em; margin: 0;
+    }
+    .h1 em { font-style: italic; color: #D3B88A; }
+    .sub { color: rgba(255,255,255,0.55); font-size: 15px; margin: 20px auto 0; max-width: 44ch; }
+
+    .pages { display: flex; flex-direction: column; gap: 12px; padding: 36px 0; }
+    .pages img {
+      display: block; width: 100%; height: auto;
+      background: #1a1a1a;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+    }
+
+    .bottom-cta {
+      padding: 56px 16px 100px; text-align: center;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .bottom-cta .h2 {
+      font-family: 'Instrument Serif', serif; font-weight: 400;
+      font-size: clamp(28px, 6vw, 44px); line-height: 1.1;
+      letter-spacing: -0.01em; margin: 0 0 14px;
+    }
+    .bottom-cta .h2 em { font-style: italic; color: #D3B88A; }
+    .bottom-cta .lede {
+      color: rgba(255,255,255,0.55); font-size: 14px;
+      max-width: 44ch; margin: 0 auto 28px;
+    }
+    .btn-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 14px 22px; font-family: monospace;
+      font-size: 12px; letter-spacing: 0.22em; text-transform: uppercase;
+      text-decoration: none; border: 1px solid rgba(255,255,255,0.6);
+      color: #FFF7E8; background: transparent;
+      transition: background .25s ease, color .25s ease, border-color .25s ease;
+    }
+    .btn:hover { background: #D3B88A; color: #0a0a0a; border-color: #D3B88A; }
+    .btn.primary { background: #25D366; border-color: #25D366; color: #0a0a0a; }
+    .btn.primary:hover { background: #1ebd5b; border-color: #1ebd5b; }
+    .btn svg { display: block; }
+
+    .wa-float {
+      position: fixed; right: 16px; bottom: 16px; z-index: 50;
+      display: flex; align-items: center; gap: 10px;
+      padding: 14px 18px; background: #25D366; color: #0a0a0a;
+      border-radius: 999px; font-family: 'Manrope', sans-serif;
+      font-size: 13px; font-weight: 600; letter-spacing: 0.02em;
+      text-decoration: none;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 2px 8px rgba(37,211,102,0.3);
+      transition: transform .25s ease, box-shadow .25s ease;
+    }
+    .wa-float:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.5), 0 4px 12px rgba(37,211,102,0.4);
+    }
+    .wa-float svg { display: block; }
+    .wa-float .lbl-short { display: none; }
+    @media (max-width: 480px) {
+      .wa-float { padding: 12px 16px; bottom: 12px; right: 12px; }
+      .wa-float .lbl-full { display: none; }
+      .wa-float .lbl-short { display: inline; }
+    }
+
+    .footer {
+      padding: 24px 16px 32px; text-align: center;
+      font-family: monospace; font-size: 10.5px;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+    }
+    .footer a { color: rgba(255,255,255,0.55); text-decoration: none; }
+    .footer a:hover { color: #FFF7E8; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <header class="header">
+      <div class="eyebrow">→ Related Motion Studio · Rates 2026</div>
+      <h1 class="h1">Rate <em>card</em>.</h1>
+      <p class="sub">Six worlds inside Lagos. Tap WhatsApp to reserve any space — same day where possible.</p>
+    </header>
+
+    <section class="pages" aria-label="Rate card pages">
+      <img src="page-01.webp" alt="Rate card cover" loading="eager" decoding="async" fetchpriority="high" />
+      <img src="page-02.webp" alt="Rate card page 2" loading="lazy" decoding="async" />
+      <img src="page-03.webp" alt="Main Studio" loading="lazy" decoding="async" />
+      <img src="page-04.webp" alt="Main Studio detail" loading="lazy" decoding="async" />
+      <img src="page-05.webp" alt="The Artisan Hall" loading="lazy" decoding="async" />
+      <img src="page-06.webp" alt="The Artisan Hall detail" loading="lazy" decoding="async" />
+      <img src="page-07.webp" alt="Bathhouse" loading="lazy" decoding="async" />
+      <img src="page-08.webp" alt="Bathhouse detail" loading="lazy" decoding="async" />
+      <img src="page-09.webp" alt="Mansion Entrance" loading="lazy" decoding="async" />
+      <img src="page-10.webp" alt="Mansion Entrance detail" loading="lazy" decoding="async" />
+      <img src="page-11.webp" alt="Seminar Room" loading="lazy" decoding="async" />
+      <img src="page-12.webp" alt="Seminar Room detail" loading="lazy" decoding="async" />
+      <img src="page-13.webp" alt="Outdoor Environment" loading="lazy" decoding="async" />
+      <img src="page-14.webp" alt="Outdoor Environment detail" loading="lazy" decoding="async" />
+      <img src="page-15.webp" alt="Rate card page 15" loading="lazy" decoding="async" />
+      <img src="page-16.webp" alt="Rate card page 16" loading="lazy" decoding="async" />
+    </section>
+
+    <section class="bottom-cta">
+      <h2 class="h2">Ready when you are. <em>Same day.</em></h2>
+      <p class="lede">No calendar slot-picking. Tap WhatsApp, tell us the date, we confirm within hours with a hold and quote.</p>
+      <div class="btn-row">
+        <a class="btn primary" href="https://wa.me/2348154812657?text=Hi%20RMS%20%E2%80%94%20I%27d%20like%20to%20book%20a%20studio." target="_blank" rel="noopener noreferrer">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0a8 8 0 0 0-7.05 11.79L0 16l4.31-.93A8 8 0 1 0 8 0Zm4.7 11.34c-.2.56-1.16 1.07-1.6 1.13-.43.06-.96.08-1.55-.1a13.7 13.7 0 0 1-1.4-.5A11.18 11.18 0 0 1 3.96 7.7c-.32-.55-.56-1.34-.55-1.86 0-.53.27-.78.4-.89.13-.1.27-.13.36-.13.1 0 .2 0 .29.01.09 0 .22-.04.35.27.13.31.45 1.07.49 1.15.04.08.06.18.01.28-.05.1-.07.15-.15.24-.08.09-.16.2-.23.27-.08.07-.16.16-.07.31.09.16.4.66.85 1.07.59.52 1.08.69 1.24.77.16.07.25.06.34-.04.09-.1.4-.47.5-.62.1-.16.21-.13.35-.08.14.05.91.43 1.07.51.16.08.26.12.3.18.04.06.04.36-.16.71Z"/></svg>
+          <span>WhatsApp to book</span>
+        </a>
+        <a class="btn" href="../Studio.html?open=book">Book the studio →</a>
+        <a class="btn" href="../rate-card.pdf" download>Download PDF</a>
+      </div>
+    </section>
+
+    <footer class="footer">
+      © 2026 Related Motion Studio · <a href="../index.html">Home</a> · <a href="https://wa.me/2348154812657" target="_blank" rel="noopener noreferrer">+234 815 481 2657</a>
+    </footer>
+
+  </div>
+
+  <a class="wa-float" href="https://wa.me/2348154812657?text=Hi%20RMS%20%E2%80%94%20I%27d%20like%20to%20book%20a%20studio." target="_blank" rel="noopener noreferrer" aria-label="WhatsApp Related Motion Studio">
+    <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0a8 8 0 0 0-7.05 11.79L0 16l4.31-.93A8 8 0 1 0 8 0Zm4.7 11.34c-.2.56-1.16 1.07-1.6 1.13-.43.06-.96.08-1.55-.1a13.7 13.7 0 0 1-1.4-.5A11.18 11.18 0 0 1 3.96 7.7c-.32-.55-.56-1.34-.55-1.86 0-.53.27-.78.4-.89.13-.1.27-.13.36-.13.1 0 .2 0 .29.01.09 0 .22-.04.35.27.13.31.45 1.07.49 1.15.04.08.06.18.01.28-.05.1-.07.15-.15.24-.08.09-.16.2-.23.27-.08.07-.16.16-.07.31.09.16.4.66.85 1.07.59.52 1.08.69 1.24.77.16.07.25.06.34-.04.09-.1.4-.47.5-.62.1-.16.21-.13.35-.08.14.05.91.43 1.07.51.16.08.26.12.3.18.04.06.04.36-.16.71Z"/></svg>
+    <span class="lbl-full">Book on WhatsApp</span>
+    <span class="lbl-short">Book</span>
+  </a>
+
+</body>
+</html>
