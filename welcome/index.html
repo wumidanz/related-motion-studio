@@ -273,7 +273,27 @@ const world = (n, name, lines, mood, img) => ({
   img: SPACE + img,
 });
 
+// Our work — film stills. Add a new one by dropping a file in welcome/images and adding a line here.
+const film = (n, lines, category, line, img) => ({
+  kicker: 'Reel ' + String(n).padStart(2, '0'),
+  eyebrow: 'Related Motion Studio · Our work',
+  badge: 'Shot & graded by RMS',
+  category,
+  titleLines: lines,
+  name: lines.join(' '),
+  meta: [['Studio', 'Related Motion Studio'], ['Frame', String(n).padStart(2, '0') + ' / 05']],
+  highlights: [['The frame', line], ['Made by', 'Related Motion Studio'], ['Book a shoot', 'Check in below']],
+  body: line + ' A frame from our trailer work — shot, lit and colour-graded by Related Motion Studio in Lagos.',
+  stats: [['Project', 'Trailer'], ['Stage', 'Colour grade'], ['Studio', 'RMS'], ['Location', 'Lagos'], ['Book', 'WhatsApp'], ['Rates', 'Scan below']],
+  img: 'images/' + img,
+});
+
 const SLIDES = [
+  film(1, ['The', 'Trailer'], 'Film · Colour', 'Warm light, a held look, a room that listens.', 'reel-01.webp'),
+  film(2, ['In the', 'Dark'], 'Film · Colour', 'Faces carved out of shadow.', 'reel-02.webp'),
+  film(3, ['Blind', 'Faith'], 'Film · Colour', 'A single beam, and everything it hides.', 'reel-03.webp'),
+  film(4, ['Low', 'Light'], 'Film · Colour', 'Mood built in the grade.', 'reel-04.webp'),
+  film(5, ['Red', 'Room'], 'Film · Colour', 'One colour, one silhouette, all tension.', 'reel-05.webp'),
   world(1, 'The Vacation House', ['The Vacation', 'House'], 'Linen-warm. Sun-bleached. A long Sunday.', 'w1-vacation.webp'),
   world(2, 'The Penthouse', ['The', 'Penthouse'], 'Glass, skyline, a held breath.', 'w2-penthouse.webp'),
   world(3, 'The Japanese Minimal Room', ['Japanese', 'Minimal'], 'Paper light. Silence as architecture.', 'w3-tatami.webp'),
