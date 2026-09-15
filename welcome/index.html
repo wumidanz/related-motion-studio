@@ -148,9 +148,9 @@
   .panel {
     position: absolute; z-index: 50; top: 10dvh; height: 80dvh; right: var(--pad-x); width: min(640px, 52%);
     border-radius: 48px; overflow: hidden; display: flex; flex-direction: column; color: #fff;
-    background: linear-gradient(180deg, rgba(18,16,14,.85), rgba(10,9,8,.92));
-    backdrop-filter: blur(20px) saturate(140%); -webkit-backdrop-filter: blur(20px) saturate(140%);
-    border: 1px solid rgba(255,255,255,.08);
+    background: linear-gradient(165deg, rgba(255,255,255,.12), rgba(18,16,14,.55) 35%, rgba(10,9,8,.72));
+    backdrop-filter: blur(30px) saturate(160%); -webkit-backdrop-filter: blur(30px) saturate(160%);
+    border: 1px solid rgba(255,255,255,.16); box-shadow: inset 0 1px 0 rgba(255,255,255,.2);
     transform: translateX(calc(100% + var(--pad-x) + 2dvh)); transition: transform 700ms var(--ease); will-change: transform;
     cursor: auto; user-select: text; touch-action: pan-y;
   }
@@ -180,10 +180,15 @@
   .field label { font-size: 10px; font-weight: 500; letter-spacing: .3em; text-transform: uppercase; color: rgba(255,255,255,.5); }
   .field label em { font-style: normal; color: var(--cream); }
   .field input, .field select {
-    height: 54px; padding: 0 2px; background: transparent; border: 0; border-bottom: 1px solid rgba(255,255,255,.2);
-    font-size: 18px; outline: none; border-radius: 0; color-scheme: dark; transition: border-color .3s ease;
+    height: 56px; padding: 0 18px; background-color: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.14); border-radius: 16px;
+    font-size: 17px; outline: none; color-scheme: dark; -webkit-appearance: none; appearance: none;
+    transition: border-color .3s ease, background-color .3s ease, box-shadow .3s ease;
   }
-  .field input:focus, .field select:focus { border-bottom-color: var(--cream); }
+  .field select { padding-right: 44px; background-repeat: no-repeat; background-size: 6px 6px;
+    background-image: linear-gradient(45deg, transparent 50%, rgba(255,255,255,.6) 50%), linear-gradient(135deg, rgba(255,255,255,.6) 50%, transparent 50%);
+    background-position: calc(100% - 24px) 50%, calc(100% - 18px) 50%; }
+  .field input:focus, .field select:focus { border-color: rgba(246,239,226,.7); background-color: rgba(255,255,255,.1); box-shadow: 0 0 0 4px rgba(246,239,226,.08); }
+  .field.big input { height: 76px; padding: 0 24px; border-radius: 20px; font-size: clamp(22px, 3.4dvh, 32px); letter-spacing: .04em; }
   .field input::placeholder { color: rgba(255,255,255,.28); }
   .field select option { background: #141210; }
   .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 20px; }
@@ -201,9 +206,57 @@
   .done .p-title { font-size: clamp(2.2rem, 6dvh, 4rem); }
   .count { font-family: var(--serif); font-style: italic; color: rgba(255,255,255,.45); font-size: 14px; margin-top: 22px; }
 
+  /* ---------- check-in: frosted glass modal ---------- */
+  .hint { display: none; }
+  /* No backdrop-filter on the CTA: it floats over the moving reel and would repaint every frame. */
+  .ci-cta { position: absolute; z-index: 44; left: 50%; bottom: 1.6dvh; transform: translateX(-50%); display: flex; align-items: center; gap: 14px;
+    padding: 10px 10px 10px 22px; border-radius: 999px; cursor: pointer; white-space: nowrap;
+    background: rgba(24,22,20,.8); border: 1px solid rgba(255,255,255,.22); box-shadow: inset 0 1px 0 rgba(255,255,255,.18), 0 20px 50px -20px rgba(0,0,0,.8);
+    font-size: 12px; font-weight: 500; letter-spacing: .24em; text-transform: uppercase; transition: opacity .4s ease, transform .5s var(--ease); }
+  .ci-cta b { font-weight: 600; color: var(--cream); }
+  .ci-cta i { width: 7px; height: 7px; border-radius: 50%; background: var(--cream); animation: ping 2.4s ease-out infinite; }
+  .ci-cta em { font-style: normal; display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: var(--cream); color: #0a0908; font-size: 15px; letter-spacing: 0; transition: transform .3s var(--ease); }
+  .ci-cta:hover em { transform: translateX(4px); }
+  .ci-cta.hidden { opacity: 0; transform: translate(-50%, 24px); pointer-events: none; }
+
+  .ci { position: absolute; inset: 0; z-index: 70; display: grid; place-items: center; padding: 3dvh var(--pad-x);
+    visibility: hidden; pointer-events: none; transition: visibility 0s linear 800ms; touch-action: pan-y; user-select: text; cursor: auto; }
+  .ci.on { visibility: visible; pointer-events: auto; transition-delay: 0s; }
+  .ci-bg { position: absolute; inset: 0; opacity: 0; background: radial-gradient(120% 90% at 50% 45%, rgba(10,9,8,.2), rgba(10,9,8,.75));
+    backdrop-filter: blur(16px) saturate(120%); -webkit-backdrop-filter: blur(16px) saturate(120%); transition: opacity 700ms var(--ease); }
+  .ci.on .ci-bg { opacity: 1; }
+  .ci-card { position: relative; width: min(760px, 100%); max-height: 94dvh; display: flex; flex-direction: column; border-radius: 40px; overflow: hidden;
+    background: linear-gradient(160deg, rgba(255,255,255,.16), rgba(255,255,255,.05) 38%, rgba(255,255,255,.08));
+    backdrop-filter: blur(34px) saturate(170%); -webkit-backdrop-filter: blur(34px) saturate(170%);
+    border: 1px solid rgba(255,255,255,.2); box-shadow: inset 0 1px 0 rgba(255,255,255,.3), 0 50px 140px -40px rgba(0,0,0,.9);
+    opacity: 0; transform: translateY(48px) scale(.95); transition: opacity 500ms var(--ease), transform 900ms var(--ease); }
+  .ci.on .ci-card { opacity: 1; transform: none; }
+  .ci-card::before { content: ""; position: absolute; inset: 0; z-index: 3; pointer-events: none; transform: translateX(-100%);
+    background: linear-gradient(115deg, transparent 30%, rgba(255,255,255,.14) 48%, transparent 62%); }
+  .ci.on .ci-card::before { transform: translateX(100%); transition: transform 1.8s var(--ease) 200ms; }
+  .ci-card::after { content: ""; position: absolute; width: 60%; aspect-ratio: 1; right: -20%; top: -30%; border-radius: 50%; pointer-events: none;
+    background: radial-gradient(closest-side, rgba(246,239,226,.14), transparent); animation: drift 14s ease-in-out infinite alternate; }
+  @keyframes drift { to { transform: translate(-40%, 50%); } }
+  .ci-top { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; padding: 3.2dvh 3.2dvh 0 5dvh; }
+  .ci-steps { display: flex; gap: 6px; }
+  .ci-steps span { width: 28px; height: 3px; border-radius: 3px; background: rgba(255,255,255,.18); transition: background-color .5s ease, width .5s var(--ease); }
+  .ci-steps span.on { width: 44px; background: var(--cream); }
+  .ci-close { position: static; }
+  .ci-body { position: relative; z-index: 1; overflow-y: auto; overscroll-behavior: contain; padding: 2.4dvh 5dvh 5dvh; }
+  .ci-body, .panel-scroll { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,.22) transparent; }
+  .ci-lede { margin: 14px 0 0; max-width: 46ch; font-size: 15px; line-height: 1.6; color: rgba(255,255,255,.7); }
+  .ci-link { background: none; border: 0; padding: 0; cursor: pointer; color: rgba(255,255,255,.6); font-size: 13px; text-decoration: underline; text-underline-offset: 4px; }
+  .ci .rv { opacity: 0; animation: rv 800ms var(--ease) forwards; animation-delay: calc(var(--i, 0) * 55ms + 140ms); }
+  @keyframes rv { from { opacity: 0; transform: translateY(16px); filter: blur(8px); } to { opacity: 1; transform: none; filter: none; } }
+  @media (max-aspect-ratio: 1/1) {
+    .ci { padding: 2dvh var(--pad-x); } .ci-card { border-radius: 30px; }
+    .ci-top { padding: 2.4dvh 2.4dvh 0 3dvh; } .ci-body { padding: 2dvh 3dvh 4dvh; } .ci-cta { bottom: 2dvh; }
+  }
+
   [data-reveal] { will-change: transform, opacity, filter; }
   @media (prefers-reduced-motion: reduce) {
-    .card, .panel, .veil { transition-duration: 1ms !important; }
+    .card, .panel, .veil, .ci-card, .ci-bg { transition-duration: 1ms !important; }
+    .ci .rv { animation-duration: 1ms; animation-delay: 0s; } .ci-card::after { animation: none; }
   }
 </style>
 </head>
@@ -238,6 +291,19 @@
     <div class="panel-scroll" id="panelBody"></div>
   </aside>
 
+  <button class="ci-cta" id="ciCta" data-no-drag type="button"><i></i><span>Just arrived? <b>Check in</b></span><em>→</em></button>
+
+  <div class="ci" id="ci" data-no-drag role="dialog" aria-modal="true" aria-label="Guest check-in" aria-hidden="true">
+    <div class="ci-bg"></div>
+    <div class="ci-card">
+      <div class="ci-top">
+        <div class="ci-steps" id="ciSteps" aria-hidden="true"><span></span><span></span><span></span></div>
+        <button class="close ci-close" id="ciClose" type="button" aria-label="Close">✕</button>
+      </div>
+      <div class="ci-body" id="ciBody"></div>
+    </div>
+  </div>
+
   <div class="cursor" id="cursor" aria-hidden="true">
     <div class="ring"></div>
     <div class="lab micro" id="cursorLab">Scroll</div>
@@ -254,6 +320,9 @@
    CONTENT — swap images/text here. Everything else reads from this.
    ===================================================================== */
 const WEB3FORMS_KEY = '6cdf884b-01fb-4fdd-8f86-6b61f1ca0dae';
+// Guest list backend (Google Sheet). Paste the Apps Script web-app URL here — see welcome/backend/README.md.
+// Empty = email-only via Web3Forms, with no returning-guest recognition.
+const SHEET_URL = '';
 const WHATSAPP = '2348154813203';
 const RATE_CARD_URL = 'https://github.com/wumidanz/related-motion-studio/raw/main/rate-card.pdf';
 const IDLE_AUTOPLAY_MS = 25000;   // start auto-advancing after this much inactivity
@@ -283,7 +352,7 @@ const film = (n, lines, category, line, img) => ({
   category,
   titleLines: lines,
   name: lines.join(' '),
-  meta: [['Studio', 'Related Motion Studio'], ['Frame', String(n).padStart(2, '0') + ' / 05']],
+  meta: [['Studio', 'Related Motion Studio'], ['Frame', String(n).padStart(2, '0') + ' / 07']],
   highlights: [['The frame', line], ['Made by', 'Related Motion Studio'], ['Book a shoot', 'Check in below']],
   body: line + ' A frame from our trailer work — shot, lit and colour-graded by Related Motion Studio in Lagos.',
   stats: [['Project', 'Trailer'], ['Stage', 'Colour grade'], ['Studio', 'RMS'], ['Location', 'Lagos'], ['Book', 'WhatsApp'], ['Rates', 'Scan below']],
@@ -293,9 +362,11 @@ const film = (n, lines, category, line, img) => ({
 const SLIDES = [
   film(1, ['The', 'Trailer'], 'Film · Colour', 'Warm light, a held look, a room that listens.', 'reel-01.webp'),
   film(2, ['In the', 'Dark'], 'Film · Colour', 'Faces carved out of shadow.', 'reel-02.webp'),
-  film(3, ['Blind', 'Faith'], 'Film · Colour', 'A single beam, and everything it hides.', 'reel-03.webp'),
-  film(4, ['Low', 'Light'], 'Film · Colour', 'Mood built in the grade.', 'reel-04.webp'),
-  film(5, ['Red', 'Room'], 'Film · Colour', 'One colour, one silhouette, all tension.', 'reel-05.webp'),
+  film(3, ['The', 'Offering'], 'Film · Colour', 'Candlelight, white cloth, a ritual held still.', 'reel-06.webp'),
+  film(4, ['The', 'Lantern'], 'Film · Colour', 'One flame, and someone waiting in the doorway.', 'reel-07.webp'),
+  film(5, ['Blind', 'Faith'], 'Film · Colour', 'A single beam, and everything it hides.', 'reel-03.webp'),
+  film(6, ['Low', 'Light'], 'Film · Colour', 'Mood built in the grade.', 'reel-04.webp'),
+  film(7, ['Red', 'Room'], 'Film · Colour', 'One colour, one silhouette, all tension.', 'reel-05.webp'),
   world(1, 'The Vacation House', ['The Vacation', 'House'], 'Linen-warm. Sun-bleached. A long Sunday.', 'w1-vacation.webp'),
   world(2, 'The Penthouse', ['The', 'Penthouse'], 'Glass, skyline, a held breath.', 'w2-penthouse.webp'),
   world(3, 'The Japanese Minimal Room', ['Japanese', 'Minimal'], 'Paper light. Silence as architecture.', 'w3-tatami.webp'),
@@ -424,6 +495,7 @@ let lastInteract = performance.now(), lastAuto = 0, wheelLock = 0;
 function poke() { lastInteract = performance.now(); $('hint').style.opacity = ''; }
 
 stage.addEventListener('wheel', (e) => {
+  if (e.target.closest('.panel-scroll, .ci-body')) { poke(); return; } // let long panels scroll
   e.preventDefault(); poke();
   if (openSlot !== null || panelMode) return;
   const now = performance.now();
@@ -533,7 +605,7 @@ function frame(now) {
   // kiosk autoplay + reset
   const idle = now - lastInteract;
   if (!intro && !panelMode && idle > IDLE_AUTOPLAY_MS && now - lastAuto > AUTOPLAY_EVERY_MS) { lastAuto = now; go(idx + 1); $('hint').style.opacity = '0'; }
-  if (panelMode && idle > IDLE_RESET_MS) { closePanel(); resetForm(); }
+  if (panelMode && idle > IDLE_RESET_MS) closePanel();
 
   requestAnimationFrame(frame);
 }
@@ -581,17 +653,18 @@ const panel = $('panel'), veil = $('veil'), body = $('panelBody');
 function showPanel() {
   panel.classList.add('on'); veil.classList.add('on');
   panel.setAttribute('aria-hidden', 'false');
-  $('pager').classList.add('hidden'); $('hint').classList.add('hidden');
+  setChrome(false);
   body.scrollTop = 0;
 }
+function setChrome(on) { for (const id of ['pager', 'hint', 'ciCta']) $(id).classList.toggle('hidden', !on); }
 function closePanel() {
   if (!panelMode) return;
+  if (panelMode === 'checkin') return closeCheckin();
   panel.classList.remove('on'); veil.classList.remove('on');
   panel.setAttribute('aria-hidden', 'true');
-  $('pager').classList.remove('hidden'); $('hint').classList.remove('hidden');
+  setChrome(true);
   if (openSlot !== null) slots[openSlot].classList.remove('is-open');
   openSlot = null; panelMode = null;
-  if (doneTimer) { clearInterval(doneTimer); doneTimer = null; resetForm(); }
 }
 veil.addEventListener('click', () => { poke(); closePanel(); });
 $('closeBtn').addEventListener('click', () => { poke(); closePanel(); });
@@ -622,7 +695,7 @@ function openExplore(i) {
       <button class="btn solid" type="button" id="exploreCheckin">Check in with us →</button>
     </div>`;
   makeQR('qrRates', RATE_CARD_URL);
-  $('exploreCheckin').addEventListener('click', () => { slots[i].classList.remove('is-open'); openSlot = null; openCheckin(); });
+  $('exploreCheckin').addEventListener('click', () => { closePanel(); openCheckin(); });
   showPanel();
 }
 
@@ -634,81 +707,206 @@ function makeQR(id, text) {
 }
 
 $('checkinBtn').addEventListener('click', (e) => { e.stopPropagation(); openCheckin(); });
+$('ciCta').addEventListener('click', (e) => { e.stopPropagation(); openCheckin(); });
+$('ciClose').addEventListener('click', () => { poke(); closeCheckin(); });
 
-function formHTML() {
-  return `
-    <div class="micro p-eyebrow">Related Motion Studio · Guest check-in</div>
-    <h3 class="p-title">Welcome in.<br><i style="font-weight:400;text-transform:none">Stay in the loop.</i></h3>
-    <p class="p-sub" style="font-size:14px;letter-spacing:0;text-transform:none;line-height:1.6">Leave your details and we'll send you new launches, offers and first access — by email and WhatsApp.</p>
-    <div class="hr"></div>
-    <form id="guestForm" novalidate autocomplete="off">
-      <div class="field"><label for="g-name">Full name <em>*</em></label><input id="g-name" name="name" required placeholder="Your name" /></div>
-      <div class="row2">
-        <div class="field"><label for="g-phone">WhatsApp number <em>*</em></label><input id="g-phone" name="phone" type="tel" inputmode="tel" required placeholder="0801 234 5678" /></div>
-        <div class="field"><label for="g-email">Email <em>*</em></label><input id="g-email" name="email" type="email" inputmode="email" required placeholder="you@email.com" /></div>
-      </div>
-      <div class="row2">
-        <div class="field"><label for="g-space">Space you booked</label>
-          <select id="g-space" name="space_booked"><option value="">Select one</option>${SPACES_BOOKED.map((s) => `<option>${esc(s)}</option>`).join('')}</select></div>
-        <div class="field"><label for="g-brand">Brand / company</label><input id="g-brand" name="brand" placeholder="Optional" /></div>
-      </div>
-      <div class="field"><label for="g-ig">Instagram</label><input id="g-ig" name="instagram" placeholder="@handle (optional)" autocapitalize="off" /></div>
-      <div class="field"><label>What would you like to hear about?</label>
-        <div class="chips">${INTERESTS.map((t) => `<label class="chip"><input type="checkbox" name="interests" value="${esc(t)}" /><span>${esc(t)}</span></label>`).join('')}</div>
-      </div>
-      <label class="consent"><input type="checkbox" name="consent" id="g-consent" required /><span>I'm happy for Related Motion Studio to send me updates by email and WhatsApp. I can opt out any time.</span></label>
-      <input type="checkbox" name="botcheck" style="display:none" tabindex="-1" autocomplete="off" />
-      <div class="err" id="gErr"></div>
-      <div class="actions"><button class="btn solid" type="submit" id="gSubmit" style="min-width:220px">Check in →</button></div>
-    </form>`;
-}
-let doneTimer = null;
+// ---------- check-in: phone first → returning guest (just the date) or new guest (full details) ----------
+const ciEl = $('ci'), ciBody = $('ciBody');
+const STEP_NO = { phone: 0, details: 1, back: 1, done: 2 };
+const freshCi = () => ({ step: null, phone: '', norm: '', known: false, first: '' });
+let ci = freshCi(), doneTimer = null, clearTimer = null;
+
 function openCheckin() {
   poke();
   if (intro) return;
-  if (panelMode !== 'checkin' || !$('guestForm')) body.innerHTML = formHTML();
+  if (panelMode === 'explore') closePanel();
+  clearTimeout(clearTimer);
+  if (!ci.step) renderPhone();
   panelMode = 'checkin';
-  wireForm();
-  showPanel();
+  ciEl.classList.add('on'); ciEl.setAttribute('aria-hidden', 'false');
+  setChrome(false);
 }
-function resetForm() { if (panelMode !== 'checkin') body.innerHTML = ''; }
+function closeCheckin() {
+  ciEl.classList.remove('on'); ciEl.setAttribute('aria-hidden', 'true');
+  panelMode = null; setChrome(true);
+  if (doneTimer) { clearInterval(doneTimer); doneTimer = null; }
+  if (ciEl.contains(document.activeElement)) document.activeElement.blur();
+  // Every close starts the next guest clean — nobody sees the previous person's details.
+  ci = freshCi();
+  clearTimer = setTimeout(() => { if (panelMode !== 'checkin') ciBody.innerHTML = ''; }, 800);
+}
 
-function wireForm() {
-  const f = $('guestForm');
-  if (!f || f.__wired) return;
-  f.__wired = true;
-  f.addEventListener('submit', async (e) => {
+function ciRender(step, html) {
+  ci.step = step;
+  ciBody.innerHTML = html;
+  ciBody.querySelectorAll(':scope > :not(form), :scope > form > *').forEach((el, i) => { el.classList.add('rv'); el.style.setProperty('--i', i); });
+  document.querySelectorAll('#ciSteps span').forEach((s, i) => s.classList.toggle('on', i <= STEP_NO[step]));
+  ciBody.scrollTop = 0;
+  const f = ciBody.querySelector('form');
+  if (f) f.addEventListener('input', poke);
+}
+
+const lagosDate = () => new Date().toLocaleDateString('en-CA', { timeZone: 'Africa/Lagos' }); // YYYY-MM-DD
+const lagosNow = () => new Date().toLocaleString('en-NG', { timeZone: 'Africa/Lagos' });
+function normPhone(raw) {
+  let d = String(raw || '').replace(/\D/g, '');
+  if (d.length === 11 && d[0] === '0') d = '234' + d.slice(1);
+  return d.length >= 10 && d.length <= 15 ? d : '';
+}
+const spaceField = () => `<div class="field"><label for="c-space">Space you booked</label><select id="c-space" name="space_booked"><option value="">Select one</option>${SPACES_BOOKED.map((s) => `<option>${esc(s)}</option>`).join('')}</select></div>`;
+const dateField = () => `<div class="field"><label for="c-date">Date you booked for <em>*</em></label><input id="c-date" name="booking_date" type="date" required value="${lagosDate()}" /></div>`;
+
+function renderPhone() {
+  ciRender('phone', `
+    <div class="micro p-eyebrow">Related Motion Studio · Guest check-in</div>
+    <h3 class="p-title">Welcome in.</h3>
+    <p class="ci-lede">Start with your WhatsApp number. Been here before? We'll pick up right where we left off.</p>
+    <div class="hr"></div>
+    <form id="ciForm" novalidate autocomplete="off">
+      <div class="field big"><label for="c-phone">WhatsApp number <em>*</em></label><input id="c-phone" name="phone" type="tel" inputmode="tel" placeholder="0801 234 5678" value="${esc(ci.phone)}" /></div>
+      <div class="err" id="ciErr"></div>
+      <div class="actions"><button class="btn solid" type="submit" id="ciNext" style="min-width:220px">Continue →</button></div>
+    </form>`);
+  $('ciForm').addEventListener('submit', async (e) => {
     e.preventDefault(); poke();
-    const err = $('gErr');
-    const d = new FormData(f);
-    const name = String(d.get('name') || '').trim();
-    const phone = String(d.get('phone') || '').replace(/[^\d+]/g, '');
-    const email = String(d.get('email') || '').trim();
-    if (!name) return (err.textContent = 'Please add your name.');
-    if (phone.replace(/\D/g, '').length < 10) return (err.textContent = 'Please add a valid WhatsApp number.');
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return (err.textContent = 'Please add a valid email.');
-    if (!d.get('consent')) return (err.textContent = 'Tick the box so we can send you updates.');
-    if (d.get('botcheck')) return;
-    err.textContent = '';
-    const payload = {
-      access_key: WEB3FORMS_KEY,
-      subject: 'RMS Walk-in check-in — ' + name,
-      from_name: 'RMS Studio kiosk',
-      name, phone, email,
-      space_booked: d.get('space_booked') || '—',
-      brand: d.get('brand') || '—',
-      instagram: d.get('instagram') || '—',
-      interests: d.getAll('interests').join(', ') || '—',
-      consent: 'Yes — email & WhatsApp updates',
-      checked_in_at: new Date().toLocaleString('en-NG', { timeZone: 'Africa/Lagos' }),
-    };
-    const btn = $('gSubmit'); btn.disabled = true; btn.textContent = 'Checking in…';
-    const ok = await send(payload);
-    if (!ok) queue(payload);
-    showDone(name.split(' ')[0]);
+    const raw = $('c-phone').value.trim(), norm = normPhone(raw);
+    if (!norm) return ($('ciErr').textContent = 'Please add a valid WhatsApp number.');
+    const btn = $('ciNext'); btn.disabled = true; btn.textContent = 'One moment…';
+    const mine = ci, r = await lookup(norm);
+    if (ci !== mine) return; // closed while we were looking up
+    Object.assign(ci, { phone: raw, norm, known: !!r.known, first: r.first || '' });
+    ci.known ? renderBack() : renderDetails();
+  });
+  setTimeout(() => { const p = $('c-phone'); if (p && panelMode === 'checkin') p.focus({ preventScroll: true }); }, 650);
+}
+
+function renderBack() {
+  ciRender('back', `
+    <div class="micro p-eyebrow">Welcome back</div>
+    <h3 class="p-title">Good to see<br>you again${ci.first ? ', ' + esc(ci.first) : ''}.</h3>
+    <p class="ci-lede">You're already on our list — nothing to fill in again. Just add today's booking.</p>
+    <div class="hr"></div>
+    <form id="ciForm" novalidate autocomplete="off">
+      <div class="row2">${dateField()}${spaceField()}</div>
+      <div class="err" id="ciErr"></div>
+      <div class="actions" style="align-items:center;gap:24px">
+        <button class="btn solid" type="submit" id="ciNext" style="min-width:220px">Add my booking →</button>
+        <button class="ci-link" type="button" id="ciAlt">Not you? Start over</button>
+      </div>
+    </form>`);
+  $('ciAlt').addEventListener('click', () => { poke(); Object.assign(ci, freshCi()); renderPhone(); });
+  $('ciForm').addEventListener('submit', (e) => {
+    e.preventDefault(); poke();
+    const d = new FormData(e.target);
+    if (!d.get('booking_date')) return ($('ciErr').textContent = 'Pick the date you booked for.');
+    submitCheckin({ booking_date: d.get('booking_date'), space_booked: d.get('space_booked') || '' }, ci.first);
   });
 }
 
+function renderDetails() {
+  ciRender('details', `
+    <div class="micro p-eyebrow">New here · ${esc(ci.phone)}</div>
+    <h3 class="p-title">Stay in<br><i style="font-weight:400;text-transform:none">the loop.</i></h3>
+    <p class="ci-lede">A few details and you're in — new launches, offers and first access, by email and WhatsApp.</p>
+    <div class="hr"></div>
+    <form id="ciForm" novalidate autocomplete="off">
+      <div class="field"><label for="c-name">Full name <em>*</em></label><input id="c-name" name="name" required placeholder="Your name" /></div>
+      <div class="row2">
+        <div class="field"><label for="c-email">Email <em>*</em></label><input id="c-email" name="email" type="email" inputmode="email" required placeholder="you@email.com" autocapitalize="off" /></div>
+        ${dateField()}
+      </div>
+      <div class="row2">
+        ${spaceField()}
+        <div class="field"><label for="c-brand">Brand / company</label><input id="c-brand" name="brand" placeholder="Optional" /></div>
+      </div>
+      <div class="field"><label for="c-ig">Instagram</label><input id="c-ig" name="instagram" placeholder="@handle (optional)" autocapitalize="off" /></div>
+      <div class="field"><label>What would you like to hear about?</label>
+        <div class="chips">${INTERESTS.map((t) => `<label class="chip"><input type="checkbox" name="interests" value="${esc(t)}" /><span>${esc(t)}</span></label>`).join('')}</div>
+      </div>
+      <label class="consent"><input type="checkbox" name="consent" required /><span>I'm happy for Related Motion Studio to send me updates by email and WhatsApp. I can opt out any time.</span></label>
+      <input type="checkbox" name="botcheck" style="display:none" tabindex="-1" autocomplete="off" />
+      <div class="err" id="ciErr"></div>
+      <div class="actions" style="align-items:center;gap:24px">
+        <button class="btn solid" type="submit" id="ciNext" style="min-width:220px">Check in →</button>
+        <button class="ci-link" type="button" id="ciAlt">← Change number</button>
+      </div>
+    </form>`);
+  $('ciAlt').addEventListener('click', () => { poke(); renderPhone(); });
+  $('ciForm').addEventListener('submit', (e) => {
+    e.preventDefault(); poke();
+    const d = new FormData(e.target), err = $('ciErr');
+    const name = String(d.get('name') || '').trim(), email = String(d.get('email') || '').trim();
+    if (!name) return (err.textContent = 'Please add your name.');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return (err.textContent = 'Please add a valid email.');
+    if (!d.get('booking_date')) return (err.textContent = 'Pick the date you booked for.');
+    if (!d.get('consent')) return (err.textContent = 'Tick the box so we can send you updates.');
+    if (d.get('botcheck')) return;
+    submitCheckin({
+      name, email, booking_date: d.get('booking_date'), space_booked: d.get('space_booked') || '',
+      brand: d.get('brand') || '', instagram: d.get('instagram') || '', interests: d.getAll('interests').join(', '), consent: true,
+    }, name.split(' ')[0]);
+  });
+}
+
+async function submitCheckin(fields, first) {
+  const btn = $('ciNext'); btn.disabled = true; btn.textContent = 'Saving…';
+  const mine = ci;
+  const rec = {
+    action: 'checkin', id: Date.now().toString(36) + Math.random().toString(36).slice(2, 8),
+    phone: ci.norm, phone_typed: ci.phone, ...fields, checked_in_at: lagosNow(),
+  };
+  if (!(await deliver(rec))) queue(rec);
+  if (ci === mine) renderDone(first, ci.known);
+}
+
+function renderDone(first, returning) {
+  ciRender('done', `
+    <div class="micro p-eyebrow">${returning ? 'Booking added' : "You're checked in"}</div>
+    <h3 class="p-title">Thank you${first ? ',<br>' + esc(first) : ''}.</h3>
+    <div class="hr"></div>
+    <p class="p-body">${returning ? "Today's booking is on your file. Enjoy the space — and look out for what's next from us." : "You're on the list. Expect new launches, offers and first access from us — by email and on WhatsApp."}</p>
+    <div class="hr"></div>
+    <div class="qr-row">
+      <div class="qr" id="qrRates2"></div>
+      <div><div class="micro" style="color:rgba(255,255,255,.5)">Scan with your phone</div><p>Take our rate card with you.</p></div>
+    </div>
+    <div class="count" id="doneCount">Returning to the reel in 12s</div>`);
+  makeQR('qrRates2', RATE_CARD_URL);
+  let n = 12;
+  clearInterval(doneTimer);
+  doneTimer = setInterval(() => {
+    n -= 1;
+    const c = $('doneCount'); if (c) c.textContent = `Returning to the reel in ${n}s`;
+    if (n <= 0) closeCheckin();
+  }, 1000);
+}
+
+// ---------- delivery: Google Sheet when SHEET_URL is set, otherwise email via Web3Forms ----------
+// text/plain keeps the request "simple", so Apps Script needs no CORS preflight.
+async function postSheet(body, signal) {
+  const res = await fetch(SHEET_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body), signal });
+  return res.json();
+}
+async function lookup(phone) {
+  if (!SHEET_URL) return {};
+  const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 6000);
+  try { const j = await postSheet({ action: 'lookup', phone }, ctl.signal); return j.ok ? j : {}; }
+  catch (_) { return {}; } // offline or slow: treat as new — the sheet still merges by phone number
+  finally { clearTimeout(t); }
+}
+async function deliver(rec) {
+  if (rec.access_key) return send(rec); // Web3Forms payloads queued by the older build
+  if (SHEET_URL) { try { return !!(await postSheet(rec)).ok; } catch (_) { return false; } }
+  return send({
+    access_key: WEB3FORMS_KEY,
+    subject: 'RMS Walk-in check-in — ' + (rec.name || rec.phone_typed),
+    from_name: 'RMS Studio kiosk',
+    name: rec.name || '—', phone: rec.phone_typed || rec.phone, email: rec.email || '—',
+    booking_date: rec.booking_date || '—', space_booked: rec.space_booked || '—',
+    brand: rec.brand || '—', instagram: rec.instagram || '—', interests: rec.interests || '—',
+    consent: rec.consent ? 'Yes — email & WhatsApp updates' : '—', checked_in_at: rec.checked_in_at,
+  });
+}
 async function send(payload) {
   try {
     const res = await fetch('https://api.web3forms.com/submit', {
@@ -723,38 +921,18 @@ const QKEY = 'rms-checkin-queue';
 function readQ() { try { return JSON.parse(localStorage.getItem(QKEY) || '[]'); } catch (_) { return []; } }
 function writeQ(q) { try { localStorage.setItem(QKEY, JSON.stringify(q)); } catch (_) {} }
 function queue(p) { const q = readQ(); q.push(p); writeQ(q); }
+let flushing = false;
 async function flushQ() {
-  const q = readQ(); if (!q.length) return;
+  const q = readQ(); if (!q.length || flushing) return;
+  flushing = true;
   const left = [];
-  for (const p of q) { if (!(await send(p))) left.push(p); }
-  writeQ(left);
+  for (const p of q) { if (!(await deliver(p))) left.push(p); }
+  writeQ(left.concat(readQ().slice(q.length))); // keep anything queued while we were sending
+  flushing = false;
 }
 addEventListener('online', flushQ);
 setInterval(flushQ, 60000);
 flushQ();
-
-function showDone(first) {
-  body.innerHTML = `
-    <div class="done">
-      <div class="micro p-eyebrow">You're checked in</div>
-      <h3 class="p-title">Thank you,<br>${esc(first)}.</h3>
-      <div class="hr"></div>
-      <p class="p-body">You're on the list. Expect new launches, offers and first access from us — by email and on WhatsApp.</p>
-      <div class="hr"></div>
-      <div class="qr-row">
-        <div class="qr" id="qrRates2"></div>
-        <div><div class="micro" style="color:rgba(255,255,255,.5)">Scan with your phone</div><p>Take our rate card with you.</p></div>
-      </div>
-      <div class="count" id="doneCount">Returning to the reel in 12s</div>
-    </div>`;
-  makeQR('qrRates2', RATE_CARD_URL);
-  let n = 12;
-  doneTimer = setInterval(() => {
-    n -= 1;
-    const c = $('doneCount'); if (c) c.textContent = `Returning to the reel in ${n}s`;
-    if (n <= 0) { closePanel(); }
-  }, 1000);
-}
 
 measure();
 requestAnimationFrame(frame);
