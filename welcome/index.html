@@ -106,9 +106,9 @@
   .scan.off { opacity: 0; }
 
   .topbar { position: absolute; top: 2.6dvh; left: var(--pad-x); right: var(--pad-x); z-index: 45; display: flex; justify-content: space-between; align-items: center; pointer-events: none; }
-  .brand { display: flex; align-items: baseline; gap: 10px; padding-left: 6dvh; }
-  .brand b { font-size: 17px; font-weight: 600; letter-spacing: -.01em; }
-  .brand span { font-size: 10px; letter-spacing: .32em; text-transform: uppercase; color: rgba(255,255,255,.55); }
+  .brand { display: flex; align-items: center; gap: 16px; padding-left: 6dvh; }
+  .brand img { height: 24px; width: auto; display: block; }
+  .brand span { font-size: 11px; font-weight: 500; letter-spacing: .32em; text-transform: uppercase; color: rgba(255,255,255,.8); }
   .checkin-btn {
     pointer-events: auto; display: flex; align-items: center; gap: 12px; padding: 14px 24px; border-radius: 999px; border: 0; cursor: pointer;
     background: var(--cream); color: #0a0908; font-size: 12px; font-weight: 600; letter-spacing: .28em; text-transform: uppercase;
@@ -273,7 +273,7 @@
   <div class="fade bot"></div>
 
   <header class="topbar">
-    <div class="brand"><b>related</b><span>motion studio · welcome</span></div>
+    <div class="brand"><img src="images/rms-logo.webp" alt="RMS" width="48" height="24" /><span>Related Motion Studio</span></div>
     <button class="checkin-btn" id="checkinBtn" data-no-drag type="button"><i></i>Check in</button>
   </header>
 
@@ -359,6 +359,21 @@ const film = (n, lines, category, line, img) => ({
   img: 'images/' + img,
 });
 
+// The bookable rooms at the studio — the same names as the rate card.
+const room = (name, lines, mood, img) => ({
+  kicker: 'The Space',
+  eyebrow: 'RMS Space · Bookable at the studio',
+  badge: 'Book on WhatsApp',
+  category: 'Studio space',
+  titleLines: lines,
+  name,
+  meta: [['Space', name], ['Studio', 'Lekki, Lagos']],
+  highlights: [['The mood', mood], ['Booking', 'By the hour'], ['Rates', 'Scan in Explore']],
+  body: mood + ' Book ' + name + ' for your next shoot — every rate and package is on the rate card below.',
+  stats: [['Space', name], ['Booking', 'By the hour'], ['Location', 'Lekki, Lagos'], ['Book', 'WhatsApp'], ['Call', '0815 481 3203'], ['Rates', 'Scan below']],
+  img: 'images/' + img,
+});
+
 const SLIDES = [
   film(1, ['The', 'Trailer'], 'Film · Colour', 'Warm light, a held look, a room that listens.', 'reel-01.webp'),
   film(2, ['In the', 'Dark'], 'Film · Colour', 'Faces carved out of shadow.', 'reel-02.webp'),
@@ -367,6 +382,8 @@ const SLIDES = [
   film(5, ['Blind', 'Faith'], 'Film · Colour', 'A single beam, and everything it hides.', 'reel-03.webp'),
   film(6, ['Low', 'Light'], 'Film · Colour', 'Mood built in the grade.', 'reel-04.webp'),
   film(7, ['Red', 'Room'], 'Film · Colour', 'One colour, one silhouette, all tension.', 'reel-05.webp'),
+  room('Bathhouse', ['The', 'Bathhouse'], 'Open sky, white stone, a freestanding tub.', 'space-bathhouse.webp'),
+  room('Outdoor Environment', ['The', 'Courtyard'], 'Sunlit lime walls, arches, cactus and clay.', 'space-courtyard.webp'),
   world(1, 'The Vacation House', ['The Vacation', 'House'], 'Linen-warm. Sun-bleached. A long Sunday.', 'w1-vacation.webp'),
   world(2, 'The Penthouse', ['The', 'Penthouse'], 'Glass, skyline, a held breath.', 'w2-penthouse.webp'),
   world(3, 'The Japanese Minimal Room', ['Japanese', 'Minimal'], 'Paper light. Silence as architecture.', 'w3-tatami.webp'),
