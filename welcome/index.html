@@ -253,6 +253,28 @@
     .ci-top { padding: 2.4dvh 2.4dvh 0 3dvh; } .ci-body { padding: 2dvh 3dvh 4dvh; } .ci-cta { bottom: 2dvh; }
   }
 
+  .ci-back { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 22px; padding: 16px 18px; border-radius: 18px;
+    background: rgba(246,239,226,.1); border: 1px solid rgba(246,239,226,.28); }
+  .ci-back b { display: block; font-size: 15px; color: var(--cream); }
+  .ci-back span { display: block; margin-top: 4px; font-size: 13px; color: rgba(255,255,255,.6); }
+  .stars { display: flex; align-items: center; gap: 4px; }
+  .star { background: none; border: 0; padding: 4px 2px; font-size: 30px; line-height: 1; cursor: pointer; color: rgba(255,255,255,.22);
+    transition: color .2s ease, transform .25s var(--ease); }
+  .star.on { color: var(--cream); }
+  .star:hover { transform: translateY(-2px); }
+  .star-note { margin-left: 14px; color: rgba(255,255,255,.5); }
+  .voice-wrap { position: relative; }
+  .field textarea { width: 100%; min-height: 112px; padding: 16px 18px 56px; background-color: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.14); border-radius: 16px; font-size: 16px; line-height: 1.5; outline: none; resize: vertical; color-scheme: dark;
+    transition: border-color .3s ease, background-color .3s ease, box-shadow .3s ease; }
+  .field textarea:focus { border-color: rgba(246,239,226,.7); background-color: rgba(255,255,255,.1); box-shadow: 0 0 0 4px rgba(246,239,226,.08); }
+  .mic { position: absolute; right: 12px; bottom: 12px; display: inline-flex; align-items: center; gap: 9px; padding: 10px 16px; border-radius: 999px; cursor: pointer;
+    border: 1px solid rgba(255,255,255,.22); background: rgba(10,9,8,.66); color: #fff; font-size: 11px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase; }
+  .mic i { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,.65); }
+  .mic.on { background: var(--cream); color: #0a0908; border-color: var(--cream); }
+  .mic.on i { background: #c0392b; animation: ping2 1.2s ease-out infinite; }
+  [hidden] { display: none !important; }
+
   [data-reveal] { will-change: transform, opacity, filter; }
   @media (prefers-reduced-motion: reduce) {
     .card, .panel, .veil, .ci-card, .ci-bg { transition-duration: 1ms !important; }
@@ -329,20 +351,6 @@ const IDLE_AUTOPLAY_MS = 25000;   // start auto-advancing after this much inacti
 const AUTOPLAY_EVERY_MS = 6500;
 const IDLE_RESET_MS = 90000;      // close panels + clear form after this much inactivity
 
-const SPACE = '../products/rms-space/images/';
-const world = (n, name, lines, mood, img) => ({
-  kicker: 'N° ' + String(n).padStart(2, '0'),
-  eyebrow: 'RMS Space · World ' + String(n).padStart(2, '0') + ' of 08',
-  badge: 'Built · lit · held year-round',
-  category: 'Set world',
-  titleLines: lines,
-  name,
-  meta: [['World', String(n).padStart(2, '0') + ' / 08'], ['Studio', 'Lekki, Lagos']],
-  highlights: [['The mood', mood], ['Booking', '5 hrs or 10 hrs'], ['Where', 'Lekki Peninsula II']],
-  body: mood + ' Each world is built, lit and held year-round inside our Lagos studio — step in, live the scene, walk out into the city again.',
-  stats: [['World', String(n).padStart(2, '0') + ' / 08'], ['Standard', '5 hours'], ['Full day', '10 hours'], ['Location', 'Lekki, Lagos'], ['Book', 'WhatsApp'], ['Rates', 'Scan below']],
-  img: SPACE + img,
-});
 
 // Our work — film stills. Add a new one by dropping a file in welcome/images and adding a line here.
 const film = (n, lines, category, line, img) => ({
@@ -387,41 +395,6 @@ const SLIDES = [
   film(10, ['On', 'Set'], 'Behind the scenes', 'The dolly, the crew, the take before the take.', 'reel-10.webp'),
   room('Bathhouse', ['The', 'Bathhouse'], 'Open sky, white stone, a freestanding tub.', 'space-bathhouse.webp'),
   room('Outdoor Environment', ['The', 'Courtyard'], 'Sunlit lime walls, arches, cactus and clay.', 'space-courtyard.webp'),
-  world(1, 'The Vacation House', ['The Vacation', 'House'], 'Linen-warm. Sun-bleached. A long Sunday.', 'w1-vacation.webp'),
-  world(2, 'The Penthouse', ['The', 'Penthouse'], 'Glass, skyline, a held breath.', 'w2-penthouse.webp'),
-  world(3, 'The Japanese Minimal Room', ['Japanese', 'Minimal'], 'Paper light. Silence as architecture.', 'w3-tatami.webp'),
-  world(4, 'The Rainy Apartment', ['The Rainy', 'Apartment'], 'Petrichor, a yellow lamp, slowness.', 'w4-rainy.webp'),
-  world(5, 'The Old-Money Library', ['Old-Money', 'Library'], 'Walnut, brass, a century inside the dust.', 'w5-library.webp'),
-  world(6, 'The Paris Morning Café', ['Paris', 'Morning Café'], 'Marble, espresso, a folded paper.', 'w6-paris.webp'),
-  world(7, 'The Creative Loft', ['The Creative', 'Loft'], 'Concrete, north light, the next idea.', 'w7-loft.webp'),
-  world(8, 'A Modern African Luxury', ['African', 'Luxury'], 'Clay, mahogany, gold afternoon.', 'w8-african.webp'),
-  {
-    kicker: 'Identity', eyebrow: 'RMS Identity · Brand & ad testing', badge: 'Live in Lagos · Nairobi · Accra',
-    category: 'Test before you shoot', titleLines: ['RMS', 'Identity'], name: 'RMS Identity',
-    meta: [['Method', 'Real people first'], ['Then', 'Camera']],
-    highlights: [['The method', 'We test the ad before we shoot it.'], ['Markets', 'Lagos · Nairobi · Accra'], ['We make', 'Brand films · Campaigns']],
-    body: 'We test your ad with real people in your market before we shoot anything. Only when the numbers say go do we move to camera — then we make the work: brand films, launch campaigns, product reels and social content.',
-    stats: [['Service', 'Ad testing'], ['Then', 'Production'], ['Markets', '3 cities'], ['Films', 'Brand · Launch'], ['Social', 'Reels'], ['Book', 'WhatsApp']],
-    img: '../products/rms-identity/assets/shoot-bg.webp',
-  },
-  {
-    kicker: 'Trybe', eyebrow: 'RMS Trybe · The creative house', badge: 'Next intake open',
-    category: 'Creative community', titleLines: ['RMS', 'Trybe'], name: 'RMS Trybe',
-    meta: [['For', 'Creatives'], ['Entry', 'By application']],
-    highlights: [['The house', 'Where Lagos creatives build together.'], ['For', 'Photographers · Directors · Stylists'], ['Entry', 'Apply · request access']],
-    body: 'A house for photographers, directors, designers, stylists, producers and writers. Join the cohort, collaborate on real work, and grow inside the studio.',
-    stats: [['Entry', 'Application'], ['Format', 'Cohort'], ['For', 'Creatives'], ['Crafts', '14+'], ['Base', 'Lagos'], ['Apply', 'Online']],
-    img: '../products/rms-trybe/assets/studio.webp',
-  },
-  {
-    kicker: 'Frames', eyebrow: 'RMS Frames · Coming soon', badge: 'Coming soon',
-    category: 'Glamour & editorial', titleLines: ['RMS', 'Frames'], name: 'RMS Frames',
-    meta: [['Status', 'Coming soon'], ['Focus', 'Editorial']],
-    highlights: [['The frame', 'Glamour, beauty, editorial.'], ['Status', 'Launching soon'], ['First to know', 'Check in below']],
-    body: 'Signature glamour, beauty and editorial sessions — coming soon to the studio. Check in to be first on the list when bookings open.',
-    stats: [['Status', 'Coming soon'], ['Focus', 'Editorial'], ['Style', 'Glamour'], ['Where', 'RMS Studio'], ['Updates', 'Check in'], ['Launch', 'Soon']],
-    img: '../products/rms-frames/assets/bg1.webp',
-  },
   {
     kicker: 'GETYOURSIT', eyebrow: 'GETYOURSIT · Coming soon', badge: 'Coming soon',
     category: 'Coming soon', titleLines: ['Get your', 'Sit'], name: 'GETYOURSIT',
@@ -433,7 +406,7 @@ const SLIDES = [
   },
 ];
 
-const SPACES_BOOKED = ['Main Studio', 'The Artisan Hall', 'Bathhouse', 'Mansion Entrance', 'Seminar Room', 'Outdoor Environment', 'A Space set world', 'Not sure yet'];
+const SPACES = ['Main Studio', 'The Artisan Hall', 'Bathhouse', 'Mansion Entrance', 'Seminar Room', 'Outdoor Environment', 'A Space set world'];
 const INTERESTS = ['New launches', 'Offers & discounts', 'Space bookings', 'RMS Academy', 'Trybe community', 'Brand films & campaigns'];
 
 /* =====================================================================
@@ -739,18 +712,20 @@ $('checkinBtn').addEventListener('click', (e) => { e.stopPropagation(); openChec
 $('ciCta').addEventListener('click', (e) => { e.stopPropagation(); openCheckin(); });
 $('ciClose').addEventListener('click', () => { poke(); closeCheckin(); });
 
-// ---------- check-in: phone first → returning guest (just the date) or new guest (full details) ----------
+// ---------- check-in: one form, one pop-up ----------
+// The WhatsApp number sits with the rest of the fields. As soon as it is a
+// valid number we ask the sheet whether we know it; a returning guest keeps
+// the same form, minus everything they already told us.
 const ciEl = $('ci'), ciBody = $('ciBody');
-const STEP_NO = { phone: 0, details: 1, back: 1, done: 2 };
-const freshCi = () => ({ step: null, phone: '', norm: '', known: false, first: '' });
-let ci = freshCi(), doneTimer = null, clearTimer = null;
+const freshCi = () => ({ open: false, phone: '', norm: '', known: false, first: '', rating: 0, done: false });
+let ci = freshCi(), doneTimer = null, clearTimer = null, lookupTimer = null;
 
 function openCheckin() {
   poke();
   if (intro) return;
   if (panelMode === 'explore') closePanel();
   clearTimeout(clearTimer);
-  if (!ci.step) renderPhone();
+  if (!ci.open) { ci = freshCi(); ci.open = true; renderForm(); }
   panelMode = 'checkin';
   ciEl.classList.add('on'); ciEl.setAttribute('aria-hidden', 'false');
   setChrome(false);
@@ -759,20 +734,19 @@ function closeCheckin() {
   ciEl.classList.remove('on'); ciEl.setAttribute('aria-hidden', 'true');
   panelMode = null; setChrome(true);
   if (doneTimer) { clearInterval(doneTimer); doneTimer = null; }
+  clearTimeout(lookupTimer);
+  stopDictation();
   if (ciEl.contains(document.activeElement)) document.activeElement.blur();
-  // Every close starts the next guest clean — nobody sees the previous person's details.
+  // Always start the next guest clean — nobody sees the previous person's details.
   ci = freshCi();
   clearTimer = setTimeout(() => { if (panelMode !== 'checkin') ciBody.innerHTML = ''; }, 800);
 }
 
 function ciRender(step, html) {
-  ci.step = step;
   ciBody.innerHTML = html;
   ciBody.querySelectorAll(':scope > :not(form), :scope > form > *').forEach((el, i) => { el.classList.add('rv'); el.style.setProperty('--i', i); });
-  document.querySelectorAll('#ciSteps span').forEach((s, i) => s.classList.toggle('on', i <= STEP_NO[step]));
+  document.querySelectorAll('#ciSteps span').forEach((s, i) => s.classList.toggle('on', i <= (step === 'done' ? 2 : 1)));
   ciBody.scrollTop = 0;
-  const f = ciBody.querySelector('form');
-  if (f) f.addEventListener('input', poke);
 }
 
 const lagosDate = () => new Date().toLocaleDateString('en-CA', { timeZone: 'Africa/Lagos' }); // YYYY-MM-DD
@@ -782,118 +756,186 @@ function normPhone(raw) {
   if (d.length === 11 && d[0] === '0') d = '234' + d.slice(1);
   return d.length >= 10 && d.length <= 15 ? d : '';
 }
-const spaceField = () => `<div class="field"><label for="c-space">Space you booked</label><select id="c-space" name="space_booked"><option value="">Select one</option>${SPACES_BOOKED.map((s) => `<option>${esc(s)}</option>`).join('')}</select></div>`;
-const dateField = () => `<div class="field"><label for="c-date">Date you booked for <em>*</em></label><input id="c-date" name="booking_date" type="date" required value="${lagosDate()}" /></div>`;
 
-function renderPhone() {
-  ciRender('phone', `
+function renderForm() {
+  ciRender('form', `
     <div class="micro p-eyebrow">Related Motion Studio · Guest check-in</div>
     <h3 class="p-title">Welcome in.</h3>
-    <p class="ci-lede">Start with your WhatsApp number. Been here before? We'll pick up right where we left off.</p>
+    <p class="ci-lede">Leave your details and we'll send you new launches, offers and first access — by email and WhatsApp.</p>
     <div class="hr"></div>
     <form id="ciForm" novalidate autocomplete="off">
-      <div class="field big"><label for="c-phone">WhatsApp number <em>*</em></label><input id="c-phone" name="phone" type="tel" inputmode="tel" placeholder="0801 234 5678" value="${esc(ci.phone)}" /></div>
-      <div class="err" id="ciErr"></div>
-      <div class="actions"><button class="btn solid" type="submit" id="ciNext" style="min-width:220px">Continue →</button></div>
-    </form>`);
-  $('ciForm').addEventListener('submit', async (e) => {
-    e.preventDefault(); poke();
-    const raw = $('c-phone').value.trim(), norm = normPhone(raw);
-    if (!norm) return ($('ciErr').textContent = 'Please add a valid WhatsApp number.');
-    const btn = $('ciNext'); btn.disabled = true; btn.textContent = 'One moment…';
-    const mine = ci, r = await lookup(norm);
-    if (ci !== mine) return; // closed while we were looking up
-    Object.assign(ci, { phone: raw, norm, known: !!r.known, first: r.first || '' });
-    ci.known ? renderBack() : renderDetails();
-  });
-  setTimeout(() => { const p = $('c-phone'); if (p && panelMode === 'checkin') p.focus({ preventScroll: true }); }, 650);
-}
+      <div class="ci-back" id="ciBack" hidden></div>
 
-function renderBack() {
-  ciRender('back', `
-    <div class="micro p-eyebrow">Welcome back</div>
-    <h3 class="p-title">Good to see<br>you again${ci.first ? ', ' + esc(ci.first) : ''}.</h3>
-    <p class="ci-lede">You're already on our list — nothing to fill in again. Just add today's booking.</p>
-    <div class="hr"></div>
-    <form id="ciForm" novalidate autocomplete="off">
-      <div class="row2">${dateField()}${spaceField()}</div>
-      <div class="err" id="ciErr"></div>
-      <div class="actions" style="align-items:center;gap:24px">
-        <button class="btn solid" type="submit" id="ciNext" style="min-width:220px">Add my booking →</button>
-        <button class="ci-link" type="button" id="ciAlt">Not you? Start over</button>
-      </div>
-    </form>`);
-  $('ciAlt').addEventListener('click', () => { poke(); Object.assign(ci, freshCi()); renderPhone(); });
-  $('ciForm').addEventListener('submit', (e) => {
-    e.preventDefault(); poke();
-    const d = new FormData(e.target);
-    if (!d.get('booking_date')) return ($('ciErr').textContent = 'Pick the date you booked for.');
-    submitCheckin({ booking_date: d.get('booking_date'), space_booked: d.get('space_booked') || '' }, ci.first);
-  });
-}
-
-function renderDetails() {
-  ciRender('details', `
-    <div class="micro p-eyebrow">New here · ${esc(ci.phone)}</div>
-    <h3 class="p-title">Stay in<br><i style="font-weight:400;text-transform:none">the loop.</i></h3>
-    <p class="ci-lede">A few details and you're in — new launches, offers and first access, by email and WhatsApp.</p>
-    <div class="hr"></div>
-    <form id="ciForm" novalidate autocomplete="off">
-      <div class="field"><label for="c-name">Full name <em>*</em></label><input id="c-name" name="name" required placeholder="Your name" /></div>
       <div class="row2">
+        <div class="field"><label for="c-phone">WhatsApp number <em>*</em></label><input id="c-phone" name="phone" type="tel" inputmode="tel" required placeholder="0801 234 5678" /></div>
+        <div class="field" data-new><label for="c-name">Full name <em>*</em></label><input id="c-name" name="name" required placeholder="Your name" /></div>
+      </div>
+      <div class="row2" data-new>
         <div class="field"><label for="c-email">Email <em>*</em></label><input id="c-email" name="email" type="email" inputmode="email" required placeholder="you@email.com" autocapitalize="off" /></div>
-        ${dateField()}
-      </div>
-      <div class="row2">
-        ${spaceField()}
         <div class="field"><label for="c-brand">Brand / company</label><input id="c-brand" name="brand" placeholder="Optional" /></div>
       </div>
-      <div class="field"><label for="c-ig">Instagram</label><input id="c-ig" name="instagram" placeholder="@handle (optional)" autocapitalize="off" /></div>
-      <div class="field"><label>What would you like to hear about?</label>
+      <div class="field" data-new><label for="c-ig">Instagram</label><input id="c-ig" name="instagram" placeholder="@handle (optional)" autocapitalize="off" /></div>
+
+      <div class="field"><label>Which spaces work best for you?</label>
+        <div class="chips">${SPACES.map((s) => `<label class="chip"><input type="checkbox" name="spaces" value="${esc(s)}" /><span>${esc(s)}</span></label>`).join('')}</div>
+      </div>
+
+      <div class="field"><label>How was the space?</label>
+        <div class="stars" id="ciStars" role="radiogroup" aria-label="Rate the space">
+          ${[1, 2, 3, 4, 5].map((n) => `<button type="button" class="star" data-n="${n}" role="radio" aria-checked="false" aria-label="${n} out of 5">★</button>`).join('')}
+          <span class="star-note micro" id="ciStarNote">Tap to rate</span>
+        </div>
+      </div>
+
+      <div class="field"><label for="c-review">Anything you'd like to tell us?</label>
+        <div class="voice-wrap">
+          <textarea id="c-review" name="review" rows="3" placeholder="What worked, what didn't — or press the mic and just talk."></textarea>
+          <button type="button" class="mic" id="ciMic" hidden aria-label="Record your answer"><i></i><span>Speak</span></button>
+        </div>
+      </div>
+
+      <div class="field" data-new><label>What would you like to hear about?</label>
         <div class="chips">${INTERESTS.map((t) => `<label class="chip"><input type="checkbox" name="interests" value="${esc(t)}" /><span>${esc(t)}</span></label>`).join('')}</div>
       </div>
-      <label class="consent"><input type="checkbox" name="consent" required /><span>I'm happy for Related Motion Studio to send me updates by email and WhatsApp. I can opt out any time.</span></label>
+
+      <label class="consent" data-new><input type="checkbox" name="consent" required /><span>I'm happy for Related Motion Studio to send me updates by email and WhatsApp. I can opt out any time.</span></label>
       <input type="checkbox" name="botcheck" style="display:none" tabindex="-1" autocomplete="off" />
       <div class="err" id="ciErr"></div>
-      <div class="actions" style="align-items:center;gap:24px">
-        <button class="btn solid" type="submit" id="ciNext" style="min-width:220px">Check in →</button>
-        <button class="ci-link" type="button" id="ciAlt">← Change number</button>
-      </div>
+      <div class="actions"><button class="btn solid" type="submit" id="ciSubmit" style="min-width:220px">Check in →</button></div>
     </form>`);
-  $('ciAlt').addEventListener('click', () => { poke(); renderPhone(); });
-  $('ciForm').addEventListener('submit', (e) => {
-    e.preventDefault(); poke();
-    const d = new FormData(e.target), err = $('ciErr');
-    const name = String(d.get('name') || '').trim(), email = String(d.get('email') || '').trim();
-    if (!name) return (err.textContent = 'Please add your name.');
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return (err.textContent = 'Please add a valid email.');
-    if (!d.get('booking_date')) return (err.textContent = 'Pick the date you booked for.');
-    if (!d.get('consent')) return (err.textContent = 'Tick the box so we can send you updates.');
-    if (d.get('botcheck')) return;
-    submitCheckin({
-      name, email, booking_date: d.get('booking_date'), space_booked: d.get('space_booked') || '',
-      brand: d.get('brand') || '', instagram: d.get('instagram') || '', interests: d.getAll('interests').join(', '), consent: true,
-    }, name.split(' ')[0]);
+
+  const f = $('ciForm');
+  f.addEventListener('input', poke);
+  wireStars();
+  wireMic();
+
+  // Recognise a returning guest as they type, without a second screen.
+  $('c-phone').addEventListener('input', (e) => {
+    const norm = normPhone(e.target.value);
+    clearTimeout(lookupTimer);
+    if (ci.known && norm !== ci.norm) forgetGuest();
+    if (!norm || norm === ci.norm) return;
+    lookupTimer = setTimeout(async () => {
+      const mine = ci, r = await lookup(norm);
+      if (ci !== mine || normPhone($('c-phone').value) !== norm) return;
+      if (r.known) knowGuest(norm, r.first || '');
+    }, 700);
+  });
+
+  f.addEventListener('submit', onSubmit);
+  setTimeout(() => { const p = $('c-phone'); if (p && panelMode === 'checkin') p.focus({ preventScroll: true }); }, 600);
+}
+
+function knowGuest(norm, first) {
+  ci.known = true; ci.norm = norm; ci.first = first;
+  const b = $('ciBack');
+  b.innerHTML = `<div><b>Welcome back${first ? ', ' + esc(first) : ''}.</b><span>You're already on our list — just tell us about today.</span></div><button type="button" class="ci-link" id="ciNotMe">Not you?</button>`;
+  b.hidden = false;
+  $('ciNotMe').addEventListener('click', () => { poke(); forgetGuest(); });
+  // Everything they already gave us stays out of the way.
+  $('ciForm').querySelectorAll('[data-new]').forEach((el) => { el.hidden = true; el.querySelectorAll('[required]').forEach((i) => (i.required = false)); });
+}
+function forgetGuest() {
+  ci.known = false; ci.first = ''; ci.norm = '';
+  $('ciBack').hidden = true;
+  $('ciForm').querySelectorAll('[data-new]').forEach((el) => {
+    el.hidden = false;
+    el.querySelectorAll('input').forEach((i) => { if (['name', 'email', 'consent'].includes(i.name)) i.required = true; });
   });
 }
 
-async function submitCheckin(fields, first) {
-  const btn = $('ciNext'); btn.disabled = true; btn.textContent = 'Saving…';
+function wireStars() {
+  const wrap = $('ciStars'), note = $('ciStarNote');
+  const WORDS = ['', 'Not great', 'It was okay', 'Good', 'Really good', 'Perfect'];
+  wrap.addEventListener('click', (e) => {
+    const b = e.target.closest('.star'); if (!b) return;
+    poke();
+    ci.rating = Number(b.dataset.n);
+    wrap.querySelectorAll('.star').forEach((s) => {
+      const on = Number(s.dataset.n) <= ci.rating;
+      s.classList.toggle('on', on);
+      s.setAttribute('aria-checked', String(Number(s.dataset.n) === ci.rating));
+    });
+    note.textContent = WORDS[ci.rating];
+  });
+}
+
+// ---------- talk instead of type ----------
+// Browser dictation (Chrome, Edge, Safari). The button hides itself where the
+// browser has no speech recognition, so the textarea is always the fallback.
+let recog = null;
+function stopDictation() {
+  if (recog) { try { recog.stop(); } catch (_) {} recog = null; }
+  const b = $('ciMic'); if (b) b.classList.remove('on');
+}
+function wireMic() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const btn = $('ciMic'), box = $('c-review');
+  if (!SR || !btn) return;
+  btn.hidden = false;
+  btn.addEventListener('click', () => {
+    poke();
+    if (recog) { stopDictation(); return; }
+    const r = new SR();
+    r.lang = 'en-NG';
+    r.interimResults = true;
+    r.continuous = true;
+    const base = box.value ? box.value.trim() + ' ' : '';
+    r.onresult = (e) => {
+      let text = '';
+      for (let i = 0; i < e.results.length; i++) text += e.results[i][0].transcript;
+      box.value = base + text.trim();
+      poke();
+    };
+    r.onerror = () => { stopDictation(); $('ciErr').textContent = 'Could not hear that — you can type instead.'; };
+    r.onend = () => { if (recog) stopDictation(); };
+    recog = r;
+    btn.classList.add('on');
+    try { r.start(); } catch (_) { stopDictation(); }
+  });
+}
+
+async function onSubmit(e) {
+  e.preventDefault(); poke(); stopDictation();
+  const f = e.target, d = new FormData(f), err = $('ciErr');
+  const norm = normPhone(d.get('phone'));
+  const name = String(d.get('name') || '').trim();
+  const email = String(d.get('email') || '').trim();
+  if (!norm) return (err.textContent = 'Please add a valid WhatsApp number.');
+  if (!ci.known) {
+    if (!name) return (err.textContent = 'Please add your name.');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return (err.textContent = 'Please add a valid email.');
+    if (!d.get('consent')) return (err.textContent = 'Tick the box so we can send you updates.');
+  }
+  if (d.get('botcheck')) return;
+  err.textContent = '';
+
+  const btn = $('ciSubmit'); btn.disabled = true; btn.textContent = 'Checking in…';
   const mine = ci;
   const rec = {
-    action: 'checkin', id: Date.now().toString(36) + Math.random().toString(36).slice(2, 8),
-    phone: ci.norm, phone_typed: ci.phone, ...fields, checked_in_at: lagosNow(),
+    action: 'checkin',
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2, 8),
+    phone: norm, phone_typed: String(d.get('phone') || '').trim(),
+    name, email, brand: d.get('brand') || '', instagram: d.get('instagram') || '',
+    booking_date: lagosDate(),
+    spaces: d.getAll('spaces').join(', '),
+    rating: ci.rating || '',
+    review: String(d.get('review') || '').trim(),
+    interests: d.getAll('interests').join(', '),
+    consent: ci.known ? true : !!d.get('consent'),
+    checked_in_at: lagosNow(),
   };
   if (!(await deliver(rec))) queue(rec);
-  if (ci === mine) renderDone(first, ci.known);
+  if (ci === mine) renderDone(ci.first || name.split(' ')[0], ci.known);
 }
 
 function renderDone(first, returning) {
+  ci.done = true;
   ciRender('done', `
-    <div class="micro p-eyebrow">${returning ? 'Booking added' : "You're checked in"}</div>
+    <div class="micro p-eyebrow">${returning ? 'Good to see you again' : "You're checked in"}</div>
     <h3 class="p-title">Thank you${first ? ',<br>' + esc(first) : ''}.</h3>
     <div class="hr"></div>
-    <p class="p-body">${returning ? "Today's booking is on your file. Enjoy the space — and look out for what's next from us." : "You're on the list. Expect new launches, offers and first access from us — by email and on WhatsApp."}</p>
+    <p class="p-body">${returning ? "Today is on your file. Enjoy the space — and look out for what's next from us." : "You're on the list. Expect new launches, offers and first access from us — by email and on WhatsApp."}</p>
     <div class="hr"></div>
     <div class="qr-row">
       <div class="qr" id="qrRates2"></div>
@@ -924,14 +966,15 @@ async function lookup(phone) {
   finally { clearTimeout(t); }
 }
 async function deliver(rec) {
-  if (rec.access_key) return send(rec); // Web3Forms payloads queued by the older build
+  if (rec.access_key) return send(rec); // Web3Forms payloads queued by an older build
   if (SHEET_URL) { try { return !!(await postSheet(rec)).ok; } catch (_) { return false; } }
   return send({
     access_key: WEB3FORMS_KEY,
     subject: 'RMS Walk-in check-in — ' + (rec.name || rec.phone_typed),
     from_name: 'RMS Studio kiosk',
     name: rec.name || '—', phone: rec.phone_typed || rec.phone, email: rec.email || '—',
-    booking_date: rec.booking_date || '—', space_booked: rec.space_booked || '—',
+    booking_date: rec.booking_date || '—', favourite_spaces: rec.spaces || '—',
+    rating: rec.rating ? rec.rating + ' / 5' : '—', review: rec.review || '—',
     brand: rec.brand || '—', instagram: rec.instagram || '—', interests: rec.interests || '—',
     consent: rec.consent ? 'Yes — email & WhatsApp updates' : '—', checked_in_at: rec.checked_in_at,
   });

@@ -11,8 +11,8 @@
 const NOTIFY_EMAIL = '';        // who gets the "new / returning guest" email. Empty = the Google account that deployed this.
 const TZ = 'Africa/Lagos';
 
-const GUEST_HEADERS = ['Phone', 'Name', 'Email', 'Brand', 'Instagram', 'Interests', 'Consent', 'Bookings', 'First visit', 'Last visit', 'Booking dates', 'Spaces booked'];
-const VISIT_HEADERS = ['Checked in at', 'Phone', 'Name', 'Booking date', 'Space', 'Returning', 'Booking no.', 'Kiosk ID'];
+const GUEST_HEADERS = ['Phone', 'Name', 'Email', 'Brand', 'Instagram', 'Interests', 'Consent', 'Bookings', 'First visit', 'Last visit', 'Booking dates', 'Favourite spaces'];
+const VISIT_HEADERS = ['Checked in at', 'Phone', 'Name', 'Visit date', 'Favourite spaces', 'Rating', 'Review', 'Returning', 'Visit no.', 'Kiosk ID'];
 
 function doGet() {
   return json({ ok: true, service: 'rms-welcome' });
@@ -49,7 +49,9 @@ function checkin(b) {
 
   const now = Utilities.formatDate(new Date(), TZ, 'yyyy-MM-dd HH:mm');
   const date = clean(b.booking_date).slice(0, 10) || Utilities.formatDate(new Date(), TZ, 'yyyy-MM-dd');
-  const space = clean(b.space_booked);
+  const spaces = clean(b.spaces);
+  const rating = clean(b.rating);
+  const review = clean(b.review, 4000); // a spoken review runs long
   const row = findRow(guests, 1, phone);
   let count, name;
 
@@ -58,21 +60,21 @@ function checkin(b) {
     count = Number(r[7] || 0) + 1;
     name = clean(b.name) || r[1];
     const dates = r[10] ? String(r[10]).split(', ') : [];
-    const spaces = r[11] ? String(r[11]).split(', ') : [];
+    const known = r[11] ? String(r[11]).split(', ') : [];
     dates.push(date);
-    if (space) spaces.push(space);
+    for (const one of spaces ? spaces.split(', ') : []) if (known.indexOf(one) === -1) known.push(one);
     guests.getRange(row, 1, 1, GUEST_HEADERS.length).setValues([[
       phone, name, clean(b.email) || r[2], clean(b.brand) || r[3], clean(b.instagram) || r[4],
-      clean(b.interests) || r[5], b.consent ? 'Yes' : r[6], count, r[8], now, dates.join(', '), spaces.join(', '),
+      clean(b.interests) || r[5], b.consent ? 'Yes' : r[6], count, r[8], now, dates.join(', '), known.join(', '),
     ]]);
   } else {
     count = 1;
     name = clean(b.name);
-    guests.appendRow([phone, name, clean(b.email), clean(b.brand), clean(b.instagram), clean(b.interests), b.consent ? 'Yes' : '', 1, now, now, date, space]);
+    guests.appendRow([phone, name, clean(b.email), clean(b.brand), clean(b.instagram), clean(b.interests), b.consent ? 'Yes' : '', 1, now, now, date, spaces]);
   }
 
-  visits.appendRow([now, phone, name, date, space, count > 1 ? 'Yes' : 'No', count, clean(b.id)]);
-  notify({ count, name, phone, date, space, b });
+  visits.appendRow([now, phone, name, date, spaces, rating, review, count > 1 ? 'Yes' : 'No', count, clean(b.id)]);
+  notify({ count, name, phone, date, spaces, rating, review, b });
   return { ok: true };
 }
 
@@ -88,8 +90,10 @@ function notify(v) {
     '',
     `Name: ${v.name || '—'}`,
     `WhatsApp: +${v.phone}`,
-    `Booking date: ${v.date}`,
-    `Space: ${v.space || '—'}`,
+    `Checked in for: ${v.date}`,
+    `Favourite spaces: ${v.spaces || '—'}`,
+    `Rating: ${v.rating ? v.rating + ' / 5' : '—'}`,
+    `Review: ${v.review || '—'}`,
   ];
   if (!returning) {
     lines.push(`Email: ${clean(v.b.email) || '—'}`, `Brand: ${clean(v.b.brand) || '—'}`, `Instagram: ${clean(v.b.instagram) || '—'}`, `Interests: ${clean(v.b.interests) || '—'}`);
@@ -122,7 +126,7 @@ function recentIdExists(visits, id) {
   const last = visits.getLastRow();
   if (last < 2 || !id) return false;
   const from = Math.max(2, last - 300);
-  return visits.getRange(from, 8, last - from + 1, 1).getValues().some((r) => String(r[0]) === id);
+  return visits.getRange(from, 10, last - from + 1, 1).getValues().some((r) => String(r[0]) === id);
 }
 
 function normPhone(raw) {
@@ -132,8 +136,8 @@ function normPhone(raw) {
 }
 
 // Stops a typed "=..." being run as a spreadsheet formula.
-function clean(v) {
-  const s = String(v == null ? '' : v).trim().slice(0, 300);
+function clean(v, max) {
+  const s = String(v == null ? '' : v).trim().slice(0, max || 300);
   return /^[=+\-@]/.test(s) ? "'" + s : s;
 }
 
