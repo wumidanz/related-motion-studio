@@ -199,6 +199,7 @@
   .chip span { display: inline-flex; align-items: center; min-height: 42px; padding: 0 16px; border-radius: 999px; border: 1px solid rgba(255,255,255,.2);
     font-size: 13px; color: rgba(255,255,255,.8); cursor: pointer; transition: all .25s ease; }
   .chip input:checked + span { background: var(--cream); color: #0a0908; border-color: var(--cream); }
+  .field label .opt { font-style: normal; letter-spacing: .12em; color: rgba(255,255,255,.3); }
   .field .other { margin-top: 10px; height: 52px; }
   .consent { display: flex; gap: 12px; align-items: flex-start; font-size: 13px; line-height: 1.5; color: rgba(255,255,255,.7); margin: 6px 0 22px; cursor: pointer; }
   .consent input { width: 22px; height: 22px; accent-color: var(--cream); flex: none; margin-top: 1px; }
@@ -793,16 +794,16 @@ function renderForm() {
         <div class="chips">${SPACES.map((s) => `<label class="chip"><input type="checkbox" name="spaces" value="${esc(s)}" /><span>${esc(s)}</span></label>`).join('')}</div>
       </div>
 
-      <div class="field"><label>How was the space?</label>
+      <div class="field"><label>How was the space? <i class="opt">optional</i></label>
         <div class="stars" id="ciStars" role="radiogroup" aria-label="Rate the space">
           ${[1, 2, 3, 4, 5].map((n) => `<button type="button" class="star" data-n="${n}" role="radio" aria-checked="false" aria-label="${n} out of 5">★</button>`).join('')}
           <span class="star-note micro" id="ciStarNote">Tap to rate</span>
         </div>
       </div>
 
-      <div class="field"><label for="c-review">Anything you'd like to tell us?</label>
+      <div class="field"><label for="c-review">Anything you'd like to tell us? <i class="opt">optional</i></label>
         <div class="voice-wrap">
-          <textarea id="c-review" name="review" rows="3" placeholder="What worked, what didn't — or press the mic and just talk."></textarea>
+          <textarea id="c-review" name="review" rows="3" placeholder="Only if you feel like it — type, or press the mic and talk."></textarea>
           <button type="button" class="mic" id="ciMic" hidden aria-label="Record your answer"><i></i><span>Speak</span></button>
         </div>
       </div>
