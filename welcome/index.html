@@ -407,6 +407,8 @@ const SLIDES = [
 ];
 
 const SPACES = ['Main Studio', 'The Artisan Hall', 'Bathhouse', 'Mansion Entrance', 'Seminar Room', 'Outdoor Environment', 'A Space set world'];
+const SHOOTS = ['Music video', 'Brand film / advert', 'Photo shoot', 'Content day', 'Podcast / interview', 'Film / series', 'Editorial / fashion', 'Event', 'Something else'];
+const ROLES = ['Photographer', 'Director / filmmaker', 'Producer', 'Content creator', 'Brand owner', 'Marketing / agency', 'Artist / musician', 'Stylist', 'Model / talent', 'Student', 'Something else'];
 const INTERESTS = ['New launches', 'Offers & discounts', 'Space bookings', 'RMS Academy', 'Trybe community', 'Brand films & campaigns'];
 
 /* =====================================================================
@@ -776,6 +778,14 @@ function renderForm() {
       </div>
       <div class="field" data-new><label for="c-ig">Instagram</label><input id="c-ig" name="instagram" placeholder="@handle (optional)" autocapitalize="off" /></div>
 
+      <div class="field"><label>What are you shooting today?</label>
+        <div class="chips">${SHOOTS.map((t) => `<label class="chip"><input type="checkbox" name="shoot" value="${esc(t)}" /><span>${esc(t)}</span></label>`).join('')}</div>
+      </div>
+
+      <div class="field" data-new><label>What do you do?</label>
+        <div class="chips">${ROLES.map((t) => `<label class="chip"><input type="checkbox" name="role" value="${esc(t)}" /><span>${esc(t)}</span></label>`).join('')}</div>
+      </div>
+
       <div class="field"><label>Which spaces work best for you?</label>
         <div class="chips">${SPACES.map((s) => `<label class="chip"><input type="checkbox" name="spaces" value="${esc(s)}" /><span>${esc(s)}</span></label>`).join('')}</div>
       </div>
@@ -918,6 +928,8 @@ async function onSubmit(e) {
     phone: norm, phone_typed: String(d.get('phone') || '').trim(),
     name, email, brand: d.get('brand') || '', instagram: d.get('instagram') || '',
     booking_date: lagosDate(),
+    shoot: d.getAll('shoot').join(', '),
+    role: d.getAll('role').join(', '),
     spaces: d.getAll('spaces').join(', '),
     rating: ci.rating || '',
     review: String(d.get('review') || '').trim(),
@@ -973,7 +985,8 @@ async function deliver(rec) {
     subject: 'RMS Walk-in check-in — ' + (rec.name || rec.phone_typed),
     from_name: 'RMS Studio kiosk',
     name: rec.name || '—', phone: rec.phone_typed || rec.phone, email: rec.email || '—',
-    booking_date: rec.booking_date || '—', favourite_spaces: rec.spaces || '—',
+    booking_date: rec.booking_date || '—', shooting: rec.shoot || '—', profession: rec.role || '—',
+    favourite_spaces: rec.spaces || '—',
     rating: rec.rating ? rec.rating + ' / 5' : '—', review: rec.review || '—',
     brand: rec.brand || '—', instagram: rec.instagram || '—', interests: rec.interests || '—',
     consent: rec.consent ? 'Yes — email & WhatsApp updates' : '—', checked_in_at: rec.checked_in_at,
