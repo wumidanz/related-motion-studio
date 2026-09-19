@@ -1,0 +1,1054 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no" />
+<meta name="theme-color" content="#0a0908" />
+<meta name="robots" content="noindex" />
+<title>Welcome · Related Motion Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0a0908;
+    --cream: rgb(246, 239, 226);
+    --pad-x: 7.5dvh;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --serif: 'Playfair Display', 'Times New Roman', serif;
+    --sans: 'Geist', system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: #fff; overflow: hidden; }
+  body { font-family: var(--sans); -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; }
+  button, input, select, textarea { font: inherit; color: inherit; }
+  @media (max-aspect-ratio: 1/1) { :root { --pad-x: 2.2dvh; } }
+
+  .stage { position: relative; height: 100dvh; width: 100%; overflow: hidden; user-select: none; touch-action: none; }
+  @media (pointer: fine) { .stage { cursor: none; } }
+
+  /* ---------- track + cards ---------- */
+  .track { position: absolute; inset: 0 0 auto 0; padding: 0 var(--pad-x); will-change: transform; }
+  .slot { position: relative; width: 100%; height: 80dvh; margin-bottom: 5dvh; perspective: 2000px; }
+  .card {
+    position: relative; height: 100%; width: 100%; overflow: hidden; border-radius: 48px;
+    transform-origin: 0% 50%; transform-style: preserve-3d; background: #141210;
+    transition: transform 700ms var(--ease), box-shadow 700ms var(--ease);
+  }
+  .slot.is-open .card { transform: rotateY(15deg); box-shadow: 0 30px 80px -20px rgba(0,0,0,.8); }
+  .card-media {
+    position: absolute; top: 50%; left: 50%; width: 100vw; height: 120dvh;
+    margin-top: -60dvh; margin-left: -50vw;
+  }
+  .slot { contain: layout paint; }
+  .slot.near .card-media { will-change: transform; }
+  .slot.near .card-content { will-change: opacity, transform; }
+  .card-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .card-media::before { content: ""; position: absolute; inset: 0; z-index: 1;
+    background: linear-gradient(180deg, rgba(0,0,0,.42) 0%, rgba(0,0,0,.06) 22%, rgba(0,0,0,.04) 70%, rgba(0,0,0,.55) 100%); }
+  .card-media::after { content: ""; position: absolute; inset: 0; z-index: 1;
+    background: radial-gradient(80% 70% at 50% 50%, transparent 40%, rgba(0,0,0,.45) 100%); }
+
+  .card-content { position: absolute; inset: 0; opacity: 0; }
+  .tl { position: absolute; left: 6dvh; top: 5.5dvh; display: flex; flex-direction: column; gap: 12px; }
+  .kicker { font-family: var(--serif); font-style: italic; font-size: clamp(1.2rem, 2.4dvh, 2.4rem); line-height: 1; color: rgba(255,255,255,.9); }
+  .micro { font-size: 10px; font-weight: 500; letter-spacing: .32em; text-transform: uppercase; }
+  .eyebrow { color: rgba(255,255,255,.65); max-width: 26ch; line-height: 1.7; }
+  .badge { margin-top: 12px; display: inline-flex; align-items: center; gap: 10px; padding: 7px 14px 7px 10px;
+    border: 1px solid rgba(255,255,255,.22); border-radius: 999px; width: fit-content; }
+  .badge i { width: 6px; height: 6px; border-radius: 50%; background: var(--cream); box-shadow: 0 0 0 0 rgba(246,239,226,.6); animation: ping 2.4s ease-out infinite; }
+  @keyframes ping { 0% { box-shadow: 0 0 0 0 rgba(246,239,226,.55); } 100% { box-shadow: 0 0 0 10px rgba(246,239,226,0); } }
+
+  .bl { position: absolute; left: 6dvh; bottom: 9dvh; display: flex; flex-direction: column; gap: 20px; }
+  .category { color: rgba(255,255,255,.55); letter-spacing: .4em; }
+  .title { margin: 0; font-family: var(--serif); font-weight: 600; text-transform: uppercase; color: var(--cream);
+    font-size: clamp(2.2rem, 8.5dvh, 9rem); line-height: .92; letter-spacing: -.02em; }
+  .title span { display: block; }
+  .meta { display: flex; flex-direction: column; gap: 6px; }
+  .meta div { display: flex; gap: 12px; align-items: baseline; }
+  .meta b { font-weight: 500; color: rgba(255,255,255,.45); }
+  .meta span { color: rgba(255,255,255,.9); }
+
+  .rc { position: absolute; right: 6dvh; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 28px; }
+  .hl { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; text-align: right; }
+  .hl .micro { font-size: 9.5px; color: rgba(255,255,255,.55); }
+  .hl q { font-family: var(--serif); font-style: italic; font-size: 16px; line-height: 1.25; color: rgba(255,255,255,.95); max-width: 18ch; quotes: "“" "”"; }
+  .rule { width: 22px; height: 1px; background: rgba(255,255,255,.4); }
+
+  .explore {
+    position: absolute; right: 6dvh; bottom: 5dvh; display: flex; align-items: center; gap: 16px; overflow: hidden;
+    padding: 16px 28px; border-radius: 999px; border: 1px solid rgba(255,255,255,.28); background: rgba(10,9,8,.55); cursor: pointer;
+    font-size: 12px; font-weight: 500; letter-spacing: .32em; text-transform: uppercase;
+  }
+  .explore::before { content: ""; position: absolute; inset: 0; border-radius: 999px; transform: translateX(-100%);
+    background: linear-gradient(90deg, rgba(255,255,255,.02), rgba(255,255,255,.12), rgba(255,255,255,.02)); transition: transform .5s ease-out; }
+  .explore:hover::before { transform: translateX(0); }
+  .explore em { font-style: normal; font-size: 15px; transition: transform .3s ease-out; }
+  .explore:hover em { transform: translateX(6px); }
+  .explore > * { position: relative; }
+
+  @media (max-aspect-ratio: 1/1) {
+    .tl { left: 3dvh; top: 3dvh; gap: 8px; }
+    .bl { left: 3dvh; bottom: 12dvh; gap: 12px; right: 3dvh; }
+    .rc, .badge { display: none; }
+    .explore { left: 3dvh; right: auto; bottom: 3dvh; padding: 14px 22px; }
+    .card { border-radius: 32px; }
+  }
+
+  /* ---------- chrome ---------- */
+  .fade { position: absolute; inset-inline: 0; height: 10dvh; z-index: 30; pointer-events: none; }
+  .fade.top { top: 0; background: linear-gradient(var(--bg), rgba(10,9,8,0)); }
+  .fade.bot { bottom: 0; background: linear-gradient(0deg, var(--bg), rgba(10,9,8,0)); }
+
+  .scan { position: absolute; inset: 0; z-index: 60; pointer-events: none; background: var(--bg); transition: opacity 1.4s ease; }
+  .scan::after { content: ""; position: absolute; inset: 0; opacity: .5;
+    background: repeating-linear-gradient(0deg, rgba(255,255,255,.035) 0 1px, transparent 1px 3px); }
+  .scan.off { opacity: 0; }
+
+  .topbar { position: absolute; top: 2.6dvh; left: var(--pad-x); right: var(--pad-x); z-index: 45; display: flex; justify-content: space-between; align-items: center; pointer-events: none; }
+  .brand { display: flex; align-items: center; gap: 16px; padding-left: 6dvh; }
+  .brand img { height: 24px; width: auto; display: block; }
+  .brand span { font-size: 11px; font-weight: 500; letter-spacing: .32em; text-transform: uppercase; color: rgba(255,255,255,.8); }
+  .checkin-btn {
+    pointer-events: auto; display: flex; align-items: center; gap: 12px; padding: 14px 24px; border-radius: 999px; border: 0; cursor: pointer;
+    background: var(--cream); color: #0a0908; font-size: 12px; font-weight: 600; letter-spacing: .28em; text-transform: uppercase;
+    box-shadow: 0 10px 40px -10px rgba(246,239,226,.35); transition: transform .3s var(--ease);
+  }
+  .checkin-btn:hover { transform: translateY(-2px); }
+  .checkin-btn i { width: 7px; height: 7px; border-radius: 50%; background: #0a0908; animation: ping2 2.2s ease-out infinite; }
+  @keyframes ping2 { 0% { box-shadow: 0 0 0 0 rgba(10,9,8,.5); } 100% { box-shadow: 0 0 0 9px rgba(10,9,8,0); } }
+  @media (max-aspect-ratio: 1/1) { .brand { padding-left: 1dvh; } .brand span { display: none; } }
+
+  .pager { position: absolute; right: 3.2dvh; top: 50%; transform: translateY(-50%); z-index: 40; display: flex; flex-direction: column; align-items: flex-end; gap: 12px; transition: opacity .4s ease; }
+  .pager .n { font-family: var(--serif); font-style: italic; font-size: 12px; color: rgba(255,255,255,.55); }
+  .pager .n.total { color: rgba(255,255,255,.35); }
+  .pager .dots { display: flex; flex-direction: column; align-items: center; }
+  .pager button { width: 20px; height: 20px; display: grid; place-items: center; background: none; border: 0; padding: 0; cursor: pointer; }
+  .pager button span { width: 4px; height: 4px; border-radius: 50%; background: rgba(255,255,255,.22); transition: all 320ms cubic-bezier(0.16, 1, 0.3, 1); }
+  .pager button.on span { width: 6px; height: 6px; background: rgba(241,231,210,.95); }
+  .hidden { opacity: 0; pointer-events: none; }
+  @media (max-aspect-ratio: 1/1) { .pager { right: 1dvh; } }
+
+  .hint { position: absolute; bottom: 2.4dvh; left: 50%; transform: translateX(-50%); z-index: 40; color: rgba(255,255,255,.4); white-space: nowrap; transition: opacity .6s ease; }
+  @media (max-aspect-ratio: 1/1) { .hint { display: none; } }
+
+  .cursor { position: fixed; left: 0; top: 0; width: 104px; height: 104px; z-index: 90; pointer-events: none; opacity: 0; will-change: transform, opacity; }
+  .cursor .ring { position: absolute; inset: 0; border-radius: 50%; border: 1px solid rgba(255,255,255,.45); }
+  .cursor .lab { position: absolute; inset: 0; display: grid; place-items: center; transition: opacity 180ms; }
+  .cursor .arr { position: absolute; left: 50%; transform: translateX(-50%); opacity: 0; transition: opacity 160ms; font-size: 14px; }
+  .cursor .arr.up { bottom: calc(100% + 10px); }
+  .cursor .arr.dn { top: calc(100% + 10px); }
+  @media (pointer: coarse) { .cursor { display: none; } }
+
+  /* ---------- panel ---------- */
+  .veil { position: absolute; z-index: 48; top: 10dvh; height: 80dvh; left: var(--pad-x); right: var(--pad-x); border-radius: 48px;
+    background: rgba(10,9,8,0); backdrop-filter: blur(0); -webkit-backdrop-filter: blur(0); pointer-events: none;
+    transition: background-color 600ms var(--ease), backdrop-filter 600ms var(--ease), -webkit-backdrop-filter 600ms var(--ease); }
+  .veil.on { background: rgba(10,9,8,.35); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); pointer-events: auto; }
+  .panel {
+    position: absolute; z-index: 50; top: 10dvh; height: 80dvh; right: var(--pad-x); width: min(640px, 52%);
+    border-radius: 48px; overflow: hidden; display: flex; flex-direction: column; color: #fff;
+    background: linear-gradient(165deg, rgba(255,255,255,.12), rgba(18,16,14,.55) 35%, rgba(10,9,8,.72));
+    backdrop-filter: blur(30px) saturate(160%); -webkit-backdrop-filter: blur(30px) saturate(160%);
+    border: 1px solid rgba(255,255,255,.16); box-shadow: inset 0 1px 0 rgba(255,255,255,.2);
+    transform: translateX(calc(100% + var(--pad-x) + 2dvh)); transition: transform 700ms var(--ease); will-change: transform;
+    cursor: auto; user-select: text; touch-action: pan-y;
+  }
+  .panel.on { transform: translateX(0); }
+  @media (max-aspect-ratio: 1/1) { .panel { width: calc(100vw - 2 * var(--pad-x)); border-radius: 32px; } .veil { border-radius: 32px; } }
+  .panel-scroll { overflow-y: auto; padding: 5dvh 5dvh 4dvh; flex: 1; overscroll-behavior: contain; }
+  .close { position: absolute; top: 3dvh; right: 3dvh; width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(255,255,255,.18); background: rgba(255,255,255,.04); cursor: pointer; z-index: 2; font-size: 16px; }
+  .p-eyebrow { color: rgba(255,255,255,.55); }
+  .p-title { font-family: var(--serif); font-weight: 600; text-transform: uppercase; font-size: clamp(2rem, 5.2dvh, 3.6rem); line-height: .95; letter-spacing: -.02em; margin: 14px 0 0; color: var(--cream); }
+  .p-sub { margin-top: 14px; color: rgba(255,255,255,.6); }
+  .hr { height: 1px; background: rgba(255,255,255,.1); margin: 24px 0; }
+  .p-body { font-family: var(--serif); font-style: italic; font-size: 16px; line-height: 1.65; color: rgba(255,255,255,.85); margin: 0; }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .stat .micro { font-size: 9.5px; color: rgba(255,255,255,.45); }
+  .stat div:last-child { font-family: var(--serif); font-size: 19px; margin-top: 6px; color: rgba(255,255,255,.95); }
+  .actions { display: flex; gap: 12px; flex-wrap: wrap; align-items: stretch; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; padding: 0 22px; border-radius: 999px; cursor: pointer;
+    font-size: 11.5px; font-weight: 600; letter-spacing: .26em; text-transform: uppercase; border: 1px solid rgba(255,255,255,.28); background: transparent; }
+  .btn.solid { background: var(--cream); color: #0a0908; border-color: var(--cream); }
+  .qr-row { display: flex; gap: 20px; align-items: center; }
+  .qr { width: 104px; height: 104px; padding: 8px; background: #fff; border-radius: 14px; flex: none; }
+  .qr img, .qr canvas { width: 100% !important; height: 100% !important; display: block; }
+  .qr-row p { margin: 6px 0 0; font-size: 13px; line-height: 1.5; color: rgba(255,255,255,.65); }
+
+  /* form */
+  .field { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+  .field label { font-size: 10px; font-weight: 500; letter-spacing: .3em; text-transform: uppercase; color: rgba(255,255,255,.5); }
+  .field label em { font-style: normal; color: var(--cream); }
+  .field input, .field select {
+    height: 56px; padding: 0 18px; background-color: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.14); border-radius: 16px;
+    font-size: 17px; outline: none; color-scheme: dark; -webkit-appearance: none; appearance: none;
+    transition: border-color .3s ease, background-color .3s ease, box-shadow .3s ease;
+  }
+  .field select { padding-right: 44px; background-repeat: no-repeat; background-size: 6px 6px;
+    background-image: linear-gradient(45deg, transparent 50%, rgba(255,255,255,.6) 50%), linear-gradient(135deg, rgba(255,255,255,.6) 50%, transparent 50%);
+    background-position: calc(100% - 24px) 50%, calc(100% - 18px) 50%; }
+  .field input:focus, .field select:focus { border-color: rgba(246,239,226,.7); background-color: rgba(255,255,255,.1); box-shadow: 0 0 0 4px rgba(246,239,226,.08); }
+  .field.big input { height: 76px; padding: 0 24px; border-radius: 20px; font-size: clamp(22px, 3.4dvh, 32px); letter-spacing: .04em; }
+  .field input::placeholder { color: rgba(255,255,255,.28); }
+  .field select option { background: #141210; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 20px; }
+  @media (max-width: 620px) { .row2 { grid-template-columns: 1fr; } }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { position: relative; }
+  .chip input { position: absolute; opacity: 0; pointer-events: none; }
+  .chip span { display: inline-flex; align-items: center; min-height: 42px; padding: 0 16px; border-radius: 999px; border: 1px solid rgba(255,255,255,.2);
+    font-size: 13px; color: rgba(255,255,255,.8); cursor: pointer; transition: all .25s ease; }
+  .chip input:checked + span { background: var(--cream); color: #0a0908; border-color: var(--cream); }
+  .field label .opt { font-style: normal; letter-spacing: .12em; color: rgba(255,255,255,.3); }
+  .field .other { margin-top: 10px; height: 52px; }
+  .consent { display: flex; gap: 12px; align-items: flex-start; font-size: 13px; line-height: 1.5; color: rgba(255,255,255,.7); margin: 6px 0 22px; cursor: pointer; }
+  .consent input { width: 22px; height: 22px; accent-color: var(--cream); flex: none; margin-top: 1px; }
+  .err { color: #e8a27c; font-size: 13px; min-height: 18px; margin-bottom: 12px; }
+  .done { text-align: left; }
+  .done .p-title { font-size: clamp(2.2rem, 6dvh, 4rem); }
+  .count { font-family: var(--serif); font-style: italic; color: rgba(255,255,255,.45); font-size: 14px; margin-top: 22px; }
+
+  /* ---------- check-in: frosted glass modal ---------- */
+  .hint { display: none; }
+  /* No backdrop-filter on the CTA: it floats over the moving reel and would repaint every frame. */
+  .ci-cta { position: absolute; z-index: 44; left: 50%; bottom: 1.6dvh; transform: translateX(-50%); display: flex; align-items: center; gap: 14px;
+    padding: 10px 10px 10px 22px; border-radius: 999px; cursor: pointer; white-space: nowrap;
+    background: rgba(24,22,20,.8); border: 1px solid rgba(255,255,255,.22); box-shadow: inset 0 1px 0 rgba(255,255,255,.18), 0 20px 50px -20px rgba(0,0,0,.8);
+    font-size: 12px; font-weight: 500; letter-spacing: .24em; text-transform: uppercase; transition: opacity .4s ease, transform .5s var(--ease); }
+  .ci-cta b { font-weight: 600; color: var(--cream); }
+  .ci-cta i { width: 7px; height: 7px; border-radius: 50%; background: var(--cream); animation: ping 2.4s ease-out infinite; }
+  .ci-cta em { font-style: normal; display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: var(--cream); color: #0a0908; font-size: 15px; letter-spacing: 0; transition: transform .3s var(--ease); }
+  .ci-cta:hover em { transform: translateX(4px); }
+  .ci-cta.hidden { opacity: 0; transform: translate(-50%, 24px); pointer-events: none; }
+
+  .ci { position: absolute; inset: 0; z-index: 70; display: grid; place-items: center; padding: 3dvh var(--pad-x);
+    visibility: hidden; pointer-events: none; transition: visibility 0s linear 800ms; touch-action: pan-y; user-select: text; cursor: auto; }
+  .ci.on { visibility: visible; pointer-events: auto; transition-delay: 0s; }
+  .ci-bg { position: absolute; inset: 0; opacity: 0; background: radial-gradient(120% 90% at 50% 45%, rgba(10,9,8,.2), rgba(10,9,8,.75));
+    backdrop-filter: blur(16px) saturate(120%); -webkit-backdrop-filter: blur(16px) saturate(120%); transition: opacity 700ms var(--ease); }
+  .ci.on .ci-bg { opacity: 1; }
+  .ci-card { position: relative; width: min(760px, 100%); max-height: 94dvh; display: flex; flex-direction: column; border-radius: 40px; overflow: hidden;
+    background: linear-gradient(160deg, rgba(255,255,255,.16), rgba(255,255,255,.05) 38%, rgba(255,255,255,.08));
+    backdrop-filter: blur(34px) saturate(170%); -webkit-backdrop-filter: blur(34px) saturate(170%);
+    border: 1px solid rgba(255,255,255,.2); box-shadow: inset 0 1px 0 rgba(255,255,255,.3), 0 50px 140px -40px rgba(0,0,0,.9);
+    opacity: 0; transform: translateY(48px) scale(.95); transition: opacity 500ms var(--ease), transform 900ms var(--ease); }
+  .ci.on .ci-card { opacity: 1; transform: none; }
+  .ci-card::before { content: ""; position: absolute; inset: 0; z-index: 3; pointer-events: none; transform: translateX(-100%);
+    background: linear-gradient(115deg, transparent 30%, rgba(255,255,255,.14) 48%, transparent 62%); }
+  .ci.on .ci-card::before { transform: translateX(100%); transition: transform 1.8s var(--ease) 200ms; }
+  .ci-card::after { content: ""; position: absolute; width: 60%; aspect-ratio: 1; right: -20%; top: -30%; border-radius: 50%; pointer-events: none;
+    background: radial-gradient(closest-side, rgba(246,239,226,.14), transparent); animation: drift 14s ease-in-out infinite alternate; }
+  @keyframes drift { to { transform: translate(-40%, 50%); } }
+  .ci-top { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; padding: 3.2dvh 3.2dvh 0 5dvh; }
+  .ci-steps { display: flex; gap: 6px; }
+  .ci-steps span { width: 28px; height: 3px; border-radius: 3px; background: rgba(255,255,255,.18); transition: background-color .5s ease, width .5s var(--ease); }
+  .ci-steps span.on { width: 44px; background: var(--cream); }
+  .ci-close { position: static; }
+  .ci-body { position: relative; z-index: 1; overflow-y: auto; overscroll-behavior: contain; padding: 2.4dvh 5dvh 5dvh; }
+  .ci-body, .panel-scroll { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,.22) transparent; }
+  .ci-lede { margin: 14px 0 0; max-width: 46ch; font-size: 15px; line-height: 1.6; color: rgba(255,255,255,.7); }
+  .ci-link { background: none; border: 0; padding: 0; cursor: pointer; color: rgba(255,255,255,.6); font-size: 13px; text-decoration: underline; text-underline-offset: 4px; }
+  .ci .rv { opacity: 0; animation: rv 800ms var(--ease) forwards; animation-delay: calc(var(--i, 0) * 55ms + 140ms); }
+  @keyframes rv { from { opacity: 0; transform: translateY(16px); filter: blur(8px); } to { opacity: 1; transform: none; filter: none; } }
+  @media (max-aspect-ratio: 1/1) {
+    .ci { padding: 2dvh var(--pad-x); } .ci-card { border-radius: 30px; }
+    .ci-top { padding: 2.4dvh 2.4dvh 0 3dvh; } .ci-body { padding: 2dvh 3dvh 4dvh; } .ci-cta { bottom: 2dvh; }
+  }
+
+  .ci-back { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 22px; padding: 16px 18px; border-radius: 18px;
+    background: rgba(246,239,226,.1); border: 1px solid rgba(246,239,226,.28); }
+  .ci-back b { display: block; font-size: 15px; color: var(--cream); }
+  .ci-back span { display: block; margin-top: 4px; font-size: 13px; color: rgba(255,255,255,.6); }
+  .stars { display: flex; align-items: center; gap: 4px; }
+  .star { background: none; border: 0; padding: 4px 2px; font-size: 30px; line-height: 1; cursor: pointer; color: rgba(255,255,255,.22);
+    transition: color .2s ease, transform .25s var(--ease); }
+  .star.on { color: var(--cream); }
+  .star:hover { transform: translateY(-2px); }
+  .star-note { margin-left: 14px; color: rgba(255,255,255,.5); }
+  .voice-wrap { position: relative; }
+  .field textarea { width: 100%; min-height: 112px; padding: 16px 18px 56px; background-color: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.14); border-radius: 16px; font-size: 16px; line-height: 1.5; outline: none; resize: vertical; color-scheme: dark;
+    transition: border-color .3s ease, background-color .3s ease, box-shadow .3s ease; }
+  .field textarea:focus { border-color: rgba(246,239,226,.7); background-color: rgba(255,255,255,.1); box-shadow: 0 0 0 4px rgba(246,239,226,.08); }
+  .mic { position: absolute; right: 12px; bottom: 12px; display: inline-flex; align-items: center; gap: 9px; padding: 10px 16px; border-radius: 999px; cursor: pointer;
+    border: 1px solid rgba(255,255,255,.22); background: rgba(10,9,8,.66); color: #fff; font-size: 11px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase; }
+  .mic i { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,.65); }
+  .mic.on { background: var(--cream); color: #0a0908; border-color: var(--cream); }
+  .mic.on i { background: #c0392b; animation: ping2 1.2s ease-out infinite; }
+  [hidden] { display: none !important; }
+
+  [data-reveal] { will-change: transform, opacity, filter; }
+  @media (prefers-reduced-motion: reduce) {
+    .card, .panel, .veil, .ci-card, .ci-bg { transition-duration: 1ms !important; }
+    .ci .rv { animation-duration: 1ms; animation-delay: 0s; } .ci-card::after { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<main class="stage" id="stage" aria-roledescription="carousel">
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs><filter id="mblur" x="-5%" y="-25%" width="110%" height="150%"><feGaussianBlur id="mblurDev" in="SourceGraphic" stdDeviation="0 0" /></filter></defs>
+  </svg>
+
+  <div class="track" id="track"></div>
+
+  <div class="fade top"></div>
+  <div class="fade bot"></div>
+
+  <header class="topbar">
+    <div class="brand"><img src="images/rms-logo.webp" alt="RMS" width="48" height="24" /><span>Related Motion Studio</span></div>
+    <button class="checkin-btn" id="checkinBtn" data-no-drag type="button"><i></i>Check in</button>
+  </header>
+
+  <nav class="pager" id="pager" data-no-drag aria-label="Slides">
+    <div class="n" id="pagerCur">01</div>
+    <div class="dots" id="pagerDots"></div>
+    <div class="n total" id="pagerTotal">01</div>
+  </nav>
+
+  <div class="hint micro" id="hint">Drag · scroll · tap explore</div>
+
+  <div class="veil" id="veil"></div>
+  <aside class="panel" id="panel" data-no-drag aria-hidden="true">
+    <button class="close" id="closeBtn" type="button" aria-label="Close">✕</button>
+    <div class="panel-scroll" id="panelBody"></div>
+  </aside>
+
+  <button class="ci-cta" id="ciCta" data-no-drag type="button"><i></i><span>Just arrived? <b>Check in</b></span><em>→</em></button>
+
+  <div class="ci" id="ci" data-no-drag role="dialog" aria-modal="true" aria-label="Guest check-in" aria-hidden="true">
+    <div class="ci-bg"></div>
+    <div class="ci-card">
+      <div class="ci-top">
+        <div class="ci-steps" id="ciSteps" aria-hidden="true"><span></span><span></span><span></span></div>
+        <button class="close ci-close" id="ciClose" type="button" aria-label="Close">✕</button>
+      </div>
+      <div class="ci-body" id="ciBody"></div>
+    </div>
+  </div>
+
+  <div class="cursor" id="cursor" aria-hidden="true">
+    <div class="ring"></div>
+    <div class="lab micro" id="cursorLab">Scroll</div>
+    <div class="arr up" id="arrUp">↑</div>
+    <div class="arr dn" id="arrDn">↓</div>
+  </div>
+
+  <div class="scan" id="scan"></div>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+/* =====================================================================
+   CONTENT — swap images/text here. Everything else reads from this.
+   ===================================================================== */
+const WEB3FORMS_KEY = '6cdf884b-01fb-4fdd-8f86-6b61f1ca0dae';
+// Guest list backend (Google Sheet). Paste the Apps Script web-app URL here — see welcome/backend/README.md.
+// Empty = email-only via Web3Forms, with no returning-guest recognition.
+const SHEET_URL = '';
+const WHATSAPP = '2348154813203';
+const RATE_CARD_URL = 'https://github.com/wumidanz/related-motion-studio/raw/main/rate-card.pdf';
+const IDLE_AUTOPLAY_MS = 25000;   // start auto-advancing after this much inactivity
+const AUTOPLAY_EVERY_MS = 6500;
+const IDLE_RESET_MS = 90000;      // close panels + clear form after this much inactivity
+
+
+// Our work — film stills. Add a new one by dropping a file in welcome/images and adding a line here.
+const film = (n, lines, category, line, img) => ({
+  kicker: 'Reel ' + String(n).padStart(2, '0'),
+  eyebrow: 'Related Motion Studio · Our work',
+  badge: 'Shot & graded by RMS',
+  category,
+  titleLines: lines,
+  name: lines.join(' '),
+  meta: [['Studio', 'Related Motion Studio'], ['Frame', String(n).padStart(2, '0') + ' / 10']],
+  highlights: [['The frame', line], ['Made by', 'Related Motion Studio'], ['Book a shoot', 'Check in below']],
+  body: line + ' A frame from our trailer work — shot, lit and colour-graded by Related Motion Studio in Lagos.',
+  stats: [['Project', 'Trailer'], ['Stage', 'Colour grade'], ['Studio', 'RMS'], ['Location', 'Lagos'], ['Book', 'WhatsApp'], ['Rates', 'Scan below']],
+  img: 'images/' + img,
+});
+
+// The bookable rooms at the studio — the same names as the rate card.
+const room = (name, lines, mood, img) => ({
+  kicker: 'The Space',
+  eyebrow: 'RMS Space · Bookable at the studio',
+  badge: 'Book on WhatsApp',
+  category: 'Studio space',
+  titleLines: lines,
+  name,
+  meta: [['Space', name], ['Studio', 'Lekki, Lagos']],
+  highlights: [['The mood', mood], ['Booking', 'By the hour'], ['Rates', 'Scan in Explore']],
+  body: mood + ' Book ' + name + ' for your next shoot — every rate and package is on the rate card below.',
+  stats: [['Space', name], ['Booking', 'By the hour'], ['Location', 'Lekki, Lagos'], ['Book', 'WhatsApp'], ['Call', '0815 481 3203'], ['Rates', 'Scan below']],
+  img: 'images/' + img,
+});
+
+const SLIDES = [
+  film(1, ['The', 'Trailer'], 'Film · Colour', 'Warm light, a held look, a room that listens.', 'reel-01.webp'),
+  film(2, ['In the', 'Dark'], 'Film · Colour', 'Faces carved out of shadow.', 'reel-02.webp'),
+  film(3, ['The', 'Offering'], 'Film · Colour', 'Candlelight, white cloth, a ritual held still.', 'reel-06.webp'),
+  film(4, ['The', 'Lantern'], 'Film · Colour', 'One flame, and someone waiting in the doorway.', 'reel-07.webp'),
+  film(5, ['Blind', 'Faith'], 'Film · Colour', 'A single beam, and everything it hides.', 'reel-03.webp'),
+  film(6, ['Low', 'Light'], 'Film · Colour', 'Mood built in the grade.', 'reel-04.webp'),
+  film(7, ['Red', 'Room'], 'Film · Colour', 'One colour, one silhouette, all tension.', 'reel-05.webp'),
+  film(8, ['The', 'Room'], 'Film · Colour', 'A red dress, a white cyc, a room leaning in.', 'reel-08.webp'),
+  film(9, ['The', 'Ensemble'], 'Film · Colour', 'Nine looks, one wall, one frame.', 'reel-09.webp'),
+  film(10, ['On', 'Set'], 'Behind the scenes', 'The dolly, the crew, the take before the take.', 'reel-10.webp'),
+  room('Bathhouse', ['The', 'Bathhouse'], 'Open sky, white stone, a freestanding tub.', 'space-bathhouse.webp'),
+  room('Outdoor Environment', ['The', 'Courtyard'], 'Sunlit lime walls, arches, cactus and clay.', 'space-courtyard.webp'),
+  {
+    kicker: 'GETYOURSIT', eyebrow: 'GETYOURSIT · Coming soon', badge: 'Coming soon',
+    category: 'Coming soon', titleLines: ['Get your', 'Sit'], name: 'GETYOURSIT',
+    meta: [['Status', 'Coming soon'], ['Web', 'getyoursit.com']],
+    highlights: [['The promise', 'Something worth waiting for.'], ['Status', 'Launching soon'], ['First to know', 'Check in below']],
+    body: 'Something worth waiting for. GETYOURSIT is coming soon — check in and be the first to know the moment it launches.',
+    stats: [['Status', 'Coming soon'], ['Web', 'getyoursit.com'], ['Launch', 'Soon'], ['Updates', 'Check in'], ['Book', 'WhatsApp'], ['Rates', 'Scan below']],
+    img: 'images/getyoursit.webp',
+  },
+];
+
+const SPACES = ['Main Studio', 'The Artisan Hall', 'Bathhouse', 'Mansion Entrance', 'Seminar Room', 'Outdoor Environment', 'A Space set world'];
+const SHOOTS = ['Music video', 'Brand film / advert', 'Photo shoot', 'Content day', 'Podcast / interview', 'Film / series', 'Editorial / fashion', 'Event', 'Something else'];
+const ROLES = ['Photographer', 'Director / filmmaker', 'Producer', 'Content creator', 'Brand owner', 'Marketing / agency', 'Artist / musician', 'Stylist', 'Model / talent', 'Student', 'Something else'];
+const INTERESTS = ['New launches', 'Offers & discounts', 'Space bookings', 'RMS Academy', 'Trybe community', 'Brand films & campaigns'];
+
+/* =====================================================================
+   ENGINE
+   ===================================================================== */
+const N = SLIDES.length, COPIES = 3, TOTAL = N * COPIES;
+const $ = (id) => document.getElementById(id);
+const stage = $('stage'), track = $('track'), blurDev = $('mblurDev');
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+function slideHTML(s) {
+  return `
+    <div class="card">
+      <div class="card-media"><img src="${s.img}" alt="${esc(s.name)}" draggable="false" decoding="async" /></div>
+      <div class="card-content">
+        <div class="tl" data-reveal>
+          <div class="kicker">${esc(s.kicker)}</div>
+          <div class="micro eyebrow">${esc(s.eyebrow)}</div>
+          <div class="badge micro"><i></i>${esc(s.badge)}</div>
+        </div>
+        <div class="bl">
+          <div class="micro category" data-reveal>${esc(s.category)}</div>
+          <h2 class="title" data-reveal>${s.titleLines.map((l) => `<span>${esc(l)}</span>`).join('')}</h2>
+          <div class="meta micro" data-reveal>${s.meta.map(([k, v]) => `<div><b>${esc(k)}</b><span>${esc(v)}</span></div>`).join('')}</div>
+        </div>
+        <div class="rc" data-reveal>
+          ${s.highlights.map(([k, v]) => `<div class="hl"><div class="rule"></div><div class="micro">${esc(k)}</div><q>${esc(v)}</q></div>`).join('')}
+        </div>
+        <button class="explore" type="button" data-no-drag data-explore><span>Explore</span><em>→</em></button>
+      </div>
+    </div>`;
+}
+
+const slots = [];
+for (let i = 0; i < TOTAL; i++) {
+  const s = SLIDES[i % N];
+  const el = document.createElement('div');
+  el.className = 'slot';
+  el.innerHTML = slideHTML(s);
+  el.__media = el.querySelector('.card-media');
+  el.__content = el.querySelector('.card-content');
+  el.style.visibility = 'hidden';
+  el.__on = false;
+  el.querySelector('[data-explore]').addEventListener('click', (e) => { e.stopPropagation(); openExplore(i); });
+  track.appendChild(el);
+  slots.push(el);
+}
+
+// pager
+$('pagerTotal').textContent = String(N).padStart(2, '0');
+const dots = SLIDES.map((_, k) => {
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.setAttribute('aria-label', 'Go to slide ' + (k + 1));
+  b.innerHTML = '<span></span>';
+  b.addEventListener('click', (e) => { e.stopPropagation(); poke(); const cur = mod(idx); let d = k - cur; if (d > N / 2) d -= N; if (d < -N / 2) d += N; go(idx + d); });
+  $('pagerDots').appendChild(b);
+  return b;
+});
+const mod = (i) => ((i % N) + N) % N;
+
+// geometry
+let VH = innerHeight / 100, cardH = 80 * VH, slotH = 85 * VH, topPad = 10 * VH, measuredH = innerHeight;
+function measure() { measuredH = innerHeight; VH = innerHeight / 100; cardH = 80 * VH; slotH = 85 * VH; topPad = 10 * VH; y = target = topPad - idx * slotH; }
+addEventListener('resize', measure);
+
+let idx = N, prevIdx = idx;
+let y = topPad - idx * slotH, target = y;
+let intro = !reduced, introHidden = !reduced;
+let lastActiveShown = -1;
+
+function go(i) {
+  if (intro || openSlot !== null) return;
+  prevIdx = idx; idx = i;
+  target = topPad - idx * slotH;
+  updatePager();
+}
+function updatePager() {
+  const k = mod(idx);
+  $('pagerCur').textContent = String(k + 1).padStart(2, '0');
+  dots.forEach((d, j) => d.classList.toggle('on', j === k));
+}
+updatePager();
+
+// ---------- input ----------
+let lastInteract = performance.now(), lastAuto = 0, wheelLock = 0;
+function poke() { lastInteract = performance.now(); $('hint').style.opacity = ''; }
+
+stage.addEventListener('wheel', (e) => {
+  if (e.target.closest('.panel-scroll, .ci-body')) { poke(); return; } // let long panels scroll
+  e.preventDefault(); poke();
+  if (openSlot !== null || panelMode) return;
+  const now = performance.now();
+  if (now < wheelLock || Math.abs(e.deltaY) < 4) return;
+  wheelLock = now + 420;
+  go(idx + (e.deltaY > 0 ? 1 : -1));
+}, { passive: false });
+
+addEventListener('keydown', (e) => {
+  poke();
+  if (e.key === 'Escape') { closePanel(); return; }
+  if (panelMode) return;
+  if (['ArrowDown', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); go(idx + 1); }
+  if (['ArrowUp', 'PageUp'].includes(e.key)) { e.preventDefault(); go(idx - 1); }
+});
+
+const drag = { active: false, startY: 0, startTrack: 0, delta: 0, id: 0 };
+let edge = null, hovering = false, noDrag = false, pointer = { x: 0, y: 0 };
+
+stage.addEventListener('pointerdown', (e) => {
+  poke();
+  if (e.target.closest('[data-no-drag]') || intro || panelMode) return;
+  drag.active = true; drag.startY = e.clientY; drag.startTrack = y; drag.delta = 0; drag.id = e.pointerId;
+  try { stage.setPointerCapture(e.pointerId); } catch (_) {}
+});
+stage.addEventListener('pointermove', (e) => {
+  pointer.x = e.clientX; pointer.y = e.clientY; hovering = true;
+  noDrag = !!e.target.closest('[data-no-drag]');
+  edge = e.clientY < 10 * VH ? 'top' : e.clientY > innerHeight - 10 * VH ? 'bottom' : null;
+  if (!drag.active) return;
+  poke();
+  drag.delta = e.clientY - drag.startY;
+  y = drag.startTrack + drag.delta;
+});
+function endDrag(commit) {
+  if (!drag.active) return;
+  drag.active = false;
+  try { stage.releasePointerCapture(drag.id); } catch (_) {}
+  const d = drag.delta;
+  if (!commit) return;
+  if (edge && Math.abs(d) < 8) { go(idx + (edge === 'top' ? -1 : 1)); return; }
+  if (Math.abs(d) > Math.min(70, 7 * VH)) go(idx + (d < 0 ? 1 : -1));
+}
+stage.addEventListener('pointerup', () => endDrag(true));
+stage.addEventListener('pointercancel', () => endDrag(false));
+stage.addEventListener('pointerleave', () => { hovering = false; endDrag(true); });
+stage.addEventListener('pointerenter', () => { hovering = true; });
+
+// ---------- render loop ----------
+const smooth = (t) => t * t * (3 - 2 * t);
+const cursorEl = $('cursor'), cur = { x: 0, y: 0, s: 1, o: 0, init: false };
+
+function frame(now) {
+  // Kiosk tablets rotate and browsers sometimes skip resize events.
+  if (!intro && !drag.active && innerHeight !== measuredH) measure();
+  if (!intro && !drag.active) {
+    const d = target - y;
+    y = Math.abs(d) < 0.5 ? target : y + d * 0.16;
+    // seamless loop rebase once settled
+    if (y === target && (idx < N || idx >= 2 * N)) {
+      const shift = idx < N ? N : -N;
+      idx += shift; prevIdx += shift; y -= shift * slotH; target = y;
+    }
+  }
+  track.style.transform = `translate3d(0, ${y.toFixed(2)}px, 0)`;
+
+  const half = innerHeight / 2;
+  for (let i = 0; i < TOTAL; i++) {
+    const el = slots[i];
+    const r = i * slotH + y + cardH / 2 - half;
+    const a = Math.abs(r) / cardH;
+    if (a > 1.35) {
+      if (el.__on) { el.style.visibility = 'hidden'; el.classList.remove('near'); el.__content.style.opacity = '0'; el.__on = false; el.__css = ''; }
+      continue;
+    }
+    if (!el.__on) { el.style.visibility = ''; el.classList.add('near'); el.__on = true; }
+    el.__media.style.transform = `translate3d(0, ${(-r / 1.2).toFixed(1)}px, 0)`;
+    const c = el.__content;
+    if (introHidden) { if (el.__css !== 'h') { c.style.opacity = '0'; el.__css = 'h'; } continue; }
+    let m = 0, blur = 16, ty = 0;
+    if (i === idx) { const t = Math.max(0, Math.min(1, 1 - a / 0.55)); m = smooth(t); blur = (1 - m) * 14; ty = (1 - m) * 64 * Math.sign(r || 1); }
+    else if (i === prevIdx) { m = Math.max(0, 1 - Math.max(0, a - 0.6) / 0.6); blur = (1 - m) * 6; ty = -0.42 * r; }
+    const key = m.toFixed(2) + '|' + ty.toFixed(0);
+    if (key === el.__css) continue;
+    el.__css = key;
+    c.style.opacity = m.toFixed(2);
+    c.style.filter = m > 0.98 || m < 0.02 ? 'none' : `blur(${blur.toFixed(1)}px)`;
+    c.style.transform = `translate3d(0, ${ty.toFixed(0)}px, 0)`;
+  }
+
+  // cursor
+  if (!cur.init && (pointer.x || pointer.y)) { cur.x = pointer.x; cur.y = pointer.y; cur.init = true; }
+  cur.x += (pointer.x - cur.x) * 0.22; cur.y += (pointer.y - cur.y) * 0.22;
+  const showCursor = hovering && cur.init && !noDrag && !panelMode;
+  cur.o += ((showCursor ? 1 : 0) - cur.o) * 0.18;
+  cur.s += ((drag.active ? 1.18 : 1) - cur.s) * 0.22;
+  cursorEl.style.transform = `translate3d(${cur.x}px, ${cur.y}px, 0) translate(-50%, -50%) scale(${cur.s.toFixed(3)})`;
+  cursorEl.style.opacity = cur.o.toFixed(3);
+  const lab = (drag.active ? 'Drag' : 'Scroll') + edge;
+  if (lab !== cur.lab) {
+    cur.lab = lab;
+    $('cursorLab').textContent = drag.active ? 'Drag' : 'Scroll';
+    $('arrUp').style.opacity = edge === 'top' ? '1' : '0';
+    $('arrDn').style.opacity = edge === 'bottom' ? '1' : '0';
+  }
+
+  // kiosk autoplay + reset
+  const idle = now - lastInteract;
+  if (!intro && !panelMode && idle > IDLE_AUTOPLAY_MS && now - lastAuto > AUTOPLAY_EVERY_MS) { lastAuto = now; go(idx + 1); $('hint').style.opacity = '0'; }
+  if (panelMode && idle > IDLE_RESET_MS) closePanel();
+
+  requestAnimationFrame(frame);
+}
+
+// ---------- intro: the reel rolls in ----------
+function revealActive(i) {
+  const els = slots[i].querySelectorAll('[data-reveal]');
+  els.forEach((el, k) => {
+    el.animate(
+      [{ opacity: 0, transform: 'translateY(32px)', filter: 'blur(10px)' }, { opacity: 1, transform: 'translateY(0)', filter: 'blur(0)' }],
+      { duration: 1000, delay: k * 70, easing: 'cubic-bezier(0.16, 1, 0.3, 1)', fill: 'backwards' }
+    );
+  });
+}
+function runIntro() {
+  if (reduced) { $('scan').classList.add('off'); return; }
+  const from = idx - N, to = idx;
+  const y0 = topPad - from * slotH, y1 = topPad - to * slotH;
+  const dur = 3000, t0 = performance.now();
+  let lastY = y0, lastT = t0;
+  track.style.filter = 'url(#mblur)';
+  setTimeout(() => $('scan').classList.add('off'), 250);
+  const step = (now) => {
+    const p = Math.min(1, (now - t0) / dur);
+    const e = 1 - Math.pow(1 - p, 3); // power3.out
+    y = y0 + (y1 - y0) * e;
+    const v = Math.abs(y - lastY) / Math.max(1, now - lastT);
+    blurDev.setAttribute('stdDeviation', `0 ${Math.min(18, v * 2.2).toFixed(2)}`);
+    lastY = y; lastT = now;
+    if (p < 1) return requestAnimationFrame(step);
+    y = target = y1;
+    blurDev.setAttribute('stdDeviation', '0 0');
+    track.style.filter = '';
+    intro = false; introHidden = false;
+    revealActive(idx);
+    poke();
+  };
+  requestAnimationFrame(step);
+}
+
+// ---------- panel: explore + check-in ----------
+let openSlot = null, panelMode = null;
+const panel = $('panel'), veil = $('veil'), body = $('panelBody');
+
+function showPanel() {
+  panel.classList.add('on'); veil.classList.add('on');
+  panel.setAttribute('aria-hidden', 'false');
+  setChrome(false);
+  body.scrollTop = 0;
+}
+function setChrome(on) { for (const id of ['pager', 'hint', 'ciCta']) $(id).classList.toggle('hidden', !on); }
+function closePanel() {
+  if (!panelMode) return;
+  if (panelMode === 'checkin') return closeCheckin();
+  panel.classList.remove('on'); veil.classList.remove('on');
+  panel.setAttribute('aria-hidden', 'true');
+  setChrome(true);
+  if (openSlot !== null) slots[openSlot].classList.remove('is-open');
+  openSlot = null; panelMode = null;
+}
+veil.addEventListener('click', () => { poke(); closePanel(); });
+$('closeBtn').addEventListener('click', () => { poke(); closePanel(); });
+panel.addEventListener('pointerdown', poke);
+panel.addEventListener('input', poke);
+
+function openExplore(i) {
+  poke();
+  if (intro || i !== idx) return;
+  const s = SLIDES[i % N];
+  openSlot = i; panelMode = 'explore';
+  slots[i].classList.add('is-open');
+  body.innerHTML = `
+    <div class="micro p-eyebrow">${esc(s.eyebrow)}</div>
+    <h3 class="p-title">${s.titleLines.map(esc).join('<br>')}</h3>
+    <div class="micro p-sub">${s.meta.map(([k, v]) => esc(k) + ' · ' + esc(v)).join('&nbsp;&nbsp;&nbsp;')}</div>
+    <div class="hr"></div>
+    <p class="p-body">${esc(s.body)}</p>
+    <div class="hr"></div>
+    <div class="stats">${s.stats.map(([k, v]) => `<div class="stat"><div class="micro">${esc(k)}</div><div>${esc(v)}</div></div>`).join('')}</div>
+    <div class="hr"></div>
+    <div class="qr-row">
+      <div class="qr" id="qrRates"></div>
+      <div><div class="micro" style="color:rgba(255,255,255,.5)">Scan with your phone</div><p>Our full rate card — every space, every package.</p></div>
+    </div>
+    <div class="hr"></div>
+    <div class="actions">
+      <button class="btn solid" type="button" id="exploreCheckin">Check in with us →</button>
+    </div>`;
+  makeQR('qrRates', RATE_CARD_URL);
+  $('exploreCheckin').addEventListener('click', () => { closePanel(); openCheckin(); });
+  showPanel();
+}
+
+function makeQR(id, text) {
+  const el = $(id);
+  if (!el) return;
+  if (typeof QRCode === 'undefined') { el.parentElement.style.display = 'none'; return; }
+  new QRCode(el, { text, width: 176, height: 176, colorDark: '#0a0908', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M });
+}
+
+$('checkinBtn').addEventListener('click', (e) => { e.stopPropagation(); openCheckin(); });
+$('ciCta').addEventListener('click', (e) => { e.stopPropagation(); openCheckin(); });
+$('ciClose').addEventListener('click', () => { poke(); closeCheckin(); });
+
+// ---------- check-in: one form, one pop-up ----------
+// The WhatsApp number sits with the rest of the fields. As soon as it is a
+// valid number we ask the sheet whether we know it; a returning guest keeps
+// the same form, minus everything they already told us.
+const ciEl = $('ci'), ciBody = $('ciBody');
+const freshCi = () => ({ open: false, phone: '', norm: '', known: false, first: '', rating: 0, done: false });
+let ci = freshCi(), doneTimer = null, clearTimer = null, lookupTimer = null;
+
+function openCheckin() {
+  poke();
+  if (intro) return;
+  if (panelMode === 'explore') closePanel();
+  clearTimeout(clearTimer);
+  if (!ci.open) { ci = freshCi(); ci.open = true; renderForm(); }
+  panelMode = 'checkin';
+  ciEl.classList.add('on'); ciEl.setAttribute('aria-hidden', 'false');
+  setChrome(false);
+}
+function closeCheckin() {
+  ciEl.classList.remove('on'); ciEl.setAttribute('aria-hidden', 'true');
+  panelMode = null; setChrome(true);
+  if (doneTimer) { clearInterval(doneTimer); doneTimer = null; }
+  clearTimeout(lookupTimer);
+  stopDictation();
+  if (ciEl.contains(document.activeElement)) document.activeElement.blur();
+  // Always start the next guest clean — nobody sees the previous person's details.
+  ci = freshCi();
+  clearTimer = setTimeout(() => { if (panelMode !== 'checkin') ciBody.innerHTML = ''; }, 800);
+}
+
+function ciRender(step, html) {
+  ciBody.innerHTML = html;
+  ciBody.querySelectorAll(':scope > :not(form), :scope > form > *').forEach((el, i) => { el.classList.add('rv'); el.style.setProperty('--i', i); });
+  document.querySelectorAll('#ciSteps span').forEach((s, i) => s.classList.toggle('on', i <= (step === 'done' ? 2 : 1)));
+  ciBody.scrollTop = 0;
+}
+
+const lagosDate = () => new Date().toLocaleDateString('en-CA', { timeZone: 'Africa/Lagos' }); // YYYY-MM-DD
+const lagosNow = () => new Date().toLocaleString('en-NG', { timeZone: 'Africa/Lagos' });
+function normPhone(raw) {
+  let d = String(raw || '').replace(/\D/g, '');
+  if (d.length === 11 && d[0] === '0') d = '234' + d.slice(1);
+  return d.length >= 10 && d.length <= 15 ? d : '';
+}
+
+function renderForm() {
+  ciRender('form', `
+    <div class="micro p-eyebrow">Related Motion Studio · Guest check-in</div>
+    <h3 class="p-title">Welcome in.</h3>
+    <p class="ci-lede">Leave your details and we'll send you new launches, offers and first access — by email and WhatsApp.</p>
+    <div class="hr"></div>
+    <form id="ciForm" novalidate autocomplete="off">
+      <div class="ci-back" id="ciBack" hidden></div>
+
+      <div class="row2">
+        <div class="field"><label for="c-phone">WhatsApp number <em>*</em></label><input id="c-phone" name="phone" type="tel" inputmode="tel" required placeholder="0801 234 5678" /></div>
+        <div class="field" data-new><label for="c-name">Full name <em>*</em></label><input id="c-name" name="name" required placeholder="Your name" /></div>
+      </div>
+      <div class="row2" data-new>
+        <div class="field"><label for="c-email">Email <em>*</em></label><input id="c-email" name="email" type="email" inputmode="email" required placeholder="you@email.com" autocapitalize="off" /></div>
+        <div class="field"><label for="c-brand">Brand / company</label><input id="c-brand" name="brand" placeholder="Optional" /></div>
+      </div>
+      <div class="field" data-new><label for="c-ig">Instagram</label><input id="c-ig" name="instagram" placeholder="@handle (optional)" autocapitalize="off" /></div>
+
+      <div class="field"><label>What are you shooting today?</label>
+        <div class="chips">${SHOOTS.map((t) => `<label class="chip"><input type="checkbox" name="shoot" value="${esc(t)}" /><span>${esc(t)}</span></label>`).join('')}</div>
+        <input class="other" id="c-shoot-other" name="shoot_other" placeholder="Tell us what you are shooting" hidden />
+      </div>
+
+      <div class="field" data-new><label>What do you do?</label>
+        <div class="chips">${ROLES.map((t) => `<label class="chip"><input type="checkbox" name="role" value="${esc(t)}" /><span>${esc(t)}</span></label>`).join('')}</div>
+        <input class="other" id="c-role-other" name="role_other" placeholder="Tell us what you do" hidden />
+      </div>
+
+      <div class="field"><label>Which spaces work best for you?</label>
+        <div class="chips">${SPACES.map((s) => `<label class="chip"><input type="checkbox" name="spaces" value="${esc(s)}" /><span>${esc(s)}</span></label>`).join('')}</div>
+      </div>
+
+      <div class="field"><label>How was the space? <i class="opt">optional</i></label>
+        <div class="stars" id="ciStars" role="radiogroup" aria-label="Rate the space">
+          ${[1, 2, 3, 4, 5].map((n) => `<button type="button" class="star" data-n="${n}" role="radio" aria-checked="false" aria-label="${n} out of 5">★</button>`).join('')}
+          <span class="star-note micro" id="ciStarNote">Tap to rate</span>
+        </div>
+      </div>
+
+      <div class="field"><label for="c-review">Anything you'd like to tell us? <i class="opt">optional</i></label>
+        <div class="voice-wrap">
+          <textarea id="c-review" name="review" rows="3" placeholder="Only if you feel like it — type, or press the mic and talk."></textarea>
+          <button type="button" class="mic" id="ciMic" hidden aria-label="Record your answer"><i></i><span>Speak</span></button>
+        </div>
+      </div>
+
+      <div class="field" data-new><label>What would you like to hear about?</label>
+        <div class="chips">${INTERESTS.map((t) => `<label class="chip"><input type="checkbox" name="interests" value="${esc(t)}" /><span>${esc(t)}</span></label>`).join('')}</div>
+      </div>
+
+      <label class="consent" data-new><input type="checkbox" name="consent" required /><span>I'm happy for Related Motion Studio to send me updates by email and WhatsApp. I can opt out any time.</span></label>
+      <input type="checkbox" name="botcheck" style="display:none" tabindex="-1" autocomplete="off" />
+      <div class="err" id="ciErr"></div>
+      <div class="actions"><button class="btn solid" type="submit" id="ciSubmit" style="min-width:220px">Check in →</button></div>
+    </form>`);
+
+  const f = $('ciForm');
+  f.addEventListener('input', poke);
+  wireStars();
+  wireMic();
+  wireOther('shoot', 'c-shoot-other');
+  wireOther('role', 'c-role-other');
+
+  // Recognise a returning guest as they type, without a second screen.
+  $('c-phone').addEventListener('input', (e) => {
+    const norm = normPhone(e.target.value);
+    clearTimeout(lookupTimer);
+    if (ci.known && norm !== ci.norm) forgetGuest();
+    if (!norm || norm === ci.norm) return;
+    lookupTimer = setTimeout(async () => {
+      const mine = ci, r = await lookup(norm);
+      if (ci !== mine || normPhone($('c-phone').value) !== norm) return;
+      if (r.known) knowGuest(norm, r.first || '');
+    }, 700);
+  });
+
+  f.addEventListener('submit', onSubmit);
+  setTimeout(() => { const p = $('c-phone'); if (p && panelMode === 'checkin') p.focus({ preventScroll: true }); }, 600);
+}
+
+function knowGuest(norm, first) {
+  ci.known = true; ci.norm = norm; ci.first = first;
+  const b = $('ciBack');
+  b.innerHTML = `<div><b>Welcome back${first ? ', ' + esc(first) : ''}.</b><span>You're already on our list — just tell us about today.</span></div><button type="button" class="ci-link" id="ciNotMe">Not you?</button>`;
+  b.hidden = false;
+  $('ciNotMe').addEventListener('click', () => { poke(); forgetGuest(); });
+  // Everything they already gave us stays out of the way.
+  $('ciForm').querySelectorAll('[data-new]').forEach((el) => { el.hidden = true; el.querySelectorAll('[required]').forEach((i) => (i.required = false)); });
+}
+function forgetGuest() {
+  ci.known = false; ci.first = ''; ci.norm = '';
+  $('ciBack').hidden = true;
+  $('ciForm').querySelectorAll('[data-new]').forEach((el) => {
+    el.hidden = false;
+    el.querySelectorAll('input').forEach((i) => { if (['name', 'email', 'consent'].includes(i.name)) i.required = true; });
+  });
+}
+
+// "Something else" opens a box to type in, and what they type replaces it.
+function wireOther(group, inputId) {
+  const box = $(inputId);
+  const other = $('ciForm').querySelector(`[name="${group}"][value="Something else"]`);
+  if (!box || !other) return;
+  other.addEventListener('change', () => {
+    poke();
+    box.hidden = !other.checked;
+    if (other.checked) setTimeout(() => box.focus({ preventScroll: true }), 60);
+    else box.value = '';
+  });
+}
+function pickList(d, group, otherId) {
+  const typed = String(d.get(group + '_other') || '').trim();
+  return d.getAll(group).map((v) => (v === 'Something else' ? typed || 'Something else' : v)).join(', ');
+}
+
+function wireStars() {
+  const wrap = $('ciStars'), note = $('ciStarNote');
+  const WORDS = ['', 'Not great', 'It was okay', 'Good', 'Really good', 'Perfect'];
+  wrap.addEventListener('click', (e) => {
+    const b = e.target.closest('.star'); if (!b) return;
+    poke();
+    ci.rating = Number(b.dataset.n);
+    wrap.querySelectorAll('.star').forEach((s) => {
+      const on = Number(s.dataset.n) <= ci.rating;
+      s.classList.toggle('on', on);
+      s.setAttribute('aria-checked', String(Number(s.dataset.n) === ci.rating));
+    });
+    note.textContent = WORDS[ci.rating];
+  });
+}
+
+// ---------- talk instead of type ----------
+// Browser dictation (Chrome, Edge, Safari). The button hides itself where the
+// browser has no speech recognition, so the textarea is always the fallback.
+let recog = null;
+function stopDictation() {
+  if (recog) { try { recog.stop(); } catch (_) {} recog = null; }
+  const b = $('ciMic'); if (b) b.classList.remove('on');
+}
+function wireMic() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const btn = $('ciMic'), box = $('c-review');
+  if (!SR || !btn) return;
+  btn.hidden = false;
+  btn.addEventListener('click', () => {
+    poke();
+    if (recog) { stopDictation(); return; }
+    const r = new SR();
+    r.lang = 'en-NG';
+    r.interimResults = true;
+    r.continuous = true;
+    const base = box.value ? box.value.trim() + ' ' : '';
+    r.onresult = (e) => {
+      let text = '';
+      for (let i = 0; i < e.results.length; i++) text += e.results[i][0].transcript;
+      box.value = base + text.trim();
+      poke();
+    };
+    r.onerror = () => { stopDictation(); $('ciErr').textContent = 'Could not hear that — you can type instead.'; };
+    r.onend = () => { if (recog) stopDictation(); };
+    recog = r;
+    btn.classList.add('on');
+    try { r.start(); } catch (_) { stopDictation(); }
+  });
+}
+
+async function onSubmit(e) {
+  e.preventDefault(); poke(); stopDictation();
+  const f = e.target, d = new FormData(f), err = $('ciErr');
+  const norm = normPhone(d.get('phone'));
+  const name = String(d.get('name') || '').trim();
+  const email = String(d.get('email') || '').trim();
+  if (!norm) return (err.textContent = 'Please add a valid WhatsApp number.');
+  if (!ci.known) {
+    if (!name) return (err.textContent = 'Please add your name.');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return (err.textContent = 'Please add a valid email.');
+    if (!d.get('consent')) return (err.textContent = 'Tick the box so we can send you updates.');
+  }
+  if (d.get('botcheck')) return;
+  err.textContent = '';
+
+  const btn = $('ciSubmit'); btn.disabled = true; btn.textContent = 'Checking in…';
+  const mine = ci;
+  const rec = {
+    action: 'checkin',
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2, 8),
+    phone: norm, phone_typed: String(d.get('phone') || '').trim(),
+    name, email, brand: d.get('brand') || '', instagram: d.get('instagram') || '',
+    booking_date: lagosDate(),
+    shoot: pickList(d, 'shoot'),
+    role: pickList(d, 'role'),
+    spaces: d.getAll('spaces').join(', '),
+    rating: ci.rating || '',
+    review: String(d.get('review') || '').trim(),
+    interests: d.getAll('interests').join(', '),
+    consent: ci.known ? true : !!d.get('consent'),
+    checked_in_at: lagosNow(),
+  };
+  if (!(await deliver(rec))) queue(rec);
+  if (ci === mine) renderDone(ci.first || name.split(' ')[0], ci.known);
+}
+
+function renderDone(first, returning) {
+  ci.done = true;
+  ciRender('done', `
+    <div class="micro p-eyebrow">${returning ? 'Good to see you again' : "You're checked in"}</div>
+    <h3 class="p-title">Thank you${first ? ',<br>' + esc(first) : ''}.</h3>
+    <div class="hr"></div>
+    <p class="p-body">${returning ? "Today is on your file. Enjoy the space — and look out for what's next from us." : "You're on the list. Expect new launches, offers and first access from us — by email and on WhatsApp."}</p>
+    <div class="hr"></div>
+    <div class="qr-row">
+      <div class="qr" id="qrRates2"></div>
+      <div><div class="micro" style="color:rgba(255,255,255,.5)">Scan with your phone</div><p>Take our rate card with you.</p></div>
+    </div>
+    <div class="count" id="doneCount">Returning to the reel in 12s</div>`);
+  makeQR('qrRates2', RATE_CARD_URL);
+  let n = 12;
+  clearInterval(doneTimer);
+  doneTimer = setInterval(() => {
+    n -= 1;
+    const c = $('doneCount'); if (c) c.textContent = `Returning to the reel in ${n}s`;
+    if (n <= 0) closeCheckin();
+  }, 1000);
+}
+
+// ---------- delivery: Google Sheet when SHEET_URL is set, otherwise email via Web3Forms ----------
+// text/plain keeps the request "simple", so Apps Script needs no CORS preflight.
+async function postSheet(body, signal) {
+  const res = await fetch(SHEET_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body), signal });
+  return res.json();
+}
+async function lookup(phone) {
+  if (!SHEET_URL) return {};
+  const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 6000);
+  try { const j = await postSheet({ action: 'lookup', phone }, ctl.signal); return j.ok ? j : {}; }
+  catch (_) { return {}; } // offline or slow: treat as new — the sheet still merges by phone number
+  finally { clearTimeout(t); }
+}
+async function deliver(rec) {
+  if (rec.access_key) return send(rec); // Web3Forms payloads queued by an older build
+  if (SHEET_URL) { try { return !!(await postSheet(rec)).ok; } catch (_) { return false; } }
+  return send({
+    access_key: WEB3FORMS_KEY,
+    subject: 'RMS Walk-in check-in — ' + (rec.name || rec.phone_typed),
+    from_name: 'RMS Studio kiosk',
+    name: rec.name || '—', phone: rec.phone_typed || rec.phone, email: rec.email || '—',
+    booking_date: rec.booking_date || '—', shooting: rec.shoot || '—', profession: rec.role || '—',
+    favourite_spaces: rec.spaces || '—',
+    rating: rec.rating ? rec.rating + ' / 5' : '—', review: rec.review || '—',
+    brand: rec.brand || '—', instagram: rec.instagram || '—', interests: rec.interests || '—',
+    consent: rec.consent ? 'Yes — email & WhatsApp updates' : '—', checked_in_at: rec.checked_in_at,
+  });
+}
+async function send(payload) {
+  try {
+    const res = await fetch('https://api.web3forms.com/submit', {
+      method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(payload),
+    });
+    const j = await res.json().catch(() => ({}));
+    return res.ok && j.success;
+  } catch (_) { return false; }
+}
+// Offline-safe: a kiosk on flaky Wi-Fi keeps check-ins and retries later.
+const QKEY = 'rms-checkin-queue';
+function readQ() { try { return JSON.parse(localStorage.getItem(QKEY) || '[]'); } catch (_) { return []; } }
+function writeQ(q) { try { localStorage.setItem(QKEY, JSON.stringify(q)); } catch (_) {} }
+function queue(p) { const q = readQ(); q.push(p); writeQ(q); }
+let flushing = false;
+async function flushQ() {
+  const q = readQ(); if (!q.length || flushing) return;
+  flushing = true;
+  const left = [];
+  for (const p of q) { if (!(await deliver(p))) left.push(p); }
+  writeQ(left.concat(readQ().slice(q.length))); // keep anything queued while we were sending
+  flushing = false;
+}
+addEventListener('online', flushQ);
+setInterval(flushQ, 60000);
+flushQ();
+
+measure();
+requestAnimationFrame(frame);
+const firstImgs = [idx - 1, idx, idx + 1].map((i) => slots[i].querySelector('img'));
+Promise.race([
+  Promise.all(firstImgs.map((im) => im.decode().catch(() => {}))),
+  new Promise((r) => setTimeout(r, 2500)),
+]).then(runIntro);
+</script>
+</body>
+</html>
