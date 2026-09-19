@@ -199,6 +199,7 @@
   .chip span { display: inline-flex; align-items: center; min-height: 42px; padding: 0 16px; border-radius: 999px; border: 1px solid rgba(255,255,255,.2);
     font-size: 13px; color: rgba(255,255,255,.8); cursor: pointer; transition: all .25s ease; }
   .chip input:checked + span { background: var(--cream); color: #0a0908; border-color: var(--cream); }
+  .field .other { margin-top: 10px; height: 52px; }
   .consent { display: flex; gap: 12px; align-items: flex-start; font-size: 13px; line-height: 1.5; color: rgba(255,255,255,.7); margin: 6px 0 22px; cursor: pointer; }
   .consent input { width: 22px; height: 22px; accent-color: var(--cream); flex: none; margin-top: 1px; }
   .err { color: #e8a27c; font-size: 13px; min-height: 18px; margin-bottom: 12px; }
@@ -780,10 +781,12 @@ function renderForm() {
 
       <div class="field"><label>What are you shooting today?</label>
         <div class="chips">${SHOOTS.map((t) => `<label class="chip"><input type="checkbox" name="shoot" value="${esc(t)}" /><span>${esc(t)}</span></label>`).join('')}</div>
+        <input class="other" id="c-shoot-other" name="shoot_other" placeholder="Tell us what you are shooting" hidden />
       </div>
 
       <div class="field" data-new><label>What do you do?</label>
         <div class="chips">${ROLES.map((t) => `<label class="chip"><input type="checkbox" name="role" value="${esc(t)}" /><span>${esc(t)}</span></label>`).join('')}</div>
+        <input class="other" id="c-role-other" name="role_other" placeholder="Tell us what you do" hidden />
       </div>
 
       <div class="field"><label>Which spaces work best for you?</label>
@@ -818,6 +821,8 @@ function renderForm() {
   f.addEventListener('input', poke);
   wireStars();
   wireMic();
+  wireOther('shoot', 'c-shoot-other');
+  wireOther('role', 'c-role-other');
 
   // Recognise a returning guest as they type, without a second screen.
   $('c-phone').addEventListener('input', (e) => {
@@ -852,6 +857,23 @@ function forgetGuest() {
     el.hidden = false;
     el.querySelectorAll('input').forEach((i) => { if (['name', 'email', 'consent'].includes(i.name)) i.required = true; });
   });
+}
+
+// "Something else" opens a box to type in, and what they type replaces it.
+function wireOther(group, inputId) {
+  const box = $(inputId);
+  const other = $('ciForm').querySelector(`[name="${group}"][value="Something else"]`);
+  if (!box || !other) return;
+  other.addEventListener('change', () => {
+    poke();
+    box.hidden = !other.checked;
+    if (other.checked) setTimeout(() => box.focus({ preventScroll: true }), 60);
+    else box.value = '';
+  });
+}
+function pickList(d, group, otherId) {
+  const typed = String(d.get(group + '_other') || '').trim();
+  return d.getAll(group).map((v) => (v === 'Something else' ? typed || 'Something else' : v)).join(', ');
 }
 
 function wireStars() {
@@ -928,8 +950,8 @@ async function onSubmit(e) {
     phone: norm, phone_typed: String(d.get('phone') || '').trim(),
     name, email, brand: d.get('brand') || '', instagram: d.get('instagram') || '',
     booking_date: lagosDate(),
-    shoot: d.getAll('shoot').join(', '),
-    role: d.getAll('role').join(', '),
+    shoot: pickList(d, 'shoot'),
+    role: pickList(d, 'role'),
     spaces: d.getAll('spaces').join(', '),
     rating: ci.rating || '',
     review: String(d.get('review') || '').trim(),
